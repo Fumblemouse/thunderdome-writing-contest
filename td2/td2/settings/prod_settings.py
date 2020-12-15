@@ -17,6 +17,9 @@ DATABASES = {
         'TEST': {
             'NAME': os.getenv('DATABASE_TEST_NAME'),
         }
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        }
 
     }
 }
