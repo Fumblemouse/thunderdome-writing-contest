@@ -1,0 +1,17 @@
+{% extends "baseapp/base.html" %}
+
+{% block header %}Prompt Details{% endblock %}
+
+{% block content %}
+
+{% if view_full_prompt_context %}
+        <h2>{{ view_full_prompt_context.prompt_title }}</h2>
+        <p>{{ view_full_prompt_context.prompt_content }}</p>
+
+{% else %}
+    <p>No Prompts are currently active.</p>
+{% endif %}
+
+
+
+{% endblock %}

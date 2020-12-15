@@ -1,0 +1,26 @@
+{% extends "baseapp/base.html" %}
+
+{% block header %}
+    {{request.user.username}}
+{% endblock header %}
+  
+{% block content %}
+
+<div>
+    <h3>Welcome {{request.user.first_name}} {{request.user.last_name}}</h3>
+<p>Choose form the options to your left. No, the other left.</p> 
+{% endblock content %}
+{% block aside %}
+<form action="{% url 'change username' %}" method="GET">
+    <button type="submit" class="btn btn-warning" style="margin-bottom: 5px" >Change Username</button>
+</form>
+<form action="{% url 'change password' %}" method="GET">
+<button type="submit" class="btn btn-danger" >Change Password</button>
+</form>
+<form action="{% url 'change email' %}" method="GET">
+    <button type="submit" class="btn btn-danger" >Change Email</button>
+</form>
+<form action="{% url 'settings' %}" method="GET">
+    <button type="submit" class="btn btn-danger" >Settings</button>
+</form>
+{% endblock aside %}

@@ -1,0 +1,35 @@
+{% extends "baseapp/base.html" %}
+
+{% block header %}
+      Signup
+{% endblock %}
+
+{% block content %}
+
+<div >
+  <form method="post" role="form">
+    {% csrf_token %}
+      {% for field in form %}
+	  <div class = "form-group">
+      <p>
+        {{ field.label_tag }}
+          <br>
+        {{ field }}
+        {% if "ber" in field.label %}
+          <small id="emailHelp" class="form-text text-muted">Ex: 0912345678</small>
+      		<small id="emailHelp" class="form-text text-muted">Not Required.</small>
+        {% endif %}
+		{% if "Email" in field.label %}
+		<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+		{% endif %}
+        {% for error in field.errors %}
+          <p style="color: red">{{ error }}</p>
+        {% endfor %}
+      </p>
+	  </div>
+      {% endfor %}
+
+    <button type="submit" class="btn btn-primary">Sign up</button>
+  </form>
+  </div>
+{% endblock content %}

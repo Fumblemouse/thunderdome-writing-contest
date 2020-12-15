@@ -1,0 +1,17 @@
+{% extends "baseapp/base.html" %}
+
+{% block header %}Current Contests{% endblock %}
+
+{% block content %}
+
+{% if current_contest_list %}
+    <ul>
+    {% for contest in current_contest_list.all %}
+        <li><a href="{% url 'View Full Contest' contest.id %}">{{ contest.title }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No Contests are currently active.</p>
+{% endif %}
+
+{% endblock %}

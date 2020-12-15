@@ -1,0 +1,17 @@
+{% extends "baseapp/base.html" %}
+
+{% block header %}Contest Details{% endblock %}
+
+{% block content %}
+
+{% if view_full_contest_context %}
+        <h2>{{ view_full_contest_context.title }}</h2>
+        <p>{{ view_full_contest_context.prompt.content }}</p>
+
+{% else %}
+    <p>No contests are currently active.</p>
+{% endif %}
+
+
+
+{% endblock %}

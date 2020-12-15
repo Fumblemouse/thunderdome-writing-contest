@@ -1,0 +1,17 @@
+{% extends "baseapp/base.html" %}
+
+{% block header %}List of Prompts{% endblock %}
+
+{% block content %}
+
+{% if prompt_list %}
+    <ul>
+    {% for prompt in prompt_list.all %}
+        <li><a href="{% url 'View Full Prompt' prompt.id %}">{{ prompt.title }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No Prompts are in the system.</p>
+{% endif %}
+
+{% endblock %}

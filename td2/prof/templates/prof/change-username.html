@@ -1,0 +1,21 @@
+{% extends "baseapp/base.html" %}
+
+{% block header %}
+      Change Username {{request.user.username}}
+{% endblock %}
+
+{% block content %}
+<div>
+<div style="color: red;">
+    {% if error_msg %}
+        {{ error_msg|escape }}
+    {% endif %}
+</div>
+<div>
+    <form method="post">
+  {% csrf_token %}
+  {{ form }}
+  <button type="submit" class="btn btn-primary">Save changes</button>
+    </form>
+</div>
+{% endblock content %}
