@@ -7,6 +7,7 @@ from django.template import loader
 
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 from .forms import EnterPrompt
 from .models import Prompt,Contest
@@ -28,7 +29,9 @@ def enter_prompt(request):
      # check if form data is valid
     if form.is_valid():
         # save the form data to model
+        form.instance.creator = request.user
         form.save()
+        messages.success(request, 'Your prompt was submitted successfully! Hopefully it doesn\'t suck.')
     context['form'] = form
     return render(request, "promptarena/enter-prompt.html", context)
 

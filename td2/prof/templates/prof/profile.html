@@ -12,15 +12,15 @@
 {% endblock content %}
 {% block aside %}
 <form action="{% url 'change username' %}" method="GET">
-    <button type="submit" class="btn btn-warning" style="margin-bottom: 5px" >Change Username</button>
+    <button type="submit" class="btn btn-warning warning" style="margin-bottom: 5px" >Change Username</button>
 </form>
 <form action="{% url 'change password' %}" method="GET">
-<button type="submit" class="btn btn-danger" >Change Password</button>
+    <button type="submit" class="btn btn-danger warning" >Change Password</button>
 </form>
 <form action="{% url 'change email' %}" method="GET">
-    <button type="submit" class="btn btn-danger" >Change Email</button>
+    <button type="submit" class="btn btn-danger warning" >Change Email</button>
 </form>
-<form action="{% url 'settings' %}" method="GET">
-    <button type="submit" class="btn btn-danger" >Settings</button>
+    <form action="{% url 'settings' %}" method="GET">
+    <button type="submit" class="btn btn-danger warning" >Settings</button>
 </form>
 {% endblock aside %}

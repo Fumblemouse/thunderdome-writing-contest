@@ -1,0 +1,51 @@
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+  }
+  body {
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+  }
+  form {
+    margin-bottom:1em;
+  }
+  footer {
+    position: absolute;
+    bottom: 0;
+     /* Set the fixed height of the footer here */
+    height: 60px;
+    line-height: 60px; /* Vertically center the text there */
+  }
+
+  /* hide things for non-screen readers */
+  #skiptocontent a {
+    padding:6px;
+    position: absolute;
+    top:-40px;
+    left:0px;
+    color:white;
+    border-right:1px solid white;
+    border-bottom:1px solid white;
+    border-bottom-right-radius:8px;
+    background:#777;
+    -webkit-transition: top 1s ease-out;
+      transition: top 1s ease-out;
+      z-index: 100;
+  }
+  
+  #skiptocontent a:focus {
+    position:absolute;
+    left:0px;
+    top:0px;
+    outline-color:transparent;	
+    -webkit-transition: top .1s ease-in;
+      transition: top .1s ease-in;
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    #skiptocontent a {
+      transition-duration: 0.001ms !important;
+    }
+  }

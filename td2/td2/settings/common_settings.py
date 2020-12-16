@@ -130,14 +130,15 @@ EMAIL_HOST_PASSWORD = str(os.getenv('SECRET_EMAIL_KEY'))
 EMAIL_PORT = 587
 
 #Messages for bootstrap
+"""
 MESSAGE_TAGS = {
-    messages.DEBUG: 'alert-info',
-    messages.INFO: 'alert-info',
-    messages.SUCCESS: 'alert-success',
-    messages.WARNING: 'alert-warning',
-    messages.ERROR: 'alert-danger',
+    messages.DEBUG: 'alert-info debug',
+    messages.INFO: 'alert-info info',
+    messages.SUCCESS: 'alert-success success',
+    messages.WARNING: 'alert-warning warning',
+    messages.ERROR: 'alert-danger error',
 }
-
+"""
 TINYMCE_SPELLCHECKER = True
 TINYMCE_COMPRESSOR = False
 TINYMCE_DEFAULT_CONFIG = {
