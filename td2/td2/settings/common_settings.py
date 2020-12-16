@@ -144,12 +144,13 @@ TINYMCE_DEFAULT_CONFIG = {
     "theme": "silver",
     "height": 500,
     "menubar": False,
-    "plugins": "advlist,autolink,lists,link,image,charmap,print,preview,anchor,"
+    "block_formats": "Paragraph=p; Heading=h3; Preformatted=pre",
+    "plugins": "advlist,autolink,lists,charmap,print,preview,anchor,"
         "searchreplace,visualblocks,code,fullscreen,insertdatetime,media,table,paste,"
-        "code,help,wordcount",
-    "toolbar": "undo redo | formatselect | "
-        "bold italic backcolor | alignleft aligncenter "
+        "code,help,wordcount,hr",
+    "toolbar": "fullscreen | formatselect | "
+        "bold italic underline | undo redo | alignleft aligncenter "
         "alignright alignjustify | bullist numlist outdent indent | "
-        "removeformat | help",
+        "removeformat | preview save print | help",
     "resize":"both",
 }
