@@ -5,10 +5,11 @@ from django.urls import path
 #from .views import (profile, signin, signup, p_logout, settings, change_password, change_email, activate,
 #PassResetComplete, change_username, PassReset, PassResetDone, PassResetConfirm)
 
-from .views import sign_up, profile, p_logout
+from .views import sign_up, profile, p_logout, settings
 
 urlpatterns = [
     path('signup/', sign_up, name='sign up'),
     path('profile/', profile, name='profile'),
     path('logout/', p_logout, name='logout'),
+    path('settings/', settings, name='change settings'),
 ]

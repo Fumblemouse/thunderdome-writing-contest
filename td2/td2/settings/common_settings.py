@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'prof',
     'promptarena',
 #    'crispy_forms',
-#    'six',
+    'six',
     'tinymce',
 ]
 

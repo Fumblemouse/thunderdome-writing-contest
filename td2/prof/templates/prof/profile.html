@@ -11,16 +11,7 @@
 <p>Choose form the options to your left. No, the other left.</p> 
 {% endblock content %}
 {% block aside %}
-<form action="{% url 'change username' %}" method="GET">
-    <button type="submit" class="btn btn-warning warning" style="margin-bottom: 5px" >Change Username</button>
-</form>
-<form action="{% url 'change password' %}" method="GET">
-    <button type="submit" class="btn btn-danger warning" >Change Password</button>
-</form>
-<form action="{% url 'change email' %}" method="GET">
-    <button type="submit" class="btn btn-danger warning" >Change Email</button>
-</form>
-    <form action="{% url 'settings' %}" method="GET">
+<form action="{% url 'change settings' %}" method="GET">
     <button type="submit" class="btn btn-danger warning" >Settings</button>
 </form>
 {% endblock aside %}
