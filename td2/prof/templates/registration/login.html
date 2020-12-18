@@ -1,0 +1,13 @@
+{% extends 'baseapp/base.html' %}
+
+{% block content %}
+<h2>Login</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {% include 'baseapp/base-form.html' %}
+    <button type="submit" value="Login" class="btn-primary">Submit</button>
+</form>
+
+
+{% endblock %}

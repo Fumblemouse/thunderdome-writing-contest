@@ -44,8 +44,8 @@ INSTALLED_APPS = [
     'baseapp',
     'prof',
     'promptarena',
-    'crispy_forms',
-    'six',
+#    'crispy_forms',
+#    'six',
     'tinymce',
 ]
 
@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'td2.wsgi.application'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
-
+"""
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -98,7 +98,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
+"""
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -130,7 +130,7 @@ EMAIL_HOST_PASSWORD = str(os.getenv('SECRET_EMAIL_KEY'))
 EMAIL_PORT = 587
 
 #Messages for bootstrap
-"""
+
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-info debug',
     messages.INFO: 'alert-info info',
@@ -138,7 +138,7 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning warning',
     messages.ERROR: 'alert-danger error',
 }
-"""
+
 TINYMCE_SPELLCHECKER = True
 TINYMCE_COMPRESSOR = False
 TINYMCE_DEFAULT_CONFIG = {

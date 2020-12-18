@@ -2,12 +2,11 @@
 from django.urls import path
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views.generic.base import RedirectView
-from .views import home
-#from django.contrib.auth.decorators import login_required
-
+from .views import home, create_story
 
 urlpatterns = [
     path('', home, name='home'),
+    path('create-story', create_story, name='create story'),
     path('favicon.ico',
         RedirectView.as_view(
             url=staticfiles_storage.url('favicon.ico'),

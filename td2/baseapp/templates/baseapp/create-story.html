@@ -2,11 +2,11 @@
 {% block headtag %}
     {{ form.media }}
 {% endblock %}
-{% block header %}Enter Prompt{% endblock %}
+{% block header %}Create Story{% endblock %}
 
 {% block content %}
-{{ EnterPrompt.media }}
-<form action="" method = "post">
+
+<form method = "post">
     <table class="table">
         {% csrf_token %}
         {{form.as_table }}

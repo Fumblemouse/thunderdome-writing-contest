@@ -1,0 +1,18 @@
+{% extends "baseapp/base.html" %}
+{% block headtag %}
+    {{ form.media }}
+{% endblock %}
+{% block header %}Create Prompt{% endblock %}
+
+{% block content %}
+
+<form action="" method = "post">
+    <table class="table">
+        {% csrf_token %}
+        {{form.as_table }}
+    </table>
+    <input type="submit" value="Submit" class='btn-primary'>
+
+</form>
+
+{% endblock %}

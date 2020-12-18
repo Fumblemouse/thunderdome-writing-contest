@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .forms import EnterPrompt
+from .forms import CreatePrompt
 from .models import Prompt,Contest
 
 
@@ -21,11 +21,11 @@ logger = logging.getLogger(__name__)
 # Create your views here.
 
 @login_required
-def enter_prompt(request):
+def create_prompt(request):
     """User enters new prompt"""
     context ={}
     #create object for form
-    form = EnterPrompt(request.POST or None)
+    form = CreatePrompt(request.POST or None)
      # check if form data is valid
     if form.is_valid():
         # save the form data to model
@@ -33,15 +33,15 @@ def enter_prompt(request):
         form.save()
         messages.success(request, 'Your prompt was submitted successfully! Hopefully it doesn\'t suck.')
     context['form'] = form
-    return render(request, "promptarena/enter-prompt.html", context)
+    return render(request, "promptarena/create-prompt.html", context)
 
 @login_required
-def enter_contest(request):
+def create_contest(request):
     """User enters new contest"""
     return HttpResponse('Please enter your Contest')
 
 @login_required
-def enter_story(request, contest_id):
+def enter_contest(request, contest_id):
     """User enters new story"""
     response = "Please enter your story for contest %s."
     return HttpResponse(response % contest_id)

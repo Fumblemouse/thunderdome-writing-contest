@@ -26,7 +26,7 @@ class Prompt(models.Model):
     title = models.CharField(max_length=200, unique= True)
     content =  tinymce_models.HTMLField()
     creation_date = models.DateTimeField( 'date created', auto_now_add=True)
-    slug = AutoSlugField(max_length=200, default='no-prompt-slug', unique=True)
+    slug = AutoSlugField(max_length=200, unique=True)
 
     def __str__(self):
         return self.title

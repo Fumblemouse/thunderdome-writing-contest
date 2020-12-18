@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth import get_user_model
 from autoslug import AutoSlugField
+from tinymce import models as tinymce_models
 
 # Create your models here.
 class Story(models.Model):
@@ -13,12 +14,12 @@ class Story(models.Model):
       on_delete=models.SET_NULL,
       null=True
     )
-    title = models.CharField(max_length=200, default='no story title')
-    content = models.TextField(max_length=20000)
+    title = models.CharField(max_length=255)
+    content =  tinymce_models.HTMLField()
     creation_date = models.DateTimeField('date created', auto_now_add=True,)
-    public_view_allowed = models.BooleanField()
-    slug = AutoSlugField(max_length=40, default='no-story-slug', unique=True, blank=True)
-    slug = models.SlugField(max_length=20, default='no-story-slug', unique=True, blank=True)
+    modified_date = models.DateTimeField(auto_now=True)
+    public_view_allowed = models.BooleanField(verbose_name='Display to non-logged in users?')
+    slug = AutoSlugField(max_length=40, default='no-story-slug', unique=True)
 
     #def save(self, *args, **kwargs):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
@@ -31,3 +32,23 @@ class Story(models.Model):
     def __str__(self):
         '''sits up and says hello'''
         return self.title
+    class Meta:
+        verbose_name_plural = "stories"
+"""
+class Profile(models.Model):
+    user = models.OneToOneField(models.ForeignKey(
+      get_user_model(),
+      on_delete=models.CASCADE,
+    )
+    bio = models.HTMLfield(max_length=500, blank=True)
+
+
+    @receiver(post_save, sender=User)
+    def create_user_profile(sender, instance, created, **kwargs):
+        if created:
+            Profile.objects.create(user=instance)
+
+    @receiver(post_save, sender=User)
+    def save_user_profile(sender, instance, **kwargs):
+        instance.profile.save()
+"""
