@@ -11,7 +11,7 @@ class Profile(models.Model):
         on_delete=models.CASCADE,
         primary_key=True,)
     bio = models.TextField()
-    public_profile = models.BooleanField(default=False, verbose_name='Display to non-logged-in users?')
+    public_profile = forms.BooleanField(default=False, verbose_name='Display to non-logged-in users?', required=False)
 
     def __str__(self):
         return self.user.username

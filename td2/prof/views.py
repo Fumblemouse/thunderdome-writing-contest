@@ -55,7 +55,11 @@ def settings(request):
 @login_required
 def profile(request):
     """Show profile"""
-    return render(request, 'prof/profile.html', {})
+    context = {
+        'user_context': request.user,
+        'profile_context' : request.user.profile,
+    }
+    return render(request, 'prof/profile.html', context)
 
 
 @login_required

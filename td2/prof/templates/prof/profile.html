@@ -9,7 +9,20 @@
 <div>
     <h3>Welcome {{request.user.first_name}} {{request.user.last_name}}</h3>
 <p>Choose form the options to your left. No, the other left.</p> 
+<p>Current Settings</p>
+{% if user_profile %}
+    <ul>
+    {% for key, value in user_profile.all %} 
+        <li>{{ key }} : {{ value }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Empty profile. That's weird.</p>
+{% endif %}
+
+
 {% endblock content %}
+
 {% block aside %}
 <form action="{% url 'change settings' %}" method="GET">
     <button type="submit" class="btn btn-danger warning" >Settings</button>
