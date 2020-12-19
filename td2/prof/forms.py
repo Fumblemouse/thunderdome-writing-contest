@@ -26,7 +26,7 @@ class ProfileUpdateForm(forms.ModelForm):
     """update profile model fields"""
     model = Profile
     bio = forms.CharField(widget=forms.Textarea,required=False)
-    public_profile = forms.BooleanField()
+    public_profile = forms.BooleanField(required=False)
     class Meta:
         model = get_user_model()
         fields = 'bio', 'public_profile'

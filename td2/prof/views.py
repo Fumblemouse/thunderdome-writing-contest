@@ -58,6 +58,13 @@ def profile(request):
     context = {
         'user_context': request.user,
         'profile_context' : request.user.profile,
+        'fields_context' : {
+            'Username' : request.user.username,
+            'First name': request.user.first_name, 
+            'Last name' : request.user.last_name, 
+            'Bio': request.user.profile.bio,
+            'Show profile and work publically?' : request.user.profile.public_profile
+        }
     }
     return render(request, 'prof/profile.html', context)
 

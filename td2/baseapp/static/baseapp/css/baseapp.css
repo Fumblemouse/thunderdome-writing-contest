@@ -24,6 +24,10 @@ html {
         display: block;
     }
 
+    .tdBold {
+      font-weight: bolder;
+    }
+
   /* hide things for non-screen readers */
   #skiptocontent a {
     padding:6px;

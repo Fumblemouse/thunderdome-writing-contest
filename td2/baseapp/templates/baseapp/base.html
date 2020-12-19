@@ -54,20 +54,11 @@
                     {% block aside %}
                         {% if user.is_authenticated %}
                             <p>Hi {{ user.username }}!</p>
-                            <form action="{% url 'profile' %}" method="GET">
-                                <button type="submit" class="btn btn-primary">A profile is you</button>
-                            </form>
-                            <form action="{% url 'logout' %}" method="GET">
-                                <button type="submit" class="btn btn-danger" >Exeunt pursued by a bear</button></a>
-                            </form>
-
+                            <a class="btn btn-primary" href="{% url 'profile' %}">A profile is you</a>
+                            <a  href="{% url 'logout' %}" class="btn btn-danger" >Exit pursued by a bear</a>
                         {% else %}
-                            <form action="{% url 'login' %}" method="GET">
-                                <button id="login-btn" class="btn btn-primary" type="submit" name="login-button">Login</button>
-                            </form>
-                            <form action="{% url 'sign up' %}" method="GET">
-                                <button id="signup-btn" class="btn btn-primary" type="submit" name="signup-button">Sign up</button>
-                            </form>
+                        <a  href="{% url 'login' %}" class="btn btn-primary" >Login</a>
+                        <a  href="{% url 'signup' %}" class="btn btn-primary" >Sign up</a>
 
                         {% endif %}
 
