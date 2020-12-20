@@ -54,11 +54,15 @@
                     {% block aside %}
                         {% if user.is_authenticated %}
                             <p>Hi {{ user.username }}!</p>
-                            <a class="btn btn-primary" href="{% url 'profile' %}">A profile is you</a>
-                            <a  href="{% url 'logout' %}" class="btn btn-danger" >Exit pursued by a bear</a>
+                            <div class="btn-group-vertical">
+                                <a class="btn btn-primary" href="{% url 'profile' %}">A profile is you</a>
+                                <a  href="{% url 'logout' %}" class="btn btn-danger" >Exit pursued by a bear</a>
+                                </div>
                         {% else %}
-                        <a  href="{% url 'login' %}" class="btn btn-primary" >Login</a>
-                        <a  href="{% url 'signup' %}" class="btn btn-primary" >Sign up</a>
+                            <div class="btn-group-vertical">
+                                <a  href="{% url 'login' %}" class="btn btn-primary" >Login</a>
+                                <a  href="{% url 'sign up' %}" class="btn btn-primary" >Sign up</a>
+                            </div>
 
                         {% endif %}
 

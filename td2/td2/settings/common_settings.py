@@ -35,6 +35,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 # Application definition
 
 INSTALLED_APPS = [
+    'prof',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'baseapp',
-    'prof',
+    
     'promptarena',
 #    'crispy_forms',
     'six',

@@ -7,6 +7,10 @@
     {% csrf_token %}
     {% include 'baseapp/base-form.html' %}
     <button type="submit" value="Login" class="btn-primary">Submit</button>
+
+    <p>
+        Oh, noes. I am all of a faddle. I need to...
+        <a class="btn btn-danger primary" href="{% url 'password_reset' %}">Reset Password</a>
 </form>
 
 

@@ -3,4 +3,7 @@ Hi {{ user.username }},
 Please click on the link to confirm your registration,
 
 http://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+
+If you didn't request to join, then don't click on it. That would be foolhardy, 
+and may lead to infestations from other, nastier, parallel dimensions.
 {% endautoescape %}
