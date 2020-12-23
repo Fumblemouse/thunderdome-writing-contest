@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from .forms import CreateStory
-from .models import Story
+
 
 # Create your views here.
 def home(request):

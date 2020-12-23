@@ -5,6 +5,8 @@ from django.utils.text import slugify
 from django.contrib.auth import get_user_model
 from autoslug import AutoSlugField
 from tinymce import models as tinymce_models
+from django.utils.html import strip_tags
+import re
 
 # Create your models here.
 class Story(models.Model):
@@ -20,14 +22,23 @@ class Story(models.Model):
     modified_date = models.DateTimeField(auto_now=True)
     public_view_allowed = models.BooleanField(verbose_name='Display to non-logged in users?')
     slug = AutoSlugField(max_length=40, default='no-story-slug', unique=True)
+    wordcount = models.PositiveSmallIntegerField()
 
     #def save(self, *args, **kwargs):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        '''provides a story slug is one is missed'''
+        """Additional field input"""
+        #provides a story slug is one is missed
         slug = self.slug
         if not self.id or slug == 'no-story-slug' or slug=='':
             self.slug = slugify(self.title)
+
+        #Add wordcount
+        content = self.content
+        words_to_count = strip_tags(content)
+        wordcount = len(re.findall(r'\w+', words_to_count))
+        self.wordcount = wordcount
         super(Story, self).save()
+
 
     def __str__(self):
         '''sits up and says hello'''

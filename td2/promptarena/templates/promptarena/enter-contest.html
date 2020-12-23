@@ -1,21 +1,18 @@
 {% extends "baseapp/base.html" %}
 
 {% block header %}
-{% if view_full_contest_context %}
-        <h1>{{ view_full_contest_context.prompt.title }}</h1>
-{% else %}
-    <h1>????what up???</h1>
-{% endif %}
-
+Enter Contest
 {% endblock %}
 
 {% block content %}
 
 {% if view_full_contest_context %}
+        <h3>{{ view_full_contest_context.prompt.title }}</h3>
         <p>{{ view_full_contest_context.prompt.content | safe }}</p>
 {% else %}
     <p>No contest found - check the url.</p>
 {% endif %}
+
 
 
 

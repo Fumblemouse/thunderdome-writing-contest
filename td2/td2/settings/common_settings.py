@@ -43,11 +43,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'baseapp',
-    
     'promptarena',
 #    'crispy_forms',
     'six',
     'tinymce',
+    'flatpickr',
 ]
 
 MIDDLEWARE = [
@@ -58,6 +58,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware',
+    'django_feature_policy.PermissionsPolicyMiddleware',
 ]
 
 ROOT_URLCONF = 'td2.urls'
@@ -144,6 +146,7 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger error',
 }
 
+
 TINYMCE_SPELLCHECKER = True
 TINYMCE_COMPRESSOR = False
 TINYMCE_DEFAULT_CONFIG = {
@@ -160,3 +163,44 @@ TINYMCE_DEFAULT_CONFIG = {
         "removeformat | preview save print | help",
     "resize":"both",
 }
+
+#Content Security Policy
+CSP_DEFAULT_SRC = "'none'"
+CSP_STYLE_SRC = (
+    "'self'",
+    'https://cdn.jsdelivr.net',
+    )
+CSP_IMG_SRC =("'self'", 'data:')
+#TODO: remove undafe inline
+CSP_SCRIPT_SRC = ("'self'",'strict-dynamic', 'https://cdn.jsdelivr.net',"'unsafe-inline'")
+
+#Feature Policy
+PERMISSIONS_POLICY = {
+    'accelerometer' : [],
+#    'ambient-light-sensor' : [],
+    'autoplay' : [],
+ #  'battery' : [],
+    'camera' : [],
+    'cross-origin-isolated' : [],
+#    'display-capture' : [],
+    'document-domain' : [],
+    'encrypted-media' : [],
+#    'execution-while-not-rendered' : [],
+#    'execution-while-out-of-viewport' : [],
+    'fullscreen' : [],
+    'geolocation' : [],
+    'gyroscope' : [],
+    'magnetometer' : [],
+    'microphone' : [],
+    'midi' : [],
+#    'navigation-override' : [],
+    'payment' : [],
+    'picture-in-picture' : [],
+    'publickey-credentials-get' : [],
+    'screen-wake-lock' : [],
+    'sync-xhr' : [],
+    'usb' : [],
+#    'web-share' : [],
+#    'xr-spatial-tracking2' : [],
+    }
+

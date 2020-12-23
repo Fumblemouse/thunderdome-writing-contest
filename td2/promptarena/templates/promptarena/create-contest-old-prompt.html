@@ -1,0 +1,23 @@
+{% extends "baseapp/base.html" %}
+{% block headtag %}
+    {{ form.media }}
+{% endblock %}
+{% block header %}Create Contest{% endblock %}
+
+{% block content %}
+<ul class="nav nav-pills">
+  <li class="nav-item">
+    <a  href="{% url 'create contest'%}" class="nav-link">Create a contest with a new prompt</a>
+  </li>
+  <li class="nav-item">
+    <a  class="nav-link active" aria-current="page" href="{% url 'create contest old prompt'%}">Create a contest recycling an old prompt</a>
+  </li>
+</ul>
+<form method = "post">
+    {% csrf_token %}
+    {% include 'baseapp/base-form.html' %}
+    <input type="submit" value="Submit" class='btn-primary'>
+
+</form>
+
+{% endblock %}

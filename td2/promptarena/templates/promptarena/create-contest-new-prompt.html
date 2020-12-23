@@ -1,0 +1,37 @@
+{% extends "baseapp/base.html" %}
+{% block headtag %}
+    {{ p_form.media }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+Usage
+
+{% endblock %}
+{% block header %}Create Contest{% endblock %}
+
+{% block content %}
+<ul class="nav nav-pills">
+  <li class="nav-item">
+    <a href="{% url 'create contest'%}" class="nav-link active" aria-current="page">Create a contest with a new prompt</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'create contest old prompt'%}">Create a contest and recycle an old prompt</a>
+  </li>
+</ul>
+
+<form method = "post">
+    <table class="table">
+        {% csrf_token %}
+        {{ p_form }}
+        {{ c_form }}
+
+    </table>
+    <input type="submit" value="Submit" class='btn-primary'>
+
+</form>
+<script>
+flatpickr('#id_start_date', {enableTime:true, defaultDate: 'today', minDate: 'today'});
+flatpickr('#id_expiry_date', {enableTime:true, defaultDate: new Date().fp_incr(7), minDate: 'today'});
+</script>
+{% endblock %}
+maxDate: new Date().fp_incr(14

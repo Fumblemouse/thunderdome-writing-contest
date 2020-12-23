@@ -3,20 +3,20 @@
 {% block header %}
     {{request.user.username}}
 {% endblock header %}
-  
+
 {% block content %}
 
 <div>
-    <h3>Welcome {{request.user.first_name}} {{request.user.last_name}}</h3>
-<p>Choose form the options to your left. No, the other left.</p> 
+    <h3>Welcome {{request.user.username}}</h3>
+<p>Choose form the options to your left. No, the other left.</p>
 
-{% if fields_context %} 
+{% if fields_context %}
 <p>Current Settings</p>
     <table class="table table-striped table_ruled">
         <tr>
             <th scope="col" >Thing</th><th>Value of thing</th>
        </tr>
-        {% for key, value in fields_context.items %} 
+        {% for key, value in fields_context.items %}
          <tr>
              <th scope="row">{{ key }}</th><td>{{value}}</td>
         </tr>

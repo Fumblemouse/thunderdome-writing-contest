@@ -13,6 +13,12 @@ from autoslug import AutoSlugField
 #from tinymce.models import HTMLField
 from tinymce import models as tinymce_models
 
+SCORE_CHOICES = [
+    (3, 3),
+    ('MRS', 'Mrs.'),
+    ('MS', 'Ms.'),
+]
+
 
 # Create your models here.
 
@@ -38,18 +44,17 @@ class Prompt(models.Model):
             self.slug = slugify(self.title)
         super(Prompt, self).save()
 
-
 class Contest(models.Model):
     """Contest- Actual Competition"""
-    prompt = models.ForeignKey(Prompt, null=True, on_delete=models.SET_NULL)
+    prompt = models.ForeignKey(Prompt, on_delete=models.SET_NULL, null=True) #Null = true to make on_delete work
     start_date = models.DateTimeField('Start Date')
     expiry_date = models.DateTimeField('Submit by Date')
-    title = models.CharField(max_length=200, editable=False, null=True)
+    wordcount = models.PositiveIntegerField(default=1000)
     slug = AutoSlugField(max_length=200, default='no-contest-slug', unique=True)
 
     def __str__(self):
-        if not self.title is None:
-            return self.title
+        if self.prompt:
+            return self.prompt.title
         return "ALERT - somehow this contest did not get set a title"
 
     def is_active(self):
@@ -59,37 +64,40 @@ class Contest(models.Model):
     #def save(self, *args, **kwargs):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         slug = self.slug
-        if not self.id or slug == 'no-contest-slug' or slug=='':
-            self.slug = slugify(self.prompt.title)
-        self.title = self.prompt.title
+        if not self.id or slug.startswith('no-contest-)' or slug=='':
+            self.slug = "contest-" + slugify(self.prompt.title)
         super(Contest, self).save()
 
-"""class Story(models.Model):
-    ""Story - the heart of it all""
-    author = models.ForeignKey(
-      get_user_model(),
-      on_delete=models.SET_NULL,
-      null=True
+class Entry(models.Model):
+    """Links stories and contests"""
+    story = models.ForeignKey(Story, on_delete=models.CASCADE)
+    contest = models.Foreign(Contest, on_delete=models.CASCADE)
+    contest_score = models.JSONField()
+    public_score = models.JSONField(blank=True)
+
+class Crits(models.Model):
+    """Reviews of stories"""
+    story = models.ForeignKey(Story, on_delete=models.CASCADE)
+    contest = models.Foreign(Contest, on_delete-models.SET_NULL, null=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = tinymce_models.HTMLField()
+
+
+class Scores(models.Model):
+    LOW_SCORE = 3
+    LOW_MID_SCORE = 5
+    MID_SCORE = 7
+    HI_MID_SCORE = 11
+    HI_SCORE = 13
+    SCORE_CHOICES = (
+        (LOW_SCORE, 'Low'),
+        (LOW_MID_SCORE, 'Low Middle'),
+        (MID_SCORE, 'Middle'),
+        (HI_MID_SCORE, 'High Middle'),
+        (HI_SCORE, "High'
     )
-    prompt = models.ForeignKey(Prompt, null=True, on_delete=models.SET_NULL)
-    contest = models.ForeignKey(Contest, null=True, on_delete=models.SET_NULL)
-    title = models.CharField(max_length=200, default='no story title')
-    content = models.TextField(max_length=20000)
-    contest_score = models.DecimalField(max_digits=5, decimal_places=2,default=0)
-    public_score = models.DecimalField(max_digits=10, decimal_places=2,default=0)
-    creation_date = models.DateTimeField('date created', auto_now_add=True,)
-    public_view_allowed = models.BooleanField()
-    slug = models.SlugField(max_length=20, default='no-story-slug', unique=True, blank=True)
+    # ...s
+    reviewer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    story = models.ForeignKey(Story, on_delete=models.CASCADE)
+    score = = models.IntegerField(choices=SCORE_CHOICES, default=MID_SCORE)
 
-    #def save(self, *args, **kwargs):
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        '''provides a story slug is one is missed'''
-        slug = self.slug
-        if not self.id or slug == 'no-story-slug' or slug=='':
-            self.slug = slugify(self.title)
-        super(Story, self).save()
-
-    def __str__(self):
-        '''sits up and says hello'''
-        return self.title
-"""

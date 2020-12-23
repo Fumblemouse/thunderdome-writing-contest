@@ -2,15 +2,13 @@
 {% block headtag %}
     {{ form.media }}
 {% endblock %}
-{% block header %}Create Prompt{% endblock %}
+{% block header %}Create Contest{% endblock %}
 
 {% block content %}
 
-<form action="" method = "post">
-    <table class="table">
+<form method = "post">
         {% csrf_token %}
         {% include 'baseapp/base-form.html' %}
-    </table>
     <input type="submit" value="Submit" class='btn-primary'>
 
 </form>
