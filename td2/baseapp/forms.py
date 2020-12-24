@@ -2,7 +2,7 @@
 from django import forms
 from .models import Story
 
-class CreateStory(forms.ModelForm):
+class CreateStoryForm(forms.ModelForm):
     """USer enters Story and Title"""
 
     class Meta:

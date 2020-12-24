@@ -12,12 +12,7 @@ from django.contrib.auth import get_user_model
 from autoslug import AutoSlugField
 #from tinymce.models import HTMLField
 from tinymce import models as tinymce_models
-
-SCORE_CHOICES = [
-    (3, 3),
-    ('MRS', 'Mrs.'),
-    ('MS', 'Ms.'),
-]
+from baseapp.models import Story
 
 
 # Create your models here.
@@ -64,40 +59,54 @@ class Contest(models.Model):
     #def save(self, *args, **kwargs):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         slug = self.slug
-        if not self.id or slug.startswith('no-contest-)' or slug=='':
+        if not self.id or slug.startswith('no-contest-') or slug=='':
             self.slug = "contest-" + slugify(self.prompt.title)
         super(Contest, self).save()
 
 class Entry(models.Model):
     """Links stories and contests"""
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
-    contest = models.Foreign(Contest, on_delete=models.CASCADE)
-    contest_score = models.JSONField()
-    public_score = models.JSONField(blank=True)
+    contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
+    contest_scores = models.CharField(blank=True, max_length=200)
+
 
 class Crits(models.Model):
     """Reviews of stories"""
+    UNSCORED = 0
+    LOW_SCORE = 3
+    LOW_MID_SCORE = 5
+    MID_SCORE = 7
+    HI_MID_SCORE = 11
+    HI_SCORE = 13
+    SCORE_CHOICES = [
+        (UNSCORED, 'Select Score'),
+        (LOW_SCORE, 'Low'),
+        (LOW_MID_SCORE, 'Low Middle'),
+        (MID_SCORE, 'Middle'),
+        (HI_MID_SCORE, 'High Middle'),
+        (HI_SCORE, 'High')
+    ]
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
-    contest = models.Foreign(Contest, on_delete-models.SET_NULL, null=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    contest = models.ForeignKey(Contest, on_delete=models.SET_NULL, null=True)
+    reviewer = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     content = tinymce_models.HTMLField()
+    score = models.IntegerField(choices=SCORE_CHOICES, default=UNSCORED)
 
-
+"""
 class Scores(models.Model):
     LOW_SCORE = 3
     LOW_MID_SCORE = 5
     MID_SCORE = 7
     HI_MID_SCORE = 11
     HI_SCORE = 13
-    SCORE_CHOICES = (
+    SCORE_CHOICES = [
         (LOW_SCORE, 'Low'),
         (LOW_MID_SCORE, 'Low Middle'),
         (MID_SCORE, 'Middle'),
         (HI_MID_SCORE, 'High Middle'),
-        (HI_SCORE, "High'
-    )
-    # ...s
-    reviewer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+        (HI_SCORE, 'High')
+    ]
+    reviewer = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True)
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
-    score = = models.IntegerField(choices=SCORE_CHOICES, default=MID_SCORE)
-
+    score = models.IntegerField(choices=SCORE_CHOICES, default=MID_SCORE)
+"""

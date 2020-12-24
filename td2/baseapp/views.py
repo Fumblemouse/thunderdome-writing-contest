@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .forms import CreateStory
+from .forms import CreateStoryForm
 
 
 # Create your views here.
@@ -22,7 +22,7 @@ def create_story(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = CreateStory(request.POST)
+        form = CreateStoryForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required

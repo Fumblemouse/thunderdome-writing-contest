@@ -23,6 +23,9 @@ class Story(models.Model):
     public_view_allowed = models.BooleanField(verbose_name='Display to non-logged in users?')
     slug = AutoSlugField(max_length=40, default='no-story-slug', unique=True)
     wordcount = models.PositiveSmallIntegerField()
+    #tags = models.JSONField(blank=True, null=True)
+    #public_scores = models.JSONField(blank=True, null=True)
+
 
     #def save(self, *args, **kwargs):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):

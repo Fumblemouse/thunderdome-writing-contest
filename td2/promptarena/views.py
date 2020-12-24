@@ -43,22 +43,22 @@ def create_prompt(request):
 def create_contest_new_prompt(request):
     """User enters new contest with a new prompt"""
     #context = {}
-    p_form = CreatePromptForm(request.POST or None)
-    c_form = CreateContestNewPromptForm(request.POST or None)
-    if p_form.is_valid() and c_form.is_valid():
+    prompt_form = CreatePromptForm(request.POST or None)
+    contest_form = CreateContestNewPromptForm(request.POST or None)
+    if prompt_form.is_valid() and contest_form.is_valid():
         #save w/o comitting then add user and save
-        p_form_uncommitted = p_form.save(commit=False)
-        p_form_uncommitted.creator = request.user
-        p_form_saved = p_form_uncommitted.save()
+        prompt_form_uncommitted = prompt_form.save(commit=False)
+        prompt_form_uncommitted.creator = request.user
+        prompt_form_saved = prompt_form_uncommitted.save()
 
         #save w/o comitting then add prompt and save
-        c_form_uncommitted = c_form.save(commit=False)
-        c_form_uncommitted.prompt = p_form_uncommitted
-        c_form_uncommitted.save()
+        contest_form_uncommitted = contest_form.save(commit=False)
+        contest_form_uncommitted.prompt = prompt_form_uncommitted
+        contest_form_uncommitted.save()
         messages.success(request, 'Your contest was submitted successfully! Hopefully it doesn\'t suck.')
         return HttpResponseRedirect('/')
 
-    return render(request, "promptarena/create-contest-new-prompt.html", {'p_form': p_form, 'c_form': c_form})
+    return render(request, "promptarena/create-contest-new-prompt.html", {'prompt_form': prompt_form, 'contest_form': contest_form})
 
 @login_required
 def create_contest_old_prompt(request):
@@ -76,26 +76,37 @@ def create_contest_old_prompt(request):
 
 
 @login_required
-def enter_contest(request, contest_id):
+def enter_contest(request, contest_id,):
     """User enters new story"""
-    view_full_contest_context = get_object_or_404(Contest, pk=contest_id)
-    form = EnterContestNewStoryForm(request.POST or None)
-    words_to_count = strip_tags(form.content)
+    contest_context = get_object_or_404(Contest, pk=contest_id)
+    entry_form = EnterContestNewStoryForm(request.POST or None)
+    story_form = CreateStoryForm(request.POST or None)
+    words_to_count = strip_tags(story_form.content)
     wordcount = len(re.findall(r'\w+', words_to_count))
 
 
-    if form.is_valid():
-        form_uncommitted = form.save(commit=False)
-        if form_uncommitted.story.wordcount
+    if story_form.is_valid():
+        story_form_uncommitted = story_form.save(commit=False)
+        if story_form_uncommitted.wordcount > contest_context.wordcount:
+            messages.error(request, 'Your wordcount was too high. Kill your darlings!')
+            return HttpResponse(response % contest_id, story_form_uncommitted)
+        story_form_uncommitted.save()
+        entry_form_uncommitted = entry_form.sav(commit = False)
+        entry_form_uncommitted.story = story_form_uncommitted
+        entry_form_uncommitted.contest = contest_context
+        entry_form_uncommitted.save()
+        messages.success(request, 'Your entry was submitted successfully! Hopefully it doesn\'t suck.')
+        return HttpResponseRedirect('/')
+
 
 
     return HttpResponse(response % contest_id)
 
 def view_full_contest(request, contest_id):
     """User views specific prompt and metadata"""
-    view_full_contest_context = get_object_or_404(Contest, pk=contest_id)
+    contest_context = get_object_or_404(Contest, pk=contest_id)
     context = {
-        'view_full_contest_context' : view_full_contest_context,
+        'contest_context' : contest_context,
     }
     return render(request, 'promptarena/view-full-contest.html', context)
 
