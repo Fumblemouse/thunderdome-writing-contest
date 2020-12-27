@@ -21,7 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/',include('django.contrib.auth.urls')),
     path('', include('baseapp.urls')),
-    path('', include('prof.urls')),
+    path('', include('profiles.urls')),
     path('', include('promptarena.urls')),
     path('tinymce/', include('tinymce.urls')),
 ]

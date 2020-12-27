@@ -18,7 +18,7 @@ load_dotenv()
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -33,9 +33,9 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 
 # Application definition
-
+# Include profiles before contrib.auth to get in first
 INSTALLED_APPS = [
-    'prof',
+    'profiles',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -171,7 +171,7 @@ CSP_STYLE_SRC = (
     'https://cdn.jsdelivr.net',
     )
 CSP_IMG_SRC =("'self'", 'data:')
-#TODO: remove undafe inline
+#TODO remove unsafe inline
 CSP_SCRIPT_SRC = ("'self'",'strict-dynamic', 'https://cdn.jsdelivr.net',"'unsafe-inline'")
 
 #Feature Policy
@@ -203,4 +203,3 @@ PERMISSIONS_POLICY = {
 #    'web-share' : [],
 #    'xr-spatial-tracking2' : [],
     }
-

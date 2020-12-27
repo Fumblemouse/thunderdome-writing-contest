@@ -1,12 +1,14 @@
 """BASE reference models used across multiple apps"""
+import re
 from django.db import models
 #from django.utils import timezone
 from django.utils.text import slugify
 from django.contrib.auth import get_user_model
+from django.utils.html import strip_tags
 from autoslug import AutoSlugField
 from tinymce import models as tinymce_models
-from django.utils.html import strip_tags
-import re
+
+
 
 # Create your models here.
 class Story(models.Model):

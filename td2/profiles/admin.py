@@ -1,4 +1,4 @@
-"""admin imports from prof app"""
+"""admin imports from profiles app"""
 from django.contrib import admin
 
 # Register your models here.

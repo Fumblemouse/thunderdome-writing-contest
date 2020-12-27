@@ -69,6 +69,14 @@ class Entry(models.Model):
     contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
     contest_scores = models.CharField(blank=True, max_length=200)
 
+    def __str__(self):
+        if self.story and self.contest:
+            return str(self.story.author) + " : " + self.contest.prompt.title
+        return "ALERT - somehow this entry did not get set a title"
+
+    class Meta:
+        verbose_name_plural = "entries"
+
 
 class Crits(models.Model):
     """Reviews of stories"""
@@ -91,22 +99,3 @@ class Crits(models.Model):
     reviewer = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     content = tinymce_models.HTMLField()
     score = models.IntegerField(choices=SCORE_CHOICES, default=UNSCORED)
-
-"""
-class Scores(models.Model):
-    LOW_SCORE = 3
-    LOW_MID_SCORE = 5
-    MID_SCORE = 7
-    HI_MID_SCORE = 11
-    HI_SCORE = 13
-    SCORE_CHOICES = [
-        (LOW_SCORE, 'Low'),
-        (LOW_MID_SCORE, 'Low Middle'),
-        (MID_SCORE, 'Middle'),
-        (HI_MID_SCORE, 'High Middle'),
-        (HI_SCORE, 'High')
-    ]
-    reviewer = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True)
-    story = models.ForeignKey(Story, on_delete=models.CASCADE)
-    score = models.IntegerField(choices=SCORE_CHOICES, default=MID_SCORE)
-"""

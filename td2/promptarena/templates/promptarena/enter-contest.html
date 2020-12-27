@@ -1,14 +1,16 @@
 {% extends "baseapp/base.html" %}
-
+{% block headtag %}
+    {{ story_form.media }}
+{% endblock %}
 {% block header %}
 Enter Contest
 {% endblock %}
 
 {% block content %}
 
-{% if view_full_contest_context %}
-        <h3>{{ view_full_contest_context.prompt.title }}</h3>
-        <p>{{ view_full_contest_context.prompt.content | safe }}</p>
+{% if contest_context %}
+        <h3>{{ contest_context.prompt.title }}</h3>
+        <p>{{ contest_context.prompt.content | safe }}</p>
 {% else %}
     <p>No contest found - check the url.</p>
 {% endif %}
@@ -16,8 +18,8 @@ Enter Contest
 <form method = "post">
 
         {% csrf_token %}
-        {{ story_form }}
-        {{ entry_form }}
+        {% include 'baseapp/base-form.html' with form=story_form %}
+        {% include 'baseapp/base-form.html' with form=entry_form %}
 
     <input type="submit" value="Submit" class='btn-primary'>
 

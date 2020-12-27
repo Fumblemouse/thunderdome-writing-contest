@@ -2,17 +2,18 @@
 from datetime import date
 # import the logging library
 import logging
+import re
 from django.http import HttpResponse, HttpResponseRedirect
-from django.core.exceptions import ValidationError
+#from django.core.exceptions import ValidationError
 
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.html import strip_tags
-import re
 
-from .forms import CreatePromptForm, CreateContestNewPromptForm, CreateContestOldPromptForm
 from baseapp.forms import CreateStoryForm
+from .forms import CreatePromptForm, CreateContestNewPromptForm, CreateContestOldPromptForm, EnterContestNewStoryForm
+
 from .models import Prompt, Contest
 
 
@@ -49,7 +50,7 @@ def create_contest_new_prompt(request):
         #save w/o comitting then add user and save
         prompt_form_uncommitted = prompt_form.save(commit=False)
         prompt_form_uncommitted.creator = request.user
-        prompt_form_saved = prompt_form_uncommitted.save()
+        prompt_form_uncommitted.save()
 
         #save w/o comitting then add prompt and save
         contest_form_uncommitted = contest_form.save(commit=False)
@@ -79,28 +80,55 @@ def create_contest_old_prompt(request):
 def enter_contest(request, contest_id,):
     """User enters new story"""
     contest_context = get_object_or_404(Contest, pk=contest_id)
-    entry_form = EnterContestNewStoryForm(request.POST or None)
     story_form = CreateStoryForm(request.POST or None)
-    words_to_count = strip_tags(story_form.content)
-    wordcount = len(re.findall(r'\w+', words_to_count))
+    #entry_form = EnterContestNewStoryForm(request.POST or None)
 
 
-    if story_form.is_valid():
-        story_form_uncommitted = story_form.save(commit=False)
-        if story_form_uncommitted.wordcount > contest_context.wordcount:
-            messages.error(request, 'Your wordcount was too high. Kill your darlings!')
-            return HttpResponse(response % contest_id, story_form_uncommitted)
-        story_form_uncommitted.save()
-        entry_form_uncommitted = entry_form.sav(commit = False)
-        entry_form_uncommitted.story = story_form_uncommitted
-        entry_form_uncommitted.contest = contest_context
-        entry_form_uncommitted.save()
-        messages.success(request, 'Your entry was submitted successfully! Hopefully it doesn\'t suck.')
-        return HttpResponseRedirect('/')
+    if request.method == "POST":
+        if story_form.is_valid(): 
+            words_to_count = strip_tags(story_form.instance.content)
+            story_wordcount = len(re.findall(r'\S+', words_to_count))
+
+            entry_form = EnterContestNewStoryForm(
+                request.POST,
+                contest_wordcount=contest_context.wordcount,
+                story_wordcount=story_wordcount
+            )
+            logger.error(str(contest_context.wordcount) + " : " + str(story_wordcount) )
+            if entry_form.is_valid():
+                #add user to story
+                story_form_uncommitted = story_form.save(commit=False)
+                story_form_uncommitted.author = request.user
+
+                #add contest to entry
+                entry_form_uncommitted = entry_form.save(commit = False)
+                entry_form_uncommitted.story = story_form_uncommitted
+                entry_form_uncommitted.contest = contest_context
+
+                story_form_uncommitted.save()
+                entry_form_uncommitted.save()
+
+                messages.success(request, 'Your entry was submitted successfully! Hopefully it doesn\'t suck.')
+                return HttpResponseRedirect('/')
+        return render(request, 'promptarena/enter-contest.html', {
+            'contest_context' : contest_context,
+            'entry_form': entry_form,
+            'story_form' : story_form,
+            }
+        )
+
+        
+
+    return render(request, 'promptarena/enter-contest.html', {
+        'contest_context' : contest_context,
+        #'entry_form': entry_form or None,
+        'story_form' : story_form,
+        }
+    )
 
 
 
-    return HttpResponse(response % contest_id)
+
 
 def view_full_contest(request, contest_id):
     """User views specific prompt and metadata"""

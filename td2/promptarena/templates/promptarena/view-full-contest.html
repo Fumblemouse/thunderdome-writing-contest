@@ -11,8 +11,9 @@
 
 {% block content %}
 
-{% if view_full_contest_context %}
+{% if contest_context %}
         <p>{{ contest_context.prompt.content | safe }}</p>
+        <p><a href="{% url 'enter contest' contest_context.id %}" class="btn btn-primary">Enter</a></p>
 {% else %}
     <p>No contest found - check the url.</p>
 {% endif %}

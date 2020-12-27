@@ -1,4 +1,4 @@
-"""Views for Prof app"""
+"""Views for Profiles app"""
 from django.contrib.auth import  logout
 from django.contrib.auth import get_user_model
 #from django.contrib.auth.models import User
@@ -33,7 +33,7 @@ def sign_up(request):
             """TODO add email restriction for production
             if User.objects.filter(email = form.data['email']).exists():
                 form.add_error('email', 'Email already exists.')
-                return render(request, 'prof/signup.html', {'form': form, 'error_msg':form.errors})
+                return render(request, 'profile/signup.html', {'form': form, 'error_msg':form.errors})
                 """
             #don't commit user until validation has occured
             user = form.save(commit=False)
@@ -55,7 +55,7 @@ def sign_up(request):
                 mail_subject, message, to=[to_email]
             )
             email.send()
-            """
+            """#Include to auto-signin
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=password)
@@ -98,7 +98,7 @@ def settings(request):
         u_form = UserUpdateForm(instance=request.user)
 
     context={'p_form': p_form, 'u_form': u_form}
-    return render(request, 'prof/settings.html',context )
+    return render(request, 'profiles/settings.html',context )
 
 
 
@@ -117,7 +117,7 @@ def profile(request):
             'Show profile and work publically?' : request.user.profile.public_profile
         }
     }
-    return render(request, 'prof/profile.html', context)
+    return render(request, 'profiles/profile.html', context)
 
 
 @login_required

@@ -35,7 +35,7 @@
                     <h3>Things to see</h3>
                     <ul>
                         <li><a href="/">Home</a></li>
-                        <li><a href="{% url 'view current contests' %}">Open contests</a></a></li>
+                        <li><a href="{% url 'view current contests' %}">Current contests</a></li>
                     </ul>
                     <h3>Things to do</h3>
                     {% if user.is_authenticated %}
@@ -43,7 +43,6 @@
                                 <li><a href="{% url 'create prompt' %}">Create Prompt</a></li>
                                 <li><a href="{% url 'create story' %}">Create Story</a></li>
                                 <li><a href="{% url 'create contest' %}">Create Contest</a></li>
-                                <li><a href="{% url 'enter contest' %}">Enter Contest</a></li>
                                 <li><a href="{% url 'profile' %}">Your Profile</a></li>
                         </ul>
                     {% endif %}

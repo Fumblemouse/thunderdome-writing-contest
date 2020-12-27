@@ -9,10 +9,15 @@
         <tr>
             <th>Prompt</th>
             <th>Due in</th>
+            <th>WordCount</th>
+            <th></th>
         </tr>
     {% for contest in current_contest_list.all %}
         <tr>
-            <td><a href="{% url 'view full contest' contest.id %}">{{ contest.prompt.title }}</a></td><td>{{ contest.expiry_date }}</td> </a>
+            <td><a href="{% url 'view full contest' contest.id %}">{{ contest.prompt.title }}</a></td>
+            <td>{{ contest.expiry_date }}</td>
+            <td>{{ contest.wordcount }}</td>
+            <td><a href="{% url 'enter contest' contest.id %}" class="btn btn-primary">Enter</a></td> 
         </tr>
     {% endfor %}
     </table>

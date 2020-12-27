@@ -14,6 +14,6 @@ urlpatterns = [
     path('<int:story_id>/view-story', views.view_story, name='View Story'),
     path('view-prompts', views.view_prompts, name='view prompts'),
     #enter things
-    path('enter-contest', views.enter_contest, name='enter contest'),
+    path('<int:contest_id>/enter-contest', views.enter_contest, name='enter contest'),
     #path('enter-contest-old-story', views.enter-contest-old-story, name='enter contest old story"),
     ]
