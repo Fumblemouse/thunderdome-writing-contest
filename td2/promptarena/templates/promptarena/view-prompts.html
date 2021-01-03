@@ -4,10 +4,10 @@
 
 {% block content %}
 
-{% if prompt_list %}
+{% if prompts_context %}
     <ul>
-    {% for prompt in prompt_list.all %}
-        <li><a href="{% url 'View Full Prompt' prompt.id %}">{{ prompt.title }}</a></li>
+    {% for prompt in prompts_context.all %}
+        <li><a href="{% url 'view full prompt' prompt.id %}">{{ prompt.title }}</a></li>
     {% endfor %}
     </ul>
 {% else %}

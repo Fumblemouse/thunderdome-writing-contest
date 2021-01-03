@@ -44,10 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'baseapp',
     'promptarena',
-#    'crispy_forms',
-    'six',
     'tinymce',
-    'flatpickr',
 ]
 
 MIDDLEWARE = [
@@ -60,6 +57,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'csp.middleware.CSPMiddleware',
     'django_feature_policy.PermissionsPolicyMiddleware',
+    'td2.td2_middleware.TimezoneMiddleware',
 ]
 
 ROOT_URLCONF = 'td2.urls'
@@ -125,7 +123,7 @@ STATIC_URL = '/static/'
 
 #LOGIN
 LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/profile'
+LOGIN_REDIRECT_URL = '/set-timezone'
 
 
 #Settings for email host
@@ -169,10 +167,12 @@ CSP_DEFAULT_SRC = "'none'"
 CSP_STYLE_SRC = (
     "'self'",
     'https://cdn.jsdelivr.net',
+    'https://fonts.googleapis.com/',
     )
 CSP_IMG_SRC =("'self'", 'data:')
 #TODO remove unsafe inline
-CSP_SCRIPT_SRC = ("'self'",'strict-dynamic', 'https://cdn.jsdelivr.net',"'unsafe-inline'")
+CSP_SCRIPT_SRC = ("'self'", 'https://cdn.jsdelivr.net',"'unsafe-inline'")
+CSP_FONT_SRC = "https://fonts.gstatic.com"
 
 #Feature Policy
 PERMISSIONS_POLICY = {

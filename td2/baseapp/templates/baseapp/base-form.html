@@ -9,15 +9,25 @@
     {% for field in form %}
 
         {% if field.errors %}
-            <div class="alert alert-danger"><strong>{{ field.errors }}</strong></div>
+            <div class="alert alert-warning"><strong>{{ field.errors }}</strong></div>
         {% endif %}
-        <div class="sm-3">{{ field.label_tag }}</div><div class="sm-9"> 
-            
-            {{ field }}
+
+        
+        <div class="col-sm-3">
+                {{field.label_tag}}
+
         </div>
-        {% if field.help_text %}
-        <p class="help">{{ field.help_text|safe }}</p>
-        {% endif %}
+        <div class="col-sm-9">   
+
+            {{ field }}
+            {% if  field.field.label_classes %}  
+                <label class="{% for class in field.field.label_classes %}{{ class }} {% endfor %}" for="{{ field.auto_id }}">{{ field.label }}</label>
+            {% endif %}
+            {% if field.help_text %}
+            <p class="help">{{ field.help_text|safe }}</p>
+            {% endif %}
+        </div>
+
 
     {% endfor %}
 </div>

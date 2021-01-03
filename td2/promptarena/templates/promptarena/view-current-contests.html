@@ -4,12 +4,14 @@
 
 {% block content %}
 
+
 {% if current_contest_list %}
     <table class="table table-divided">
         <tr>
             <th>Prompt</th>
             <th>Due in</th>
             <th>WordCount</th>
+            <th></th>
             <th></th>
         </tr>
     {% for contest in current_contest_list.all %}
@@ -18,9 +20,11 @@
             <td>{{ contest.expiry_date }}</td>
             <td>{{ contest.wordcount }}</td>
             <td><a href="{% url 'enter contest' contest.id %}" class="btn btn-primary">Enter</a></td> 
+            <td><a href="{% url 'close contest' contest.id %}" class="btn btn-warning">Close contest</a></td>
         </tr>
     {% endfor %}
     </table>
+
 {% else %}
     <p>No Contests are currently active.</p>
 {% endif %}

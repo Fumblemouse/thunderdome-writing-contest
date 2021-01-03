@@ -4,9 +4,9 @@
 
 {% block content %}
 
-{% if view_full_prompt_context %}
-        <h2>{{ view_full_prompt_context.prompt_title }}</h2>
-        <p>{{ view_full_prompt_context.prompt_content }}</p>
+{% if prompt_context %}
+        <h2>{{ prompt_context.title }}</h2>
+        <p>{{ prompt_context.content | safe }}</p>
 
 {% else %}
     <p>No Prompts are currently active.</p>

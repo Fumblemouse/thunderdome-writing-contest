@@ -1,0 +1,32 @@
+{% extends "baseapp/base.html" %}
+{% block headtag %}
+
+{% endblock %}
+{% block header %}
+    Read Stories
+    {% if author_context %}
+        by {{author_context}}
+    {% endif %}
+    {% endblock %}
+ {% block content %}
+{% if stories_context %}
+    <table class="table-striped table-hover">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+        </tr>
+        </thead>
+        {% for story in stories_context %}
+        <tr>
+            <td><a href="{% url 'view story by slug' story.slug %}">{{ story.title }}</a></td>
+            <td><a href="{% url 'view stories by author' story.author.username %}">{{ story.author }}</a></td>
+        </tr>
+        {% endfor  %}
+    </table>
+{% else %}
+    <div class="warning">
+    No stories available
+    </div>
+{% endif %}
+{% endblock %}

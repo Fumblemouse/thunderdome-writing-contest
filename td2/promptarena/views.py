@@ -1,9 +1,12 @@
 """List of views"""
-from datetime import date
+import re
 # import the logging library
 import logging
-import re
-from django.http import HttpResponse, HttpResponseRedirect
+
+from django.utils import timezone
+
+
+from django.http import HttpResponseRedirect
 #from django.core.exceptions import ValidationError
 
 from django.shortcuts import get_object_or_404, render
@@ -12,9 +15,16 @@ from django.contrib import messages
 from django.utils.html import strip_tags
 
 from baseapp.forms import CreateStoryForm
-from .forms import CreatePromptForm, CreateContestNewPromptForm, CreateContestOldPromptForm, EnterContestNewStoryForm
+from baseapp.models import Story
 
-from .models import Prompt, Contest
+from .forms import (CreatePromptForm,
+    CreateContestNewPromptForm,
+    CreateContestOldPromptForm,
+    EnterContestNewStoryForm,
+    EnterCritForm,
+)
+from .models import Prompt, Contest, Crit
+
 
 
 
@@ -81,20 +91,17 @@ def enter_contest(request, contest_id,):
     """User enters new story"""
     contest_context = get_object_or_404(Contest, pk=contest_id)
     story_form = CreateStoryForm(request.POST or None)
-    #entry_form = EnterContestNewStoryForm(request.POST or None)
-
-
     if request.method == "POST":
-        if story_form.is_valid(): 
+        if story_form.is_valid():
             words_to_count = strip_tags(story_form.instance.content)
             story_wordcount = len(re.findall(r'\S+', words_to_count))
 
             entry_form = EnterContestNewStoryForm(
                 request.POST,
                 contest_wordcount=contest_context.wordcount,
-                story_wordcount=story_wordcount
+                story_wordcount=story_wordcount,
+                contest_expiry_date=contest_context.expiry_date,
             )
-            logger.error(str(contest_context.wordcount) + " : " + str(story_wordcount) )
             if entry_form.is_valid():
                 #add user to story
                 story_form_uncommitted = story_form.save(commit=False)
@@ -117,8 +124,6 @@ def enter_contest(request, contest_id,):
             }
         )
 
-        
-
     return render(request, 'promptarena/enter-contest.html', {
         'contest_context' : contest_context,
         #'entry_form': entry_form or None,
@@ -126,9 +131,15 @@ def enter_contest(request, contest_id,):
         }
     )
 
-
-
-
+def close_contest(request, contest_id):
+    """User closes specific contest """
+    contest_context = get_object_or_404(Contest, pk=contest_id)
+    context = {
+        'contest_context' : contest_context,
+    }
+    contest_context.close()
+    messages.success(request, 'You have successfully closed the contest')
+    return render(request, 'promptarena/close-contest.html', context)
 
 def view_full_contest(request, contest_id):
     """User views specific prompt and metadata"""
@@ -138,15 +149,12 @@ def view_full_contest(request, contest_id):
     }
     return render(request, 'promptarena/view-full-contest.html', context)
 
-def view_story(request, story_id):
-    """User views a story"""
-    response = "You're looking at story %s."
-    return HttpResponse(response % story_id)
+
 
 def view_current_contests(request):
     """User views available contests"""
     current_contest_list = Contest.objects.filter (
-        expiry_date__gte = date.today()
+        expiry_date__gte = timezone.now()
     )
 
     context = {
@@ -156,8 +164,31 @@ def view_current_contests(request):
 
 def view_prompts(request):
     """view all prompts in a list"""
-    prompt_list = Prompt.objects.all
+    prompts_context = Prompt.objects.all
     context = {
-        'prompt_list': prompt_list,
+        'prompts_context': prompts_context,
     }
     return render(request, 'promptarena/view-prompts.html', context)
+
+def view_full_prompt(request, prompt_id):
+    """User views specific prompt and metadata"""
+    prompt_context = get_object_or_404(Prompt, pk=prompt_id)
+    context = {
+        'prompt_context' : prompt_context,
+    }
+    return render(request, 'promptarena/view-full-prompt.html', context)
+
+@login_required
+def judgemode(request, story_id = 0):
+    """Judge the supplicants mercilessly"""
+    crit_form = EnterCritForm(request.POST or None)
+    crit_list = Crit.objects.filter (
+        reviewer = request.user
+    )
+    context = {
+        'crit_list': crit_list
+    }
+    if story_id:
+        context['story'] = Story.objects.get(pk = story_id)
+        context['form'] = crit_form
+    return render(request, 'promptarena/judgemode.html', context)

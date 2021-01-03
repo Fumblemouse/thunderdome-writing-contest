@@ -4,29 +4,38 @@ html {
     position: relative;
     min-height: 100%;
   }
-  body {
-    /* Margin bottom by footer height */
-    margin-bottom: 60px;
+
+  h1,h2,h3,h4,h5,h6 {
+    font-family: "Marko One", serif;
   }
+  
+  nav.list-group {
+    margin-bottom: 1em;
+  }
+
   form {
     margin-bottom:1em;
     z-index:200;
   }
-  footer {
-    position: absolute;
-    bottom: 0;
-     /* Set the fixed height of the footer here */
-    height: 60px;
-    line-height: 60px; /* Vertically center the text there */
+
+  form div {
+    margin-bottom:1em;
+  }
+  
+  table {
+    width:100%;
   }
 
-    label, input {
-        display: block;
-    }
+  label, input {
+      display: block;
+  }
 
-    .tdBold {
-      font-weight: bolder;
-    }
+  .tdBold {
+    font-weight: bolder;
+  }
+  #page-content {
+    max-width:100%
+  }
 
   /* hide things for non-screen readers */
   #skiptocontent a {

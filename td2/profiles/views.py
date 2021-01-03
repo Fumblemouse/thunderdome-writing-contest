@@ -1,7 +1,7 @@
 """Views for Profiles app"""
 from django.contrib.auth import  logout
 from django.contrib.auth import get_user_model
-#from django.contrib.auth.models import User
+
 from django.shortcuts import redirect, render
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
@@ -13,12 +13,25 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-#from .tokens import account_activation_token
+
+from pytz import common_timezones
+from baseapp.models import Story
 from .forms import SignUpForm, UserUpdateForm, ProfileUpdateForm
+
+
 
 UserModel = get_user_model()
 
 
+def set_timezone(request):
+    """replacement login function"""
+    if request.user.is_authenticated:
+        request.session['django_timezone'] = request.user.profile.timezone
+        # Redirect to a success page.
+        return redirect(reverse('home'))
+    else:
+        messages.warning(request, 'You have failed to provide a valid username or password')
+    return render(request, 'registration/login.html', {})
 
 
 def sign_up(request):
@@ -73,7 +86,7 @@ def activate(request, uidb64, token):
         user = UserModel._default_manager.get(pk=uid)
     except(TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
         user = None
-    if user is not None and default_token_generator.check_token(user, token):
+    if user is not None and default_token_generator.check_token(user, token) and not user.is_active:
         user.is_active = True
         user.save()
         messages.success(request,'Thank you for your email confirmation. Now you can login your account.')
@@ -86,18 +99,21 @@ def activate(request, uidb64, token):
 def settings(request):
     """user sets their own settings"""
     if request.method == 'POST':
-        p_form = ProfileUpdateForm(request.POST,instance=request.user.profile)
-        u_form = UserUpdateForm(request.POST,instance=request.user)
-        if p_form.is_valid() and u_form.is_valid():
-            u_form.save()
-            p_form.save()
+        profile_form = ProfileUpdateForm(request.POST,instance=request.user.profile)
+        user_form = UserUpdateForm(request.POST,instance=request.user)
+        if profile_form.is_valid() and user_form.is_valid():
+            user_form.save()
+            profile_form_uncommitted = profile_form.save(commit=False)
+            profile_form_uncommitted.timezone = request.POST['timezone']
+            profile_form_uncommitted.save()
+            request.session['django_timezone'] = request.POST['timezone']
             messages.success(request,'Your Profile has been updated!')
             return redirect('profile')
     else:
-        p_form = ProfileUpdateForm(instance=request.user.profile)
-        u_form = UserUpdateForm(instance=request.user)
+        profile_form = ProfileUpdateForm(instance=request.user.profile)
+        user_form = UserUpdateForm(instance=request.user)
 
-    context={'p_form': p_form, 'u_form': u_form}
+    context={'profile_form': profile_form, 'user_form': user_form, 'timezones': common_timezones}
     return render(request, 'profiles/settings.html',context )
 
 
@@ -114,9 +130,15 @@ def profile(request):
             'First name': request.user.first_name,
             'Last name' : request.user.last_name,
             'Bio': request.user.profile.bio,
+            'Time zone' : request.user.profile.timezone,
             'Show profile and work publically?' : request.user.profile.public_profile
         }
     }
+
+    stories_context = Story.objects.filter(
+        author = request.user.pk
+    )
+    context['stories_context'] = stories_context
     return render(request, 'profiles/profile.html', context)
 
 
