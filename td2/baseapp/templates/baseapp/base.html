@@ -22,21 +22,16 @@
         <div id="skiptocontent"><a href="#maincontent">skip to main content</a></div>
         <div class="container">
             <header>
-
                 <div class="row">
-                
                     <div class="col-md-5 list-group">
                         <a href = "{% url 'home' %}" >
                             <img src ="{% static 'baseapp/img/tdx.png' %}" alt="Thunderdome Logo in marko one font" />
                         </a>
                     </div>    
-                    <div class="col-md-5"  >
-                        
-                        
+                    <div class="col-md-5"  >                  
                     </div>    
                     <div class="col-md-2"  >
                     </div> 
-                
             </div>
             </header>
             <div class="row" id="page-content">
@@ -51,27 +46,27 @@
                 <div class="col">
 
                     {% block sidebar %}
-                    <nav aria-labelledby="things-to-see-nav" class="list-group">
-                        <h2 id="things-to-see-nav" class="h4">Things to see</h2>
-                            <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="/">Home</a>
-                            <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'view stories' %}">Stories</a>
-                            <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'view current contests' %}">Current contests</a>
-                            <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'view prompts' %}">List of prompts</a>
-                    </nav>
-                    <nav aria-labelledby="things-to-do-nav" class="list-group">
-                    <h2 id="things-to-do-nav"class = 'h4'>Things to do</h2>
-                    {% if user.is_authenticated %}
-                                <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create prompt' %}">Create Prompt</a>
-                                <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create story' %}">Create Story</a>
-                                <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create contest' %}">Create Contest</a>
-                                <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'judgemode' %}">Judge Mode</a>
-                                <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'profile' %}">Your Profile</a>
-                    {% else %}
+                        <nav aria-labelledby="things-to-see-nav" class="list-group">
+                            <h2 id="things-to-see-nav" class="h4">Things to see</h2>
+                                <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="/">Home</a>
+                                <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'view stories' %}">Stories</a>
+                                <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'view current contests' %}">Current contests</a>
+                                <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'view prompts' %}">List of prompts</a>
+                        </nav>
+                        <nav aria-labelledby="things-to-do-nav" class="list-group">
+                            <h2 id="things-to-do-nav"class = 'h4'>Things to do</h2>
+                            {% if user.is_authenticated %}
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create prompt' %}">Create Prompt</a>
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create story' %}">Create Story</a>
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create contest' %}">Create Contest</a>
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'judgemode' %}">Judge Mode</a>
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'profile' %}">Your Profile</a>
+                            {% else %}
 
-                        <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'sign up' %}">Sign Up</a>
-                    {% endif %}
+                                <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'sign up' %}">Sign Up</a>
+                            {% endif %}
+                        </nav>
                     {% endblock %}
-                    </nav>
                 </div>
                     
                 <main class="col-md-8" id="maincontent">
