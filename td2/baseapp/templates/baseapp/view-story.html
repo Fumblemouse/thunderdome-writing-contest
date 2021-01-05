@@ -2,18 +2,18 @@
 {% block headtag %}
 
 {% endblock %}
-{% block header %}{% endblock %}
+{% block header %}
+    {% if story_context %}
+        {{ story_context.title }}
+    {% endif %}
+{% endblock %}
 
 {% block content %}
 {% if story_context %}
-    <div class="story-element">
-        <h1>{{ story_context.title }}</h1>
-    </div>
-    <div class="story-element"></div>
     {{ story_context.content | safe }}
 {% else %}
     <div class="warning">
-        Something went horribly wrong - nothing to be found 
+        Something went horribly wrong - nothing to be found
     </div>
 
 {% endif %}

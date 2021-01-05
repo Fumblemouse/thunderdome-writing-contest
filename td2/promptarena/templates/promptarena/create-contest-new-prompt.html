@@ -9,22 +9,19 @@
 {% block header %}Create Contest{% endblock %}
 
 {% block content %}
-<ul class="nav nav-pills">
-  <li class="nav-item">
-    <a href="{% url 'create contest'%}" class="nav-link active" aria-current="page">Create a contest with a new prompt</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="{% url 'create contest old prompt'%}">Create a contest and recycle an old prompt</a>
-  </li>
-</ul>
 
+<nav class="nav nav-tabs">
+    <a href="{% url 'create contest'%}" class="nav-link active" aria-current="page">Create a contest with a new prompt</a>
+    <a class="nav-link" href="{% url 'create contest old prompt'%}">Create a contest and recycle an old prompt</a>
+</nav>
 <form method = "post">
 
         {% csrf_token %}
-        {{ prompt_form }}
-        {{ contest_form }}
 
-    <input type="submit" value="Submit" class='btn-primary'>
+        {% include 'baseapp/base-form.html' with form=prompt_form %}
+        {% include 'baseapp/base-form.html' with form=contest_form %}
+
+    <input type="submit" value="Submit" class='btn btn-primary'>
 
 </form>
 <script>
@@ -32,4 +29,3 @@ flatpickr('#id_start_date', {enableTime:true, defaultDate: 'today', minDate: 'to
 flatpickr('#id_expiry_date', {enableTime:true, defaultDate: new Date().fp_incr(7), minDate: 'today'});
 </script>
 {% endblock %}
-maxDate: new Date().fp_incr(14

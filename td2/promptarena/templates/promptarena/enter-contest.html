@@ -11,8 +11,9 @@ Enter Contest
 {% if contest_context %}
         <h3>{{ contest_context.prompt.title }}</h3>
         <p>{{ contest_context.prompt.content | safe }}</p>
+        <p>Word limit: {{ contest_context.wordcount }}</p>
 {% else %}
-    <p>No contest found - check the url.</p>
+    <div class="warning">No contest found - check the url.</div>
 {% endif %}
 
 <form method = "post">
@@ -21,7 +22,7 @@ Enter Contest
         {% include 'baseapp/base-form.html' with form=story_form %}
         {% include 'baseapp/base-form.html' with form=entry_form %}
 
-    <input type="submit" value="Submit" class='btn-primary'>
+    <input type="submit" value="Submit" class='btn btn-primary'>
 
 </form>
 

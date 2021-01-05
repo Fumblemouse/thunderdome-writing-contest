@@ -1,5 +1,4 @@
-/* Sticky footer styles
--------------------------------------------------- */
+
 html {
     position: relative;
     min-height: 100%;
@@ -8,7 +7,7 @@ html {
   h1,h2,h3,h4,h5,h6 {
     font-family: "Marko One", serif;
   }
-  
+
   nav.list-group {
     margin-bottom: 1em;
   }
@@ -21,7 +20,7 @@ html {
   form div {
     margin-bottom:1em;
   }
-  
+
   table {
     width:100%;
   }
@@ -33,6 +32,24 @@ html {
   .tdBold {
     font-weight: bolder;
   }
+
+  img#logo-image {
+     height:48px;
+     width:240px;
+
+  }
+
+    #main-header {
+        position:relative;
+        left:-1em;
+        padding: .5em .5em .5em 0;
+    }
+
+  #page-content > .col {
+    padding-top: 7em;
+  }
+
+
   #page-content {
     max-width:100%
   }
@@ -47,7 +64,7 @@ html {
     border-right:1px solid white;
     border-bottom:1px solid white;
     border-bottom-right-radius:8px;
-    background:#777;
+    background:#000;
     -webkit-transition: top 1s ease-out;
       transition: top 1s ease-out;
       z-index: 100;

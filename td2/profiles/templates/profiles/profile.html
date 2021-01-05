@@ -1,18 +1,18 @@
 {% extends "baseapp/base.html" %}
 
 {% block header %}
-    Profile
+    <h1>Profile: {{request.user.username}}</h1>
 {% endblock header %}
 
 {% block content %}
 
 <div>
-    <h1>Profile: {{request.user.username}}</h1>
+
 <p>Choose from the options to your left. No, the other left.</p>
 
 {% if fields_context %}
 <h2>Current Settings</h2>
-    <table class="table table-striped table_ruled">
+    <table class="table table-ruled ">
         <tr>
             <th scope="col" >Thing</th><th>Value of thing</th>
        </tr>
@@ -37,8 +37,8 @@
 {% endblock content %}
 
 {% block aside %}
-    <a class="btn btn-danger primary" href="{% url 'change settings' %}" >Edit Settings</a>
-    <a class="btn btn-danger primary" href="{% url 'password_change' %}">Change password</a>
+    <a class="btn btn-primary" href="{% url 'change settings' %}" >Edit Settings</a>
+    <a class="btn btn-warning" href="{% url 'password_change' %}">Change password</a>
 
 
 {% endblock aside %}

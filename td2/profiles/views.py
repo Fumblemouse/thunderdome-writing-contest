@@ -18,6 +18,8 @@ from pytz import common_timezones
 from baseapp.models import Story
 from .forms import SignUpForm, UserUpdateForm, ProfileUpdateForm
 
+import logging
+logger = logging.getLogger(__name__)
 
 
 UserModel = get_user_model()
@@ -74,7 +76,7 @@ def sign_up(request):
             user = authenticate(username=username, password=password)
             login(request, user)
             """
-            messages.success(request, 'An email has been sent to your address. Click the link to complete the process ')
+            messages.success(request, 'An email has been sent to your specificed address. Click the link contained within it to complete the process ')
             return redirect('home')
 
     return render(request, 'registration/sign-up.html', {'form': form})
@@ -86,14 +88,13 @@ def activate(request, uidb64, token):
         user = UserModel._default_manager.get(pk=uid)
     except(TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
         user = None
-    if user is not None and default_token_generator.check_token(user, token) and not user.is_active:
+    if user is not None and default_token_generator.check_token(user, token) and not user.is_active and 'BingPreview' not in request.headers['user-agent']:
         user.is_active = True
         user.save()
         messages.success(request,'Thank you for your email confirmation. Now you can login your account.')
     else:
         messages.error(request,'Activation link is invalid!')
-    return redirect('home')
-
+    return render(request, 'baseapp/home.html',{} )
 
 @login_required
 def settings(request):

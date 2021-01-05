@@ -4,50 +4,53 @@
     {{ form.media }}
 {% endif %}
     {% endblock %}
-{% block header %}Judgemode{% endblock %}
+{% block header %}Judgemode{% endblock header %}
 
 {% block sidebar %}
-    <h2>Stories to judge</h2>
-   
+    <h3 class="h4">Stories to judge</h2>
+
+{% if crit_list %}
+
     {% regroup crit_list by contest as crit_list_regrouped %}
 
     {% for contest in crit_list_regrouped %}
-        <h3>{{ contest.grouper }}</h3>
+        <h4 class="h5">{{ contest.grouper }}</h3>
             <ul>
             {% for crit in contest.list %}
                 <li><a href="{% url 'judgemode' crit.story.id %}">{{ crit.story.title }}</a></li>
             {% endfor %}
             </ul>
     {% endfor %}
-      
+
+{% else %}
+    You are not currently judging anything.
+{% endif %}
 
 
-
-{% endblock sidebar %} 
+{% endblock sidebar %}
 
 {% block content %}
 {% if form %}
-    <h1>{{ story.title}}</h1>
+    <h2>{{ story.title}}</h2>
     {{ story.content | safe }}
     <form method = "post">
             {% csrf_token %}
             {% include 'baseapp/base-form.html' %}
-        <input type="submit" value="Submit" class='btn-primary'>
+        <input type="submit" value="Submit" class='btn btn-primary'>
 
     </form>
 {% else %}
-    <h1>Judgemode</h1>
-    <p>Judgemode show you the stories you currently have to citique in the contests you have entered.</p>
+    <p>Judgemode show you the stories you currently have to critique in the contests you have entered.</p>
     <ol>
         <li>Choose a story from the list on the left</li>
         <li>Read it and think about it</li>
-        <li>Provide a critique of at least 100 words. This isn't a hugfest - nobody will improve if you're not honest. 
+        <li>Provide a critique of at least 100 words. This isn't a hugfest - nobody will improve if you're not honest.
             If you can't be kind, at least be funny. If you can't be constructive, think about it some more and try again.</li>
-        <li>Provide an overall ranking. For contestant judged contests, there will usually be three stories to judge. 
-            Score them relative to each other, and the world. If you think one is head and shoulders over the others, 
+        <li>Provide an overall ranking. For contestant judged contests, there will usually be three stories to judge.
+            Score them relative to each other, and the world. If you think one is head and shoulders over the others,
             select 'High' for that story, then assign 'Low' and 'Low mid' to the others.</li>
         <li>Individual scores are private - all your authors will see is your comments.</li>
-        <li>You can revisit your work at any point, until you check the 'Final' box and submit. then it will disappear 
+        <li>You can revisit your work at any point, until you check the 'Final' box and submit. then it will disappear
             from your judgemode list</li>
     </ol>
 {% endif %}

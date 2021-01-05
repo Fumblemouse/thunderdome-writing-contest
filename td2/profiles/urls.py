@@ -11,7 +11,6 @@ urlpatterns = [
     path('signup/', sign_up, name='sign up'),
     path('profile/', profile, name='profile'),
     path('logout/', p_logout, name='logout'),
-#   path('login/', p_login, name='login'),
     path('set-timezone/', set_timezone, name="set timezone"),
     path('settings/', settings, name='change settings'),
     path('activate/<uidb64>/<token>/',activate, name='activate'),
