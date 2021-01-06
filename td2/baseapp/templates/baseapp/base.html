@@ -20,19 +20,13 @@
         <div class="container">
             <header>
                 <div class="row">
-                    <div class="col-md-5 list-group">
+                    <div class="col-md-3 list-group">
                         <a href = "{% url 'home' %}" >
                             <img id="logo-image" src ="{% static 'baseapp/img/tdx.png' %}" alt="Thunderdome Logo in marko one font" />
                         </a>
                     </div>
-                    <div class="col-md-5"  >
-                    </div>
-                    <div class="col-md-2"  >
-                    </div>
-            </div>
-            </header>
-            <div class="row" id="page-content">
-                {% for message in messages %}
+                    <div class="col-md-7"  >
+                    {% for message in messages %}
                     <div class="alert {{ message.tags }} alert-dismissible" role="alert">
                     <!--button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -40,6 +34,13 @@
                     {{ message }}
                     </div>
                 {% endfor %}
+                    </div>
+                    <div class="col-md-2"  >
+                    </div>
+            </div>
+            </header>
+            <div class="row" id="page-content">
+
                 <div class="col">
 
                     {% block sidebar %}

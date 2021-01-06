@@ -34,16 +34,24 @@ html {
   }
 
   img#logo-image {
-     height:48px;
-     width:240px;
+     height:45px;
+     width:245px;
 
   }
 
     #main-header {
         position:relative;
-        left:-1em;
+        left:.3em;
         padding: .5em .5em .5em 0;
     }
+
+@media (min-width: 768px) {
+    #main-header {
+        position:relative;
+        left:-3em;
+        padding: .5em .5em .5em 0;
+    }
+}
 
   #page-content > .col {
     padding-top: 7em;

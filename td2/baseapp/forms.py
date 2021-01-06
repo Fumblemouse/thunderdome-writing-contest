@@ -16,9 +16,10 @@ class BaseForm(forms.ModelForm):
 
 
 
-class CreateStoryForm(BaseForm):
+class StoryForm(BaseForm):
     """USer enters Story and Title"""
 
     class Meta:
         model = Story
         fields = ('title', 'content','public_view_allowed')
+

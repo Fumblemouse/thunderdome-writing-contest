@@ -1,8 +1,16 @@
 {% extends "baseapp/base.html" %}
 {% block headtag %}
     {{ form.media }}
+    {% load static %}
 {% endblock %}
-{% block header %}Create Story{% endblock %}
+{% block header %}
+    {% if form.title.value %}
+        Edit
+    {% else %}
+        Create
+    {% endif %}
+    Story
+{% endblock %}
 
 {% block content %}
 
@@ -11,7 +19,7 @@
         {% csrf_token %}
         {% include 'baseapp/base-form.html' %}
     </table>
-    <input type="submit" value="Submit" class='btn-primary'>
+    <input type="submit" value="Submit" class='btn btn-primary'>
 
 </form>
 

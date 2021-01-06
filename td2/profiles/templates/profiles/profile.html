@@ -1,7 +1,7 @@
 {% extends "baseapp/base.html" %}
 
 {% block header %}
-    <h1>Profile: {{request.user.username}}</h1>
+    Profile: {{request.user.username}}
 {% endblock header %}
 
 {% block content %}
@@ -29,11 +29,34 @@
 
 {% if stories_context %}
 <h2>Stories</h2>
-    <ul>
+    <table>
+        <tr>
+            <th>Title</th><th>Edit</th>
+        </tr>
     {% for story in stories_context %}
-        <li><a href="{% url 'view story by slug' story.slug %>">{{ story.title }}</a></li>
+        <tr>
+            <td><a href="{% url 'view story by slug' story.slug %}">{{ story.title }}</a></td>
+            <td><a href = "{% url 'edit story' story.id %}">Edit</a></td>
+        </tr>
     {% endfor %}
+    </table>
 {% endif %}
+
+{% if prompts_context %}
+<h2>prompts</h2>
+    <table>
+        <tr>
+            <th>Title</th><th>Edit</th>
+        </tr>
+    {% for prompt in prompts_context %}
+        <tr>
+            <td><a href="{% url 'view full prompt' prompt.id %}">{{ prompt.title }}</a></td>
+            <td><a href = "{% url 'edit prompt' prompt.id %}">Edit</a></td>
+        </tr>
+    {% endfor %}
+    </table>
+{% endif %}
+
 {% endblock content %}
 
 {% block aside %}

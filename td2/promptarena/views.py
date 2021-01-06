@@ -9,15 +9,15 @@ from django.utils import timezone
 from django.http import HttpResponseRedirect
 #from django.core.exceptions import ValidationError
 
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.html import strip_tags
 
-from baseapp.forms import CreateStoryForm
+from baseapp.forms import StoryForm
 from baseapp.models import Story
 
-from .forms import (CreatePromptForm,
+from .forms import (PromptForm,
     CreateContestNewPromptForm,
     CreateContestOldPromptForm,
     EnterContestNewStoryForm,
@@ -39,7 +39,7 @@ def create_prompt(request):
     """User enters new prompt"""
     context ={}
     #create object for form
-    form = CreatePromptForm(request.POST or None)
+    form = PromptForm(request.POST or None)
      # check if form data is valid
     if form.is_valid():
         # save the form data to model
@@ -51,10 +51,32 @@ def create_prompt(request):
     return render(request, "promptarena/create-prompt.html", context)
 
 @login_required
+def edit_prompt(request, prompt_id = 0):
+    """update a prompt"""
+    # get the story to update
+    prompt = get_object_or_404(Story, pk = prompt_id)
+    contests = Contest.objects.filter(prompt = prompt_id)
+    for contest in contests:
+        if contest.status != 'UNOPENED' or 'CLOSED':
+            messages.error(request, "Your prompt is currently being used in a contest.  It cannot be edited at this time.")
+            return redirect('view prompt', prompt_id = prompt_id)
+    # create a form instance and populate it with data from the request or the :
+    form = PromptForm(request.POST or None, instance = prompt)
+    # check whether it's valid:
+    if form.is_valid():
+        form.save()
+        messages.success(request, 'Your prompt was updated successfully! Hopefully it doesn\'t suck.')
+        # redirect to a new URL:
+        return redirect('view full prompt', prompt_id = prompt.pk)
+
+    return render(request, 'baseapp/create-prompt.html', {'form': form})
+
+
+@login_required
 def create_contest_new_prompt(request):
     """User enters new contest with a new prompt"""
     #context = {}
-    prompt_form = CreatePromptForm(request.POST or None)
+    prompt_form = PromptForm(request.POST or None)
     contest_form = CreateContestNewPromptForm(request.POST or None)
     if prompt_form.is_valid() and contest_form.is_valid():
         #save w/o comitting then add user and save
@@ -90,7 +112,7 @@ def create_contest_old_prompt(request):
 def enter_contest(request, contest_id,):
     """User enters new story"""
     contest_context = get_object_or_404(Contest, pk=contest_id)
-    story_form = CreateStoryForm(request.POST or None)
+    story_form = StoryForm(request.POST or None)
     if request.method == "POST":
         if story_form.is_valid():
             words_to_count = strip_tags(story_form.instance.content)

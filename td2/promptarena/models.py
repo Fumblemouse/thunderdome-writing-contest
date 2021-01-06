@@ -42,9 +42,20 @@ class Prompt(models.Model):
 
 class Contest(models.Model):
     """Contest- Actual Competition"""
+    UNOPENED = 'UNOPENED'
+    OPEN='OPEN'
+    JUDGEMENT = 'JUDGEMENT'
+    CLOSED = 'CLOSED'
+    CONTEST_STATES = [
+        (UNOPENED, 'Unopened'),
+        (OPEN, 'Open'),
+        (JUDGEMENT, 'Judgement'),
+        (CLOSED, 'Closed')
+    ]
     prompt = models.ForeignKey(Prompt, on_delete=models.SET_NULL, null=True) #Null = true to make on_delete work
     start_date = models.DateTimeField('Start Date')
     expiry_date = models.DateTimeField('Submit by Date')
+    status= models.CharField(choices=CONTEST_STATES, default='Unopened', max_length=9)
     wordcount = models.PositiveIntegerField(default=1000)
     slug = AutoSlugField(max_length=200, default='no-contest-slug', unique=True)
 
@@ -55,7 +66,7 @@ class Contest(models.Model):
 
     def is_active(self):
         '''returns true if expiry date is passed'''
-        return self.expiry_date > timezone.now()
+        return self.expiry_date > timezone.now() > self.start_date
 
     #def save(self, *args, **kwargs):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):

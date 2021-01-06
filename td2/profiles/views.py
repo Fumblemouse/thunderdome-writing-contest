@@ -16,6 +16,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 from pytz import common_timezones
 from baseapp.models import Story
+from promptarena.models import Prompt
 from .forms import SignUpForm, UserUpdateForm, ProfileUpdateForm
 
 import logging
@@ -139,7 +140,12 @@ def profile(request):
     stories_context = Story.objects.filter(
         author = request.user.pk
     )
+
+    prompts_context = Prompt.objects.filter(
+        creator = request.user.pk
+    )
     context['stories_context'] = stories_context
+    context['prompts_context'] = prompts_context
     return render(request, 'profiles/profile.html', context)
 
 

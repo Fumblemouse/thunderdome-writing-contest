@@ -1,7 +1,9 @@
 {% extends "baseapp/base.html" %}
+{% load static %}
 {% block header %}
     Welcome to the ThunderDome
+
 {% endblock header %}
 {% block content %}
-
+<img src="{% static 'baseapp/img/flourish.png' %}" alt="logo" />
 {% endblock %}

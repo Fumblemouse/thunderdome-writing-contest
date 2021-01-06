@@ -9,7 +9,7 @@ from baseapp.forms import BaseForm
 
 from .models import Prompt, Contest, Entry, Crit
 
-class CreatePromptForm(BaseForm):
+class PromptForm(BaseForm):
     """User creates Prompt details"""
     class Meta:
         model = Prompt

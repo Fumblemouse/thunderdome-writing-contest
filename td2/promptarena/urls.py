@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     #create things
     path('create-prompt', views.create_prompt, name='create prompt'),
+    path('<int:prompt_id>/edit-prompt', views.edit_prompt, name='edit prompt'),
     path('create-contest', views.create_contest_new_prompt, name='create contest'),
     path('create-contest-old-prompt', views.create_contest_old_prompt, name='create contest old prompt'),
     #view things
