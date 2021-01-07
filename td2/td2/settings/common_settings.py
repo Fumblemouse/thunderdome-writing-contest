@@ -122,7 +122,7 @@ STATIC_URL = '/static/'
 
 
 #LOGIN
-LOGIN_URL = '/login/'
+LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/set-timezone'
 
 

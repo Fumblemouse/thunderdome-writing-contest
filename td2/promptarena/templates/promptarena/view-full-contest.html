@@ -13,7 +13,9 @@
 
 {% if contest_context %}
         <p>{{ contest_context.prompt.content | safe }}</p>
+        {% if user.is_authenticated %}
         <p><a href="{% url 'enter contest' contest_context.id %}" class="btn btn-primary">Enter</a></p>
+        {% endif %}
 {% else %}
     <p>No contest found - check the url.</p>
 {% endif %}
