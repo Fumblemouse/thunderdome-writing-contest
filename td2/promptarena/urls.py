@@ -14,10 +14,14 @@ urlpatterns = [
     path('view-current-contests', views.view_current_contests, name='view current contests'),
     path('view-prompts', views.view_prompts, name='view prompts'),
     path('<int:prompt_id>/view-full-prompt', views.view_full_prompt, name='view full prompt'),
+    path('<int:contest_id>/view-judgement-contest', views.view_judgement_contest, name='view judgement contest'),
+
     #enter things
     path('<int:contest_id>/enter-contest', views.enter_contest, name='enter contest'),
     #path('enter-contest-old-story', views.enter-contest-old-story, name='enter contest old story"),
     #judge things
     path('judgemode', views.judgemode, name='judgemode'),
+    path('<int:contest_id>/judge-contest', views.judge_contest, name='judge contest'),
     path('<int:story_id>/judgemode', views.judgemode, name='judgemode'),
+
 ]

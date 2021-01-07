@@ -107,6 +107,8 @@ class Contest(models.Model):
             for story in judge[1]:
                 story_instance = Story.objects.get(pk = story)
                 Crit.objects.create(contest = self, reviewer= reviewer, story = story_instance )
+        self.status = 'JUDGEMENT'
+        self.save()
 
     def assign_stories(self, shuffled_stories, judges_with_stories):
         """checks for duplicates and returns list if there are none"""
@@ -118,6 +120,49 @@ class Contest(models.Model):
         for story in enumerate(judges_with_stories):
             judges_with_stories[story[0]][1].append(shuffled_stories[story[0]])
         return judges_with_stories
+
+    def judge(self):
+        """Count, Sort the results and"""
+        crits = Crit.objects.filter(contest = self.pk)
+        results = {}
+        results_order = {}
+        #create a dictionary with story as key and an array of two arrays scores, and
+        for crit in crits:
+            results.setdefault(crit.story, [[],crit.story.author])
+            results[crit.story][0].append(crit.score)
+            #results[crit.story][1] = crit.story.author
+
+        #sort the dictionary based on sum of the array (descending)
+        results_order = sorted(results.items(), key=lambda x: sum(x[1][0]), reverse=True)
+        #Create a result record for each item in the sorted array
+        for count, result in enumerate(results_order):
+            resultRow = Result.objects.create_result(self, result[1][1], result[0], len(results), count + 1, sum(result[1][0]))
+            resultRow.save()
+        self.status = 'CLOSED'
+        self.save()
+
+
+class ResultManager(models.Manager):
+    """Manager class so that they can be created by other models"""
+    def create_result(self, contest, entrant, story, number_of_entrants, position, score):
+        result = self.create(contest = contest, entrant = entrant, story = story, number_of_entrants = number_of_entrants, position = position, score = score)
+        # do something with the Result
+        return result
+
+class Result(models.Model):
+    """Stores results of contests, including positions, entrants and number of other entrants"""
+    contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
+    entrant =  models.ForeignKey(
+      get_user_model(),
+      on_delete=models.SET_NULL,
+      null=True
+    )
+    story = models.ForeignKey(Story, on_delete=models.CASCADE)
+    number_of_entrants = models.PositiveSmallIntegerField()
+    position = models.PositiveSmallIntegerField()
+    score = models.PositiveSmallIntegerField()
+
+    objects = ResultManager()
 
 
 

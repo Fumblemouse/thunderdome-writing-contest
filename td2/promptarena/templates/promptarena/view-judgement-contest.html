@@ -1,0 +1,29 @@
+{% extends "baseapp/base.html" %}
+
+{% block header %}Contest Judgement{% endblock %}
+
+{% block content %}
+
+
+{% if results_context %}
+    <table class="table table-divided">
+        <tr>
+            <th>UserName</th>
+            <th>Position</th>
+            <th>Total Score</th>
+
+        </tr>
+    {% for result in results_context.all %}
+        <tr>
+            <td>{{ result.entrant.username }}</a></td>
+            <td>{{ result.position }}</td>
+            <td>{{ result.score }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+
+{% else %}
+    <p>No Contests are currently active.</p>
+{% endif %}
+
+{% endblock %}
