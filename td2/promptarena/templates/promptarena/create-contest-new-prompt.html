@@ -1,5 +1,6 @@
 {% extends "baseapp/base.html" %}
 {% block headtag %}
+    {% load static %}
     {{ prompt_form.media }}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -24,8 +25,5 @@
     <input type="submit" value="Submit" class='btn btn-primary'>
 
 </form>
-<script>
-flatpickr('#id_start_date', {enableTime:true, defaultDate: 'today', minDate: 'today'});
-flatpickr('#id_expiry_date', {enableTime:true, defaultDate: new Date().fp_incr(7), minDate: 'today'});
-</script>
+<script src="{% static 'baseapp/js/flatpickr.js' %}"></script>
 {% endblock %}

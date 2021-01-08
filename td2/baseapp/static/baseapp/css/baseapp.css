@@ -4,14 +4,20 @@ html {
   }
 
 body {
-    background: url('/static/baseapp/img/craft-paper.jpg');
+    background: url('/static/baseapp/img/purty-wood.jpg');
 }
+
+body > .container {
+    margin-top: 10px;
+}
+
   h1,h2,h3,h4,h5,h6 {
     font-family: "Marko One", serif;
   }
 
   nav.list-group {
     margin-bottom: 1em;
+    position:sticky;
   }
 
   form {
@@ -21,6 +27,11 @@ body {
 
   form div {
     margin-bottom:1em;
+  }
+
+  form input.btn-primary {
+      display:block;
+      text-align:right;
   }
 
   table {
@@ -41,6 +52,17 @@ body {
 
   }
 
+  #logo-cell {
+      background-color:white;
+      min-width: 300px;
+  }
+  #page-content {
+    max-width:100%;
+    min-height:85vh;
+    margin-bottom: 1em;
+    background: url('/static/baseapp/img/paper.jpg');
+    box-shadow: 5px 5px 5px grey;
+  }
 
 
     #main-header {
@@ -66,7 +88,4 @@ body {
 
 
 
-  #page-content {
-    max-width:100%
-  }
 

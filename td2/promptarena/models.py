@@ -78,12 +78,13 @@ class Contest(models.Model):
     def close(self):
         """assign stories to judges"""
         #get list of entries to this contest
-        entries = Entry.objects.all().filter(contest = self)
+        entries = Entry.objects.filter(contest = self)
         #get list of entrants and stories from entries
         stories = entries.values_list('story', flat=True)
         stories = list(stories)
         entrants = entries.values_list('story__author', flat=True)
         entrants = list(entrants)
+
         #setup container for creating crit requirements, fill it with [entrant [list,of,stories]]
         judges_with_stories = list()
 
@@ -106,7 +107,9 @@ class Contest(models.Model):
             reviewer =  get_user_model().objects.get(pk = judge[0])
             for story in judge[1]:
                 story_instance = Story.objects.get(pk = story)
-                Crit.objects.create(contest = self, reviewer= reviewer, story = story_instance )
+                contest_instance = self
+                entry = Entry.objects.get(contest = contest_instance, story=story_instance)
+                Crit.objects.create(story = story_instance, reviewer= reviewer, entry = entry )
         self.status = 'JUDGEMENT'
         self.save()
 
@@ -164,6 +167,11 @@ class Result(models.Model):
 
     objects = ResultManager()
 
+    def __str__(self):
+        if self.contest:
+            return str(self.contest.prompt.title) + " : " + str(self.entrant.username)
+        return "ALERT - somehow this result did not get set a title"
+
 
 
 class Entry(models.Model):
@@ -198,13 +206,14 @@ class Crit(models.Model):
         (HI_SCORE, 'High')
     ]
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
-    contest = models.ForeignKey(Contest, on_delete=models.SET_NULL, null=True)
+    entry = models.ForeignKey(Entry, on_delete=models.SET_NULL, null=True)
     reviewer = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True)
     content = tinymce_models.HTMLField(help_text='Please enter your comments here')
     score = models.IntegerField(choices=SCORE_CHOICES, default=UNSCORED)
     final = models.BooleanField(blank = True, default=False)
+    wordcount = models.PositiveIntegerField(default=1000, null=True)
 
     def __str__(self):
-        if self.reviewer and self.contest:
-            return str(self.contest.prompt.title) + " : " + str(self.reviewer.username) + " reviews " + str(self.story.author) # pylint: disable=E1101
+        if self.reviewer and self.entry:
+            return str(self.entry.contest.prompt.title) + " : " + str(self.reviewer.username) + " reviews " + str(self.story.author) # pylint: disable=E1101
         return "ALERT - somehow this crit did not get set a title"

@@ -5,14 +5,10 @@
 {% block header %}Create Contest{% endblock %}
 
 {% block content %}
-<ul class="nav nav-pills">
-  <li class="nav-item">
-    <a  href="{% url 'create contest'%}" class="nav-link">Create a contest with a new prompt</a>
-  </li>
-  <li class="nav-item">
-    <a  class="nav-link active" aria-current="page" href="{% url 'create contest old prompt'%}">Create a contest recycling an old prompt</a>
-  </li>
-</ul>
+<nav class="nav nav-tabs">
+    <a href="{% url 'create contest'%}" class="nav-link " aria-current="page">Create a contest with a new prompt</a>
+    <a class="nav-link active" href="{% url 'create contest old prompt'%}">Create a contest and recycle an old prompt</a>
+</nav>
 <form method = "post">
     {% csrf_token %}
     {% include 'baseapp/base-form.html' %}

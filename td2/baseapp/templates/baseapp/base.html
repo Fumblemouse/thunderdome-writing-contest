@@ -18,12 +18,12 @@
 
         {% block headtag %}{% endblock %}
     </head>
-    <body class="d-flex flex-column h-100">
+    <body>
         <div id="skiptocontent" ><a class="visually-hidden-focusable" href="#maincontent">skip to main content</a></div>
         <div class="container">
             <header>
                 <div class="row">
-                    <div class="col-md-3 list-group">
+                    <div class="col-3 list-group" id="logo-cell">
                         <a href = "{% url 'home' %}" >
                             <img id="logo-image" src ="{% static 'baseapp/img/tdx.png' %}" alt="Thunderdome Logo in marko one font" />
                         </a>
@@ -63,7 +63,7 @@
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'judgemode' %}">Judge Mode</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'profile' %}">Your Profile</a>
                             {% else %}
-
+                                <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'login' %}" >Login</a>
                                 <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'sign up' %}">Sign Up</a>
                             {% endif %}
                         </nav>
@@ -75,6 +75,7 @@
                     {% block content %}
                     {% endblock content %}
                 </main>
+
                 <aside class="col">
 
                     {% block aside %}
@@ -84,25 +85,19 @@
                                 <a class="btn btn-primary" href="{% url 'profile' %}">A profile is you</a>
                                 <a  href="{% url 'logout' %}" class="btn btn-danger" >Exit pursued by a bear</a>
                                 </div>
-                        {% else %}
-                            <div class="btn-group-vertical">
-                                <a  href="{% url 'login' %}" class="btn btn-primary" >Login</a>
-                                <a  href="{% url 'sign up' %}" class="btn btn-primary" >Sign up</a>
-                            </div>
 
                         {% endif %}
 
                     {% endblock aside %}
 
                 </aside>
+                <footer class="footer mt-auto py-3 container">
+                    <div class>
+                        Copyright Fumblemouse 2020
+                    </div>
+                </footer>
             </div>
 
         </div>
-        <footer class="footer mt-auto py-3 bg-light">
-            <div class="container">
-                Copyright Fumblemouse 2020
-              </div>
-
-        </footer>
     </body>
 </html>

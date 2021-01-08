@@ -171,7 +171,7 @@ CSP_STYLE_SRC = (
     )
 CSP_IMG_SRC =("'self'", 'data:')
 #TODO remove unsafe inline
-CSP_SCRIPT_SRC = ("'self'", 'https://cdn.jsdelivr.net',"'unsafe-inline'")
+CSP_SCRIPT_SRC = ("'self'", 'https://cdn.jsdelivr.net',)
 CSP_FONT_SRC = "https://fonts.gstatic.com"
 
 #Feature Policy
@@ -181,7 +181,7 @@ PERMISSIONS_POLICY = {
     'autoplay' : [],
  #  'battery' : [],
     'camera' : [],
-    'cross-origin-isolated' : [],
+#    'cross-origin-isolated' : [],
 #    'display-capture' : [],
     'document-domain' : [],
     'encrypted-media' : [],
@@ -203,3 +203,5 @@ PERMISSIONS_POLICY = {
 #    'web-share' : [],
 #    'xr-spatial-tracking2' : [],
     }
+
+

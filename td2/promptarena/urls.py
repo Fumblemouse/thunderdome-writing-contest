@@ -21,7 +21,9 @@ urlpatterns = [
     #path('enter-contest-old-story', views.enter-contest-old-story, name='enter contest old story"),
     #judge things
     path('judgemode', views.judgemode, name='judgemode'),
+    path('<int:entry_id>/judgemode', views.judgemode, name='judgemode'),
+    path('<int:entry_id>/<int:crit_id>/judgemode', views.judgemode_edit, name='judgemode'),
     path('<int:contest_id>/judge-contest', views.judge_contest, name='judge contest'),
-    path('<int:story_id>/judgemode', views.judgemode, name='judgemode'),
+
 
 ]
