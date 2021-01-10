@@ -9,12 +9,15 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 from django.contrib.auth import get_user_model
+
 from autoslug import AutoSlugField
 #from tinymce.models import HTMLField
 from tinymce import models as tinymce_models
 from baseapp.models import Story
 from baseapp.utils import sattolo_cycle
 
+#from django.apps import apps
+#Story = apps.get_model('baseapp', 'Story')
 
 # Create your models here.
 
@@ -57,6 +60,7 @@ class Contest(models.Model):
     expiry_date = models.DateTimeField('Submit by Date')
     status= models.CharField(choices=CONTEST_STATES, default='Unopened', max_length=9)
     wordcount = models.PositiveIntegerField(default=1000)
+    entrant_num = models.PositiveSmallIntegerField(default = 0)
     slug = AutoSlugField(max_length=200, default='no-contest-slug', unique=True)
 
     def __str__(self):
@@ -126,59 +130,33 @@ class Contest(models.Model):
 
     def judge(self):
         """Count, Sort the results and"""
-        crits = Crit.objects.filter(contest = self.pk)
+        crits = Crit.objects.filter(entry__contest__pk = self.pk)
         results = {}
         results_order = {}
-        #create a dictionary with story as key and an array of two arrays scores, and
+        #create a dictionary with entry as key and an array of scores from judges, and
         for crit in crits:
-            results.setdefault(crit.story, [[],crit.story.author])
-            results[crit.story][0].append(crit.score)
-            #results[crit.story][1] = crit.story.author
+            results.setdefault(crit.entry, [])
+            results[crit.entry].append(crit.score)
 
-        #sort the dictionary based on sum of the array (descending)
-        results_order = sorted(results.items(), key=lambda x: sum(x[1][0]), reverse=True)
+        #sort the dictionary based on sum of the scores array (descending)
+        results_order = sorted(results.items(), key=lambda x: sum(x[1]), reverse=True)
         #Create a result record for each item in the sorted array
         for count, result in enumerate(results_order):
-            resultRow = Result.objects.create_result(self, result[1][1], result[0], len(results), count + 1, sum(result[1][0]))
-            resultRow.save()
+            entry = Entry.objects.get(pk = result[0].pk)
+            entry.contest.entrant_num = len(results)
+            entry.position = count + 1
+            entry.score = sum(result[1])
+            entry.save()
         self.status = 'CLOSED'
         self.save()
-
-
-class ResultManager(models.Manager):
-    """Manager class so that they can be created by other models"""
-    def create_result(self, contest, entrant, story, number_of_entrants, position, score):
-        result = self.create(contest = contest, entrant = entrant, story = story, number_of_entrants = number_of_entrants, position = position, score = score)
-        # do something with the Result
-        return result
-
-class Result(models.Model):
-    """Stores results of contests, including positions, entrants and number of other entrants"""
-    contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
-    entrant =  models.ForeignKey(
-      get_user_model(),
-      on_delete=models.SET_NULL,
-      null=True
-    )
-    story = models.ForeignKey(Story, on_delete=models.CASCADE)
-    number_of_entrants = models.PositiveSmallIntegerField()
-    position = models.PositiveSmallIntegerField()
-    score = models.PositiveSmallIntegerField()
-
-    objects = ResultManager()
-
-    def __str__(self):
-        if self.contest:
-            return str(self.contest.prompt.title) + " : " + str(self.entrant.username)
-        return "ALERT - somehow this result did not get set a title"
-
 
 
 class Entry(models.Model):
     """Links stories and contests"""
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
     contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
-    contest_scores = models.CharField(blank=True, max_length=200)
+    position = models.PositiveSmallIntegerField(default=0)
+    score = models.PositiveSmallIntegerField(default=0)
 
     def __str__(self):
         if self.story and self.contest:
@@ -215,5 +193,5 @@ class Crit(models.Model):
 
     def __str__(self):
         if self.reviewer and self.entry:
-            return str(self.entry.contest.prompt.title) + " : " + str(self.reviewer.username) + " reviews " + str(self.story.author) # pylint: disable=E1101
+            return str(self.entry.contest.prompt.title) + " : " + str(self.reviewer.username) + " reviews " + str(self.story.author.username) # pylint: disable=E1101
         return "ALERT - somehow this crit did not get set a title"

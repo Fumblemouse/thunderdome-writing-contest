@@ -17,15 +17,8 @@ from django.utils.html import strip_tags
 from baseapp.forms import StoryForm
 from baseapp.models import Story
 
-from .forms import (PromptForm,
-    CreateContestNewPromptForm,
-    CreateContestOldPromptForm,
-    EnterContestNewStoryForm,
-    EnterCritForm,
-)
-from .models import Prompt, Contest, Crit, Result, Entry
-
-
+from .forms import (PromptForm, CreateContestNewPromptForm, CreateContestOldPromptForm, EnterContestNewStoryForm, EnterCritForm,)
+from .models import Prompt, Contest, Crit, Entry
 
 
 # Get an instance of a logger
@@ -286,7 +279,7 @@ def judge_contest(request, contest_id = 0):
         return render(request, 'promptarena/view-full-contest.html', context)
     contest_context.judge()
     messages.success(request, 'You have successfully judged the contest')
-    context['results_context'] = Result.objects.filter(contest=contest_id)
+    context['entry_context'] = Entry.objects.filter(contest=contest_id)
     return render(request, 'promptarena/view-judgement-contest.html', context)
 
 def view_judgement_contest(request, contest_id = 0):
@@ -295,8 +288,5 @@ def view_judgement_contest(request, contest_id = 0):
     context = {
         'contest_context' : contest_context,
     }
-    context['results_context'] = Result.objects.filter(contest=contest_id)
+    context['results_context'] = Entry.objects.filter(contest=contest_id)
     return render(request, 'promptarena/view-judgement-contest.html', context)
-
-
-

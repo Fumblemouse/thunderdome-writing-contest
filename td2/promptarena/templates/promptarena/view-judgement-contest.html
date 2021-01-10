@@ -5,7 +5,7 @@
 {% block content %}
 
 
-{% if results_context %}
+{% if entry_context %}
     <table class="table table-divided">
         <tr>
             <th>UserName</th>
@@ -13,11 +13,11 @@
             <th>Total Score</th>
 
         </tr>
-    {% for result in results_context.all %}
+    {% for entry in entry_context.all %}
         <tr>
-            <td>{{ result.entrant.username }}</a></td>
-            <td>{{ result.position }}</td>
-            <td>{{ result.score }}</td>
+            <td>{{ entry.story.author.username }}</a></td>
+            <td>{{ entry.position }}</td>
+            <td>{{ entry.score }}</td>
         </tr>
     {% endfor %}
     </table>
