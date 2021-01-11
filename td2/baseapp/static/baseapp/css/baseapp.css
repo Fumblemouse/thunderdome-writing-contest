@@ -4,7 +4,7 @@ html {
   }
 
 body {
-    background: url('/static/baseapp/img/purty-wood.jpg');
+    background: url('/static/baseapp/img/paper.jpg');
 }
 
 body > .container {
@@ -60,7 +60,8 @@ body > .container {
     max-width:100%;
     min-height:85vh;
     margin-bottom: 1em;
-    background: url('/static/baseapp/img/paper.jpg');
+    background-color: white;
+    xbackground: url('/static/baseapp/img/paper.jpg');
     box-shadow: 5px 5px 5px grey;
   }
 

@@ -188,7 +188,11 @@ class Crit(models.Model):
     reviewer = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True)
     content = tinymce_models.HTMLField(help_text='Please enter your comments here')
     score = models.IntegerField(choices=SCORE_CHOICES, default=UNSCORED)
-    final = models.BooleanField(blank = True, default=False)
+    final = models.BooleanField(
+        blank = True,
+        default=False,
+        help_text="Check this box if you are finished with your critique. Be warned! - once submitted with this box checked no further edits can be made."
+    )
     wordcount = models.PositiveIntegerField(default=1000, null=True)
 
     def __str__(self):

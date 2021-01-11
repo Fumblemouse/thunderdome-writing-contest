@@ -18,13 +18,7 @@
         <h4 class="h5">{{ contest.grouper }}</h3>
             <ul>
             {% for crit in contest.list %}
-                {% if crit.content is not "" and crit.score is not '0' %}
-                    <li><a href="{% url 'judgemode' crit.entry.id %}">{{ crit.entry.story.title }}</a></li>
-                {% elif crit.final is not True %}
-                    <li><a href="{% url 'judgemode' crit.entry.id crit.id %}">{{ crit.entry.story.title }}</a></li>
-                {% else %}
-                    Judged: {{ crit.entry.story.title }}
-                {% endif %}
+                    <li><a href="{% url 'judgemode' crit.id %}">{% if crit.final %}Judged:{% endif %} {{ crit.entry.story.title }}</a></li>
             {% endfor %}
             </ul>
     {% endfor %}
@@ -40,27 +34,29 @@
 {% if form %}
     {% if form.non_field_errors %}
         <div class="alert alert-danger">
-            <strong>There was a problem with your form - <a href="#form">See errors</a></strong>
+            <strong>There was a problem with your form - <a href="#form">Go to errors</a></strong>
         </div>
     {% else %}
         {% for field in form %}
             {% if field.errors %}
                 <div class="alert alert-danger">
-                    <strong>There was a problem with your form - <a href="#form">See errors</a></strong>
+                    <strong>There was a problem with your form - <a href="#form">Go to errors</a></strong>
                 </div>
             <!-- {% endif %}
         {% endfor %} <!-- -->
+
     {% endif %}
-
-    <h2>{{ entry.story.title}}</h2>
-    {{ entry.story.content | safe }}
+    <h2>{{ crit_context.story.title}}</h2>
+    {{ crit_context.story.content | safe }}
     <img src="{% static 'baseapp/img/flourish.png' %}" alt="logo" class="rounded mx-auto d-block" />
-    <form method = "post" id="form">
-            {% csrf_token %}
-            {% include 'baseapp/base-form.html' %}
-        <input type="submit" value="Submit" class='btn btn-primary'>
+    {% if not crit_context.final %}
+        <form method = "post" id="form">
+                {% csrf_token %}
+                {% include 'baseapp/base-form.html' %}
+            <input type="submit" value="Submit" class='btn btn-primary'>
 
-    </form>
+        </form>
+    {% endif %}
 {% else %}
     <p>Judgemode show you the stories you currently have to critique in the contests you have entered.</p>
     <ol>

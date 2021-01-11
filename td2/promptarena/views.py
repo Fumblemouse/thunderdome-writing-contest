@@ -12,10 +12,11 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.utils.html import strip_tags
+
 
 from baseapp.forms import StoryForm
 from baseapp.models import Story
+from baseapp.utils import HTML_wordcount
 
 from .forms import (PromptForm, CreateContestNewPromptForm, CreateContestOldPromptForm, EnterContestNewStoryForm, EnterCritForm,)
 from .models import Prompt, Contest, Crit, Entry
@@ -108,9 +109,7 @@ def enter_contest(request, contest_id,):
     story_form = StoryForm(request.POST or None)
     if request.method == "POST":
         if story_form.is_valid():
-            words_to_count = strip_tags(story_form.instance.content)
-            story_wordcount = len(re.findall(r'\S+', words_to_count))
-
+            story_wordcount = HTML_wordcount(story_form.instance.content)
             entry_form = EnterContestNewStoryForm(
                 request.POST,
                 contest_wordcount=contest_context.wordcount,
@@ -202,54 +201,25 @@ def view_full_prompt(request, prompt_id):
     return render(request, 'promptarena/view-full-prompt.html', context)
 
 @login_required
-def judgemode(request, entry_id = 0):
+def judgemode(request, crit_id = 0):
     """Judge the supplicants mercilessly"""
-    if entry_id:
-        entry = Entry.objects.get(pk = entry_id)
-    crit_form = EnterCritForm(request.POST or None)
+    crit = {}
+    if crit_id:
+        crit = Crit.objects.get(
+                pk = crit_id,
+        )
+    if crit:
+        crit_form = EnterCritForm(request.POST or None, instance = crit)
+    else:
+        crit_form = EnterCritForm(request.POST or None)
     if request.method == "POST":
         if crit_form.is_valid():
-
-            crit_form_uncommitted = crit_form.save(commit=False)
-            #crit_form_uncommitted.wordcount = crit_wordcount
-            crit_form_uncommitted.reviewer = request.user
-            entry = Entry.objects.get(
-                pk = entry_id
-            )
-            crit_form_uncommitted.contest = entry.contest
-            crit_form_uncommitted.story = entry.story
-            crit_form_uncommitted.save()
-            messages.success(request, 'You have successfully critted a contest entry')
-
-    crit_list = Crit.objects.filter(
-        reviewer = request.user,
-        entry__contest__status = 'JUDGEMENT'
-    )
-    context = {
-        'crit_list': crit_list
-    }
-    if entry_id:
-        context['entry'] = Entry.objects.get(pk = entry_id)
-        context['form'] = crit_form
-    return render(request, 'promptarena/judgemode.html', context)
-
-@login_required
-def judgemode_edit(request, entry_id=0, crit_id = 0):
-    """Judge the supplicants mercilessly"""
-    crit = get_object_or_404(Crit, pk = crit_id)
-    crit_form = EnterCritForm(request.POST or None, instance = crit)
-    if request.method == "POST":
-        if crit_form.is_valid():
-            words_to_count = strip_tags(crit_form.instance.content)
-            crit_wordcount = len(re.findall(r'\S+', words_to_count))
+            crit_wordcount = HTML_wordcount(crit_form.instance.content)
             crit_form_uncommitted = crit_form.save(commit=False)
             crit_form_uncommitted.wordcount = crit_wordcount
             crit_form_uncommitted.reviewer = request.user
-            entry = Entry.objects.get(
-                pk = entry_id
-            )
-            crit_form_uncommitted.contest = entry.contest
-            crit_form_uncommitted.story = entry.story
+            #crit_form_uncommitted.entry = crit.entry
+            #crit_form_uncommitted.story = crit.story
             crit_form_uncommitted.save()
             messages.success(request, 'You have successfully critted a contest entry')
 
@@ -260,10 +230,11 @@ def judgemode_edit(request, entry_id=0, crit_id = 0):
     context = {
         'crit_list': crit_list
     }
-    if entry_id:
-        context['entry'] = Entry.objects.get(pk = entry_id)
+    if crit:
         context['form'] = crit_form
+        context['crit_context'] = crit
     return render(request, 'promptarena/judgemode.html', context)
+
 
 
 
