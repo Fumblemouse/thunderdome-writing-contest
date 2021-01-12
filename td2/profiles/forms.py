@@ -36,7 +36,7 @@ class UserUpdateForm(BaseForm):
 class ProfileUpdateForm(BaseForm):
     """update profile model fields"""
     bio = forms.CharField(widget=forms.Textarea,required=False)
-    public_profile = forms.BooleanField(required=False)
+    public_profile = forms.BooleanField(required=False, help_text="Leave this unchecked to keep your work private from anyone except necessary contestants. <em>NB</em>: If checked, you will still  need to set public visibility on each story")
     class Meta:
         model = Profile
         fields = 'bio', 'public_profile'

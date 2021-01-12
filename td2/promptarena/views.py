@@ -39,8 +39,9 @@ def create_prompt(request):
         # save the form data to model
         form_uncommitted = form.save(commit=False)
         form_uncommitted.creator = request.user
-        form_uncommitted.save()
+        form_saved = form_uncommitted.save()
         messages.success(request, 'Your prompt was submitted successfully! Hopefully it doesn\'t suck.')
+        return redirect('view full prompt', prompt_id = prompt.pk)
     context['form'] = form
     return render(request, "promptarena/create-prompt.html", context)
 
@@ -63,7 +64,7 @@ def edit_prompt(request, prompt_id = 0):
         # redirect to a new URL:
         return redirect('view full prompt', prompt_id = prompt.pk)
 
-    return render(request, 'baseapp/create-prompt.html', {'form': form})
+    return render(request, 'promptarena/create-prompt.html', {'form': form})
 
 
 @login_required

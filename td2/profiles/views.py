@@ -31,6 +31,7 @@ def set_timezone(request):
     if request.user.is_authenticated:
         request.session['django_timezone'] = request.user.profile.timezone
         # Redirect to a success page.
+        messages.success(request, 'Welcome, ' + request.user.username + "!")
         return redirect(reverse('home'))
     else:
         messages.warning(request, 'You have failed to provide a valid username or password')

@@ -9,6 +9,7 @@ from django.contrib.auth import get_user_model
 from .forms import StoryForm
 from .models import Story
 from promptarena.models import Entry
+from baseapp.utils import check_story_permissions
 
 import logging
 logger = logging.getLogger(__name__)
@@ -46,6 +47,9 @@ def edit_story(request, story_id = 0):
     """update a magical story of myth and wonder"""
     # get the story to update
     story = get_object_or_404(Story, pk = story_id)
+    if not check_story_permissions(request, story.author):
+        messages.error(request, "Only the author can edit their own stories.")
+        return redirect('view stories')
     entries = Entry.objects.filter(story = story_id)
     for entry in entries:
         if entry.contest.status != 'UNOPENED' or 'CLOSED':
@@ -66,28 +70,47 @@ def edit_story(request, story_id = 0):
 
 def view_stories(request):
     """User retrieves a list of available stories"""
-    stories_context = Story.objects.filter(
-        public_view_allowed = True
-    )
+    if not request.user.is_staff():
+        stories_context = Story.objects.filter(
+            public_view_allowed = True,
+            author__profile__public_profile = True,
+        )
+    else:
+        stories_context = Story.objects.all()
+
 
     return render(request, 'baseapp/view-stories.html', {'stories_context': stories_context})
 
 def view_stories_by_author(request, username):
     """User retrieves a list of available stories"""
     author = get_object_or_404(get_user_model(), username=username)
-    stories_context = Story.objects.filter(
-        public_view_allowed = True,
-        author = author,
-    )
+    if not request.user.is_staff():
+        stories_context = Story.objects.filter(
+            public_view_allowed = True,
+            author = author,
+            author__profile__public_profile = True
+        )
+    else:
+        stories_context = Story.objects.filter(
+            author = author,
+        )
+
     author_context = author
     return render(request, 'baseapp/view-stories.html', {'stories_context': stories_context, 'author_context': author_context})
 
 def view_story_by_id(request, story_id = 0):
     """User views a story"""
     story_context = get_object_or_404(Story, pk=story_id)
+    if not check_story_permissions(request, story_context.author) and not request.user.is_staff():
+        messages.error(request, "This story has been locked by the author.")
+        return redirect('view stories')
+
     return render(request, 'baseapp/view-story.html', {'story_context': story_context})
 
 def view_story_by_slug(request, slug = ''):
     """User views a story"""
     story_context = get_object_or_404(Story, slug=slug)
+    if not check_story_permissions(request, story_context.author) and not request.user.is_staff():
+        messages.error(request, "This story has been locked by the author.")
+        return redirect('view stories')
     return render(request, 'baseapp/view-story.html', {'story_context': story_context})
