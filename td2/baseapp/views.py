@@ -70,7 +70,7 @@ def edit_story(request, story_id = 0):
 
 def view_stories(request):
     """User retrieves a list of available stories"""
-    if not request.user.is_staff():
+    if not request.user.is_staff:
         stories_context = Story.objects.filter(
             public_view_allowed = True,
             author__profile__public_profile = True,
@@ -84,7 +84,7 @@ def view_stories(request):
 def view_stories_by_author(request, username):
     """User retrieves a list of available stories"""
     author = get_object_or_404(get_user_model(), username=username)
-    if not request.user.is_staff():
+    if not request.user.is_staff:
         stories_context = Story.objects.filter(
             public_view_allowed = True,
             author = author,
@@ -101,7 +101,7 @@ def view_stories_by_author(request, username):
 def view_story_by_id(request, story_id = 0):
     """User views a story"""
     story_context = get_object_or_404(Story, pk=story_id)
-    if not check_story_permissions(request, story_context.author) and not request.user.is_staff():
+    if not check_story_permissions(request, story_context.author) and not request.user.is_staff:
         messages.error(request, "This story has been locked by the author.")
         return redirect('view stories')
 
@@ -110,7 +110,7 @@ def view_story_by_id(request, story_id = 0):
 def view_story_by_slug(request, slug = ''):
     """User views a story"""
     story_context = get_object_or_404(Story, slug=slug)
-    if not check_story_permissions(request, story_context.author) and not request.user.is_staff():
+    if not check_story_permissions(request, story_context.author) and not request.user.is_staff:
         messages.error(request, "This story has been locked by the author.")
         return redirect('view stories')
     return render(request, 'baseapp/view-story.html', {'story_context': story_context})

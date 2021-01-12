@@ -17,10 +17,10 @@ def HTML_wordcount(string):
     return wordcount
 
 def check_story_permissions(request, author, story=0):
-    if author == request.user or request.user.is_staff():
+    if author == request.user or request.user.is_staff:
         result = True
     else:
-        result =  author.public_profile
+        result =  author.profile.public_profile
         if story:
             result = result and story.public_view_allowed
     return result
