@@ -7,20 +7,30 @@
     {% endblock %}
 {% block header %}Judgemode{% endblock header %}
 
-{% block sidebar %}
-    <h3 class="h4">Stories to judge</h2>
+{% block aside %}
+
+
+    <h3 class="h5">Stories to judge</h2>
 
 {% if crit_list %}
 
     {% regroup crit_list by entry.contest as crit_list_regrouped %}
 
     {% for contest in crit_list_regrouped %}
-        <h4 class="h5">{{ contest.grouper }}</h3>
-            <ul>
-            {% for crit in contest.list %}
-                    <li><a href="{% url 'judgemode' crit.id %}">{% if crit.final %}Judged:{% endif %} {{ crit.entry.story.title }}</a></li>
-            {% endfor %}
-            </ul>
+        <nav aria-labelledby="{{ contest.grouper }}" class="list-group">
+        <h4 class="h6" id={{ contest.grouper }}>{{ contest.grouper }}</h4>
+        {% for crit in contest.list %}
+                <a class="nav-link list-group-item list-group-item-action
+                {% if crit.final %}
+                    list-group-item-secondary
+                {% else %}
+                    list-group-item-primary
+                {% endif %}" href="{% url 'judgemode' crit.id %}">
+                {% if crit.final %}
+                    <em>Judged</em>
+                {% endif %} {{ crit.entry.story.title }}</a>
+        {% endfor %}
+        </nav>
     {% endfor %}
 
 {% else %}
@@ -28,7 +38,7 @@
 {% endif %}
 
 
-{% endblock sidebar %}
+{% endblock aside %}
 
 {% block content %}
 {% if form %}
@@ -50,7 +60,7 @@
     {{ crit_context.story.content | safe }}
     <img src="{% static 'baseapp/img/flourish.png' %}" alt="logo" class="rounded mx-auto d-block" />
     {% if not crit_context.final %}
-        <form method = "post" id="form">
+        <form method = "post">
                 {% csrf_token %}
                 {% include 'baseapp/base-form.html' %}
             <input type="submit" value="Submit" class='btn btn-primary'>
@@ -60,9 +70,9 @@
 {% else %}
     <p>Judgemode show you the stories you currently have to critique in the contests you have entered.</p>
     <ol>
-        <li>Choose a story from the list on the left</li>
+        <li>Choose a story from the list on the right (or at the bottom if you're on a phone)</li>
         <li>Read it and think about it</li>
-        <li>Provide a critique of at least 100 words. This isn't a hugfest - nobody will improve if you're not honest.
+        <li>Provide a critique of at least 100 words. Be real, nobody will improve if you're not honest.
             If you can't be kind, at least be funny. If you can't be constructive, think about it some more and try again.</li>
         <li>Provide an overall ranking. For contestant judged contests, there will usually be three stories to judge.
             Score them relative to each other, and the world. If you think one is head and shoulders over the others,

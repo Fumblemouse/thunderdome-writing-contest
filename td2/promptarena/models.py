@@ -193,7 +193,7 @@ class Crit(models.Model):
         default=False,
         help_text="Check this box if you are finished with your critique. Be warned! - once submitted with this box checked no further edits can be made."
     )
-    wordcount = models.PositiveIntegerField(default=1000, null=True)
+    wordcount = models.PositiveIntegerField(default=100, null=True)
 
     def __str__(self):
         if self.reviewer and self.entry:

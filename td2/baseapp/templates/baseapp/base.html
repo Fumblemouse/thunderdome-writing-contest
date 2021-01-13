@@ -29,20 +29,20 @@
                         </a>
                     </div>
                     <div class="col-md-8"  >
-                    {% for message in messages %}
-                    <div class="alert {{ message.tags }} alert-dismissible" role="alert">
-                    <!--button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button -->
-                    {{ message }}
-                    </div>
-                {% endfor %}
-                    </div>
+
                     <!-- <div class="col-md-2"  >
                     </div>-->
             </div>
             </header>
-            <div class="row g-0" id="page-content">
+            <div class="row" id="page-content">
+                         {% for message in messages %}
+                            <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+                            <!--button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button -->
+                            {{ message }}
+                            </div>
+                        {% endfor %}
 
                 <div class="col-md-2 ">
 
@@ -80,17 +80,20 @@
 
                 <aside class="col-md-2">
 
-                    {% block aside %}
                         {% if user.is_authenticated %}
                             <p>Hi {{ user.username }}!</p>
-                            <div class="btn-group-vertical">
-                                <a class="btn btn-primary" href="{% url 'profile' %}">A profile is you</a>
-                                <a  href="{% url 'logout' %}" class="btn btn-danger" >Exit pursued by a bear</a>
-                                </div>
-
                         {% endif %}
 
+
+                    {% block aside %}
+
                     {% endblock aside %}
+
+                    {% if user.is_authenticated %}
+                        <div class="btn-group-vertical">
+                            <a  href="{% url 'logout' %}" class="btn btn-danger" >Exit pursued by a bear</a>
+                        </div>
+                    {% endif %}
 
                 </aside>
                 <footer class="footer mt-auto py-3 container">

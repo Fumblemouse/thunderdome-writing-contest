@@ -215,19 +215,31 @@ def judgemode(request, crit_id = 0):
         crit_form = EnterCritForm(request.POST or None)
     if request.method == "POST":
         if crit_form.is_valid():
-            crit_wordcount = HTML_wordcount(crit_form.instance.content)
-            crit_form_uncommitted = crit_form.save(commit=False)
-            crit_form_uncommitted.wordcount = crit_wordcount
-            crit_form_uncommitted.reviewer = request.user
-            #crit_form_uncommitted.entry = crit.entry
-            #crit_form_uncommitted.story = crit.story
-            crit_form_uncommitted.save()
-            messages.success(request, 'You have successfully critted a contest entry')
+            #check that this rating has not been used before
+            used_scores = Crit.objects.filter(
+                entry__contest = crit.entry.contest,
+                reviewer = crit.reviewer,
+                score = crit.score,
+            ).exclude(
+                pk = crit.pk,
+            )
+            if used_scores:
+                messages.error(request, "You have already used that rank in this contest. Each rank given to an entry must be different.")
+            else:
+                #check wordcount not too little
+                crit_wordcount = HTML_wordcount(crit_form.instance.content)
+                crit_form_uncommitted = crit_form.save(commit=False)
+                crit_form_uncommitted.wordcount = crit_wordcount
+                crit_form_uncommitted.reviewer = request.user
+                #crit_form_uncommitted.entry = crit.entry
+                #crit_form_uncommitted.story = crit.story
+                crit_form_uncommitted.save()
+                messages.success(request, 'You have successfully critted a contest entry')
 
     crit_list = Crit.objects.filter(
         reviewer = request.user,
         entry__contest__status = 'JUDGEMENT'
-    )
+    ).order_by('final')
     context = {
         'crit_list': crit_list
     }

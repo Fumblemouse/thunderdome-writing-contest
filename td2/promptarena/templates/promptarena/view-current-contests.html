@@ -13,6 +13,7 @@
             <th>WordCount</th>
             <th>Action</th>
             <th>Status</th>
+            <th>Entries</th>
         </tr>
     {% for contest in current_contest_list.all %}
         <tr>
@@ -30,6 +31,9 @@
             </td>
             <td>
                     {{ contest.status }}
+            </td>
+            <td>
+                {{contest.entry_set.count}}
             </td>
         </tr>
     {% endfor %}

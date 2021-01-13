@@ -78,7 +78,6 @@ def view_stories(request):
     else:
         stories_context = Story.objects.all()
 
-
     return render(request, 'baseapp/view-stories.html', {'stories_context': stories_context})
 
 def view_stories_by_author(request, username):

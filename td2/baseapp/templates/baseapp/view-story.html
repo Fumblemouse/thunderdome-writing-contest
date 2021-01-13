@@ -11,7 +11,8 @@
 
 {% block content %}
 {% if story_context %}
-    {{ story_context.content | safe }}
+    <div>{{ story_context.content | safe }}</div>
+
 {% else %}
     <div class="warning">
         Something went horribly wrong - nothing to be found
@@ -19,4 +20,10 @@
 
 {% endif %}
 <img src = "{% static 'baseapp/img/flourish.png' %}" alt="Ending typographical flourish" class="rounded mx-auto d-block" />
+{% if story_context.author.profile.bio %}
+    <div id="bio">
+        <p>About the author:</p>
+        <blockquote>{{ story_context.author.profile.bio | safe }}</blockquote>
+    </div>
+{% endif %}
 {% endblock %}

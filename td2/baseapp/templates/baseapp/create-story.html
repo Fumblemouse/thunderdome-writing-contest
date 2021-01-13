@@ -15,10 +15,8 @@
 {% block content %}
 
 <form method = "post">
-    <table class="table">
         {% csrf_token %}
         {% include 'baseapp/base-form.html' %}
-    </table>
     <input type="submit" value="Submit" class='btn btn-primary'>
 
 </form>
