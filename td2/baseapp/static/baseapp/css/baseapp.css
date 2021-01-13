@@ -84,12 +84,21 @@ blockquote {
   }
 
 
-    #main-header {
-        position:relative;
-        padding: 0;
-        text-align:center;
-    }
-
+  #main-header {
+      position:relative;
+      padding: 0;
+      text-align:center;
+  }
+  #skiptocontent {
+    background-color: black;
+    min-width: 15ch;
+    float:left;
+    transition:height 3s;
+  }
+  #skiptocontent a {
+    color:white;
+    transition:height 3s;
+  }
 
 @media (max-width: 768px) {
     #main-header {

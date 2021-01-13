@@ -60,8 +60,10 @@
 {% endblock content %}
 
 {% block aside %}
-    <a class="btn btn-primary" href="{% url 'change settings' %}" >Edit Settings</a>
-    <a class="btn btn-warning" href="{% url 'password_change' %}">Change password</a>
+<nav aria-labelledby="profile-links" class="list-group">
+    <h2 id="profile-links" class="h5">Profile Links</h2>
+    <a class="nav-link list-group-item list-group-item-action list-group-item-secondary" href="{% url 'change settings' %}" >Edit Settings</a>
+    <a class="nav-link list-group-item list-group-item-action list-group-item-secondary" href="{% url 'password_change' %}">Change password</a>
 
 
 {% endblock aside %}

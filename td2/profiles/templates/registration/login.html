@@ -6,12 +6,14 @@
 <form method="post">
     {% csrf_token %}
     {% include 'baseapp/base-form.html' %}
-    <button type="submit" value="Login" class="btn btn-primary">Submit</button>
+    <input type="submit" value="Login" class="btn btn-primary" >
 </form>
 <p>
-    Oh, noes. I am all of a faddle. I need to...
-    <a class="btn btn-danger primary" href="{% url 'password_reset' %}">Reset Password</a>
-</p>
-
 
 {% endblock %}
+
+{% block aside %}
+<p>Oh, noes. I am all of a faddle. I need to...
+<a class="btn btn-danger primary" href="{% url 'password_reset' %}">Reset Password</a>
+</p>
+{% endblock %}>
