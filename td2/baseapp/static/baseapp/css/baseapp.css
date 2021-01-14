@@ -1,7 +1,3 @@
-html {
-
-  }
-
 body {
     background: url('/static/baseapp/img/paper.jpg');
     color:#222;
@@ -56,9 +52,7 @@ blockquote {
 .blockquote-footer {
     margin-top:0 !important;
 }
-.row {
 
- }
   #logo-cell {
       background-color:white;
       min-width: 300px;

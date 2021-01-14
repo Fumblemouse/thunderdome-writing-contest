@@ -1,7 +1,6 @@
 """range of utils to use across site"""
 import re
 from random import randrange
-from django.contrib.auth import get_user_model
 from django.utils.html import strip_tags
 
 def sattolo_cycle(items):
@@ -12,11 +11,15 @@ def sattolo_cycle(items):
     return items
 
 def HTML_wordcount(string):
+    """Strips HTML tags for the purposes of getting wordcoutns of fields"""
     words_to_count = strip_tags(string)
     wordcount = len(re.findall(r'\S+', words_to_count))
     return wordcount
 
 def check_story_permissions(request, author, story=0):
+    """checks if user is author or staff
+    failing that, checks to see if user has opened their work generally
+    the if story has been opened to the public"""
     if author == request.user or request.user.is_staff:
         result = True
     else:
