@@ -25,5 +25,15 @@
     <li>To see how easy it is these days to make something with relatively modern tools and make it as accessible and <a href="https://securityheaders.com/?q=fumblemouse.pythonanywhere.com&hide=on&followRedirects=on">secure</a> as possible </li>
     <li>To make me incredibly rich by stealing other people's ideas and monetising them, as is the fashion (stretch goal).</li>
 </ul>
+<h2 class="text-center">How does it work?</h2>
+<ol>
+<li>Someone creates a contest</li>
+<li>>While that contest is open, users can enter stories into it</li>
+<li>Currently there is no scheduling (because this site is on a free hosting account), so the contest can be closed by a button on the <a href="{% url 'view current contests' %}"> Current Contests </a> page</li>
+<li>All entrants are then assigned three stories to critique. Users can see stories they are in line to judge in <a href="{% url 'judgemode' %}"> Judgemode </a> </li>
+<li>User/Judges critiques aren't final until they have submitted with the 'Final' checkbox xhecked, so they can take notes as they read each sotry</li>
+<li>Once all the critiques are in (current state viewable in <a href="{% url 'view current contests' %}"> Current Contests </a>  another botton on that page closes the competition and shows the result.
+Again, this would normally be automated by I am incredibibly cheap.</li>
+</ol>
 <img src="{% static 'baseapp/img/flourish.png' %}" alt="logo" class="rounded mx-auto d-block" />
 {% endblock %}

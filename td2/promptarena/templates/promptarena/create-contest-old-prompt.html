@@ -1,6 +1,9 @@
 {% extends "baseapp/base.html" %}
 {% block headtag %}
+{% load static %}
     {{ form.media }}
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 {% endblock %}
 {% block header %}Create Contest{% endblock %}
 
@@ -15,5 +18,5 @@
     <input type="submit" value="Submit" class='btn btn-primary'>
 
 </form>
-
+<script src="{% static 'baseapp/js/flatpickr.js' %}"></script>
 {% endblock %}

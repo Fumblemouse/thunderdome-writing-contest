@@ -134,7 +134,7 @@ def profile(request):
             'Last name' : request.user.last_name,
             'Bio': request.user.profile.bio,
             'Time zone' : request.user.profile.timezone,
-            'Show profile and work publically?' : request.user.profile.public_profile
+            'Show work publically?' : request.user.profile.public_profile
         }
     }
 

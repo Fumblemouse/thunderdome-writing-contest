@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 
 from .forms import StoryForm
 from .models import Story
-from promptarena.models import Entry
+from promptarena.models import Entry, Crit
 from baseapp.utils import check_story_permissions
 
 import logging
@@ -108,8 +108,12 @@ def view_story_by_id(request, story_id = 0):
 
 def view_story_by_slug(request, slug = ''):
     """User views a story"""
-    story_context = get_object_or_404(Story, slug=slug)
-    if not check_story_permissions(request, story_context.author) and not request.user.is_staff:
+    context = {}
+    context['story_context'] = get_object_or_404(Story, slug=slug)
+    if not check_story_permissions(request, context['story_context'].author):
         messages.error(request, "This story has been locked by the author.")
         return redirect('view stories')
-    return render(request, 'baseapp/view-story.html', {'story_context': story_context})
+    context['crit_context'] = Crit.objects.filter (
+        story = context['story_context']
+    )
+    return render(request, 'baseapp/view-story.html', context)

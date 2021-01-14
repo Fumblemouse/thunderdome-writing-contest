@@ -150,6 +150,8 @@ class Contest(models.Model):
         self.status = 'CLOSED'
         self.save()
 
+    def get_final_crits(self):
+        return Crit.objects.filter(entry__contest = self, final = True)
 
 class Entry(models.Model):
     """Links stories and contests"""
@@ -165,6 +167,8 @@ class Entry(models.Model):
 
     class Meta:
         verbose_name_plural = "entries"
+
+
 
 
 class Crit(models.Model):
@@ -199,3 +203,4 @@ class Crit(models.Model):
         if self.reviewer and self.entry:
             return str(self.entry.contest.prompt.title) + " : " + str(self.reviewer.username) + " reviews " + str(self.story.author.username) # pylint: disable=E1101
         return "ALERT - somehow this crit did not get set a title"
+

@@ -18,7 +18,7 @@
        </tr>
         {% for key, value in fields_context.items %}
          <tr>
-             <th scope="row">{{ key }}</th><td>{{value}}</td>
+             <th scope="row">{{ key }}</th><td>{% if key == 'Bio' %}{{ value|safe }}{% else %}{{ value }}{% endif %}</td>
         </tr>
 
     {% endfor %}

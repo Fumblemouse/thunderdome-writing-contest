@@ -185,6 +185,8 @@ def view_current_contests(request):
     }
     return render(request, 'promptarena/view-current-contests.html', context)
 
+
+
 def view_prompts(request):
     """view all prompts in a list"""
     prompts_context = Prompt.objects.all

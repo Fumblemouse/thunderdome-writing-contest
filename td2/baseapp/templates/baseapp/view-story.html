@@ -10,20 +10,27 @@
 {% endblock %}
 
 {% block content %}
-{% if story_context %}
-    <div>{{ story_context.content | safe }}</div>
+    {% if story_context %}
+        <div>{{ story_context.content | safe }}</div>
 
-{% else %}
-    <div class="warning">
-        Something went horribly wrong - nothing to be found
-    </div>
+    {% else %}
+        <div class="warning">
+            Something went horribly wrong - nothing to be found
+        </div>
 
-{% endif %}
-<img src = "{% static 'baseapp/img/flourish.png' %}" alt="Ending typographical flourish" class="rounded mx-auto d-block" />
-{% if story_context.author.profile.bio %}
-    <div id="bio">
-        <p>About the author:</p>
-        <blockquote>{{ story_context.author.profile.bio | safe }}</blockquote>
-    </div>
-{% endif %}
+    {% endif %}
+    <img src = "{% static 'baseapp/img/flourish.png' %}" alt="Ending typographical flourish" class="rounded mx-auto d-block" />
+    {% if story_context.author.profile.bio %}
+        <div id="bio">
+            <p>About the author:</p>
+            <blockquote>{{ story_context.author.profile.bio | safe }}</blockquote>
+        </div>
+    {% endif %}
+    <h3>Critiques</h3>
+    {% for crit in story_context.crit_set.all %}
+        {% if crit.content %}
+            <div>{{ crit.content | safe }}</div>
+            <div class="text-end">--{{ crit.reviewer }}</div>
+        {% endif %}
+    {% endfor %}
 {% endblock %}

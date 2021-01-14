@@ -66,7 +66,7 @@ class EnterCritForm(BaseForm):
         model = Crit
         fields = ('content', 'score', 'final')
         labels = {
-            'content': _('Critique'),
+           # 'content': _('Critique'),
         }
 
     #def __init__(self, *args, **kwargs):

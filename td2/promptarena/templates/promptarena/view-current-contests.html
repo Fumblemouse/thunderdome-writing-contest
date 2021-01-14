@@ -36,6 +36,16 @@
                 {{contest.entry_set.count}}
             </td>
         </tr>
+        <tr>
+            <td></td><td></td> <td>(For testing purposes only)</td><td>Entrant</td><td>Finished Critiques</td><td></td>
+        </tr>
+            {% regroup contest.get_final_crits by reviewer as crit_list %}
+            {% for crit in crit_list %}
+        <tr>
+            <td></td><td></td> <td></td><td>{{ crit.grouper }}</td><td>{{crit.list|length}}</td>
+        </tr>
+            {% endfor %}
+
     {% endfor %}
     </table>
 

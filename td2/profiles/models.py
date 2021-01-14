@@ -11,7 +11,7 @@ class Profile(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         primary_key=True,)
-    bio = tinymce_models.HTMLField()
+    bio = tinymce_models.HTMLField(blank=True, )
     public_profile = models.BooleanField(
         default=False,
         help_text='Leave this unchecked to keep your work private from anyone except necessary contestants.'
