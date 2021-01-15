@@ -15,7 +15,8 @@ class Profile(models.Model):
     public_profile = models.BooleanField(
         default=False,
         help_text='Leave this unchecked to keep your work private from anyone except necessary contestants.'
-        '<em>NB:</em> If checked, you will still  need to set public visibility on each story'
+        '<em>NB:</em> If checked, you will still  need to set public visibility on each story',
+        verbose_name='Public?',
     )
     timezone = models.CharField(default="Pacific/Auckland", max_length=100)
 
