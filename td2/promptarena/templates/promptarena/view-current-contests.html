@@ -1,6 +1,6 @@
 {% extends "baseapp/base.html" %}
-
-{% block header %}Current Contests{% endblock %}
+{% block title %}ThunderDome: View Contests{% endblock %}
+{% block header %}Contests{% endblock %}
 
 {% block content %}
 
@@ -36,15 +36,17 @@
                 {{contest.entry_set.count}}
             </td>
         </tr>
-        <tr>
-            <td></td><td></td> <td>(For testing purposes only)</td><td>Entrant</td><td>Finished Critiques</td><td></td>
-        </tr>
-            {% regroup contest.get_final_crits by reviewer as crit_list %}
-            {% for crit in crit_list %}
-        <tr>
-            <td></td><td></td> <td></td><td>{{ crit.grouper }}</td><td>{{crit.list|length}}</td>
-        </tr>
-            {% endfor %}
+        {% if contest.status == 'JUDGEMENT' %}
+            <tr>
+                <td></td><td></td> <td>(For testing purposes only)</td><td>Entrant</td><td>Finished Critiques</td><td></td>
+            </tr>
+                {% regroup contest.get_final_crits by reviewer as crit_list %}
+                {% for crit in crit_list %}
+            <tr>
+                <td></td><td></td> <td></td><td>{{ crit.grouper }}</td><td>{{crit.list|length}}</td>
+            </tr>
+                {% endfor %}
+        {% endif %}
 
     {% endfor %}
     </table>

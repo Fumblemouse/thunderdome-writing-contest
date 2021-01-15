@@ -41,7 +41,7 @@ class Prompt(models.Model):
         slug = self.slug
         if not self.id or slug == 'no-prompt-slug' or slug=='':
             self.slug = slugify(self.title)
-        super(Prompt, self).save()
+        return super(Prompt, self).save()
 
 class Contest(models.Model):
     """Contest- Actual Competition"""
@@ -77,7 +77,7 @@ class Contest(models.Model):
         slug = self.slug
         if not self.id or slug.startswith('no-contest-') or slug=='':
             self.slug = "contest-" + slugify(self.prompt.title)
-        super(Contest, self).save()
+        return super(Contest, self).save()
 
     def close(self):
         """assign stories to judges"""

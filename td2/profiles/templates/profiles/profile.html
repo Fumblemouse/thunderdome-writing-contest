@@ -1,5 +1,5 @@
 {% extends "baseapp/base.html" %}
-
+{% block title %}ThunderDome: Profile{% endblock %}
 {% block header %}
     Profile: {{request.user.username}}
 {% endblock header %}
@@ -62,8 +62,8 @@
 {% block aside %}
 <nav aria-labelledby="profile-links" class="list-group">
     <h2 id="profile-links" class="h5">Profile Links</h2>
-    <a class="nav-link list-group-item list-group-item-action list-group-item-secondary" href="{% url 'change settings' %}" >Edit Settings</a>
+    <a class="nav-link list-group-item list-group-item-action list-group-item-secondary" href="{% url 'change settings' %}" >Edit Profile</a>
     <a class="nav-link list-group-item list-group-item-action list-group-item-secondary" href="{% url 'password_change' %}">Change password</a>
-
+</nav>
 
 {% endblock aside %}

@@ -156,3 +156,6 @@ def p_logout(request):
     logout(request)
     messages.success(request, 'You have managed to logout. Byeeee!')
     return redirect(reverse('home'))
+
+
+

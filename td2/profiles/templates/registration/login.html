@@ -1,19 +1,26 @@
-{% extends 'baseapp/base.html' %}
+{% extends "baseapp/base.html" %}
+{% block title %}ThunderDome: Login {% endblock %}
+{% block headtag %}
+    {{ form.media }}
+{% endblock %}
+
+{% block header %}
+    Login
+{% endblock %}
+
 
 {% block content %}
-<h2>Login</h2>
 
+{% if user.is_authenticated %}
+<p>You are already logged in, doofus!</p>
+
+{% else %}
 <form method="post">
     {% csrf_token %}
     {% include 'baseapp/base-form.html' %}
     <input type="submit" value="Login" class="btn btn-primary" >
 </form>
-<p>
 
+{% endif %}
 {% endblock %}
 
-{% block aside %}
-<p>Oh, noes. I am all of a faddle. I need to...
-<a class="btn btn-danger primary" href="{% url 'password_reset' %}">Reset Password</a>
-</p>
-{% endblock %}>

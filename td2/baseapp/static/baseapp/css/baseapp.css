@@ -1,14 +1,19 @@
 body {
     background: url('/static/baseapp/img/paper.jpg');
-    color:#222;
+
 }
 
 body > .container {
     margin-top: .5em;
+         line-height: 150%;
 }
 
   h1,h2,h3,h4,h5,h6 {
     font-family: "Marko One", serif;
+    color:#222;
+    margin:2.5rem 0 1rem 0 !important;
+    text-align:center;
+
   }
 
   nav.list-group {
@@ -31,6 +36,7 @@ body > .container {
 
   table {
     width:100%;
+    margin-bottom:3rem !important;
   }
 
   label, input {
@@ -42,6 +48,8 @@ body > .container {
 
     max-width:65ch;
     margin:auto;
+    color:#222;
+
   }
 
 blockquote {
@@ -51,6 +59,10 @@ blockquote {
 }
 .blockquote-footer {
     margin-top:0 !important;
+}
+
+.form-control {
+    border-color: #777 !important;
 }
 
   #logo-cell {
@@ -74,14 +86,11 @@ blockquote {
       text-align:center;
   }
   #skiptocontent {
-    background-color: black;
     min-width: 15ch;
     float:left;
-    transition:height 3s;
   }
   #skiptocontent a {
-    color:white;
-    transition:height 3s;
+    color:#000 !important;
   }
 
 @media (max-width: 768px) {

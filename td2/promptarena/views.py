@@ -39,9 +39,9 @@ def create_prompt(request):
         # save the form data to model
         form_uncommitted = form.save(commit=False)
         form_uncommitted.creator = request.user
-        form_saved = form_uncommitted.save()
+        form_uncommitted.save()
         messages.success(request, 'Your prompt was submitted successfully! Hopefully it doesn\'t suck.')
-        return redirect('view full prompt', prompt_id = prompt.pk)
+        return redirect('view full prompt', prompt_id = form_uncommitted.pk)
     context['form'] = form
     return render(request, "promptarena/create-prompt.html", context)
 
@@ -49,7 +49,7 @@ def create_prompt(request):
 def edit_prompt(request, prompt_id = 0):
     """update a prompt"""
     # get the story to update
-    prompt = get_object_or_404(Story, pk = prompt_id)
+    prompt = get_object_or_404(Prompt, pk = prompt_id)
     contests = Contest.objects.filter(prompt = prompt_id)
     for contest in contests:
         if contest.status != 'UNOPENED' or 'CLOSED':

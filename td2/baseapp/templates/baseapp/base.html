@@ -2,10 +2,12 @@
 <html lang="en">
     <head>
         {% load static %}
-        <meta name="robots" content="noimageindex, nofollow, nosnippet">
+
+        <meta name="robots" content="noindex, nofollow">
+
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
-        <title>{% block title %}ThunderDome{% endblock %}</title>
+        <title>{% block title %}ThunderDome Word Battle {% endblock %}</title>
 
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="shortcut icon" href="{% static 'baseapp/img/favicon/favicon.ico' %}" type="image/x-icon"/>
@@ -19,43 +21,39 @@
         {% block headtag %}{% endblock %}
     </head>
     <body>
-        <div id="skiptocontent" ><a class="visually-hidden-focusable" href="#maincontent">skip to main content</a></div>
         <div class="container">
             <header>
+                <div id="skiptocontent">
+                    <a class="visually-hidden-focusable nav-link list-group-item list-group-item-action list-group-item-primary" href="#main-content">skip to main content</a>
+                </div>
                 <div class="row">
                     <div class="col-md-4 list-group" id="logo-cell">
                         <a href = "{% url 'home' %}" >
-                            <img class='mx-auto d-block' id="logo-image" src ="{% static 'baseapp/img/tdx.jpg' %}" alt="Thunderdome Logo in marko one font" />
+                            <img class='mx-auto d-block' id="logo-image" height="48" width="300" src ="{% static 'baseapp/img/tdx.jpg' %}" alt="Thunderdome Logo in metal mania font" />
                         </a>
                     </div>
                     <div class="col-md-8"  >
 
                     <!-- <div class="col-md-2"  >
                     </div>-->
-            </div>
+                    </div>
+                </div>
+
             </header>
             <div id="page-content" class="row">
-                            {% for message in messages %}
-                <div class="alert {{ message.tags }} alert-dismissible" role="alert">
-                <!--button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button -->
-                {{ message }}
-                </div>
-            {% endfor %}
+
                 <!-- <div class="row"> -->
-                    <div class="col-md-2 order-1">
+                    <div class="col-md-2">
 
                         {% block sidebar %}
                             <nav aria-labelledby="things-to-see-nav" class="list-group">
                                 <h2 id="things-to-see-nav" class="h5">Things to see</h2>
-                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="/">Home</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'view stories' %}">Stories</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'view current contests' %}">Current contests</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'view prompts' %}">List of prompts</a>
                             </nav>
                             <nav aria-labelledby="things-to-do-nav" class="list-group">
-                                <h2 id="things-to-do-nav"class = 'h5'>Things to do</h2>
+                                <h2 id="things-to-do-nav" class = 'h5'>Things to do</h2>
                                 {% if user.is_authenticated %}
                                         <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create prompt' %}">Create Prompt</a>
                                         <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create story' %}">Create Story</a>
@@ -69,7 +67,23 @@
                             </nav>
                         {% endblock %}
                     </div>
-                    <aside class="col-md-2 order-3">
+                    <main class="col-md-8">
+                        <div id="main-content">
+                            {% for message in messages %}
+                                <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+                                <!--button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button -->
+
+                            {{ message }}
+                            </div>
+                            {% endfor %}
+                            <h1 id="main-header">{% block header %}Home{% endblock %}</h1>
+                            {% block content %}
+                            {% endblock content %}
+                        </div>
+                    </main>
+                    <nav class="col-md-2">
 
                         {% if user.is_authenticated %}
                             <p>Hi {{ user.username }}!</p>
@@ -86,14 +100,8 @@
                             </div>
                         {% endif %}
 
-                    </aside>
-                    <main class="col-md-8 order-2">
-                        <div id="main-content">
-                            <h1 id="main-header">{% block header %}Home{% endblock %}</h1>
-                            {% block content %}
-                            {% endblock content %}
-                        </div>
-                    </main>
+                    </nav>
+
 
                 <!-- </div> -->
                 <footer class="footer mt-auto py-3 col order-4">

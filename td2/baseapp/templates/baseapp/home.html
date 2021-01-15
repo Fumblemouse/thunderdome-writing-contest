@@ -1,4 +1,5 @@
 {% extends "baseapp/base.html" %}
+{% block title %}ThunderDome: Home page{% endblock %}
 {% load static %}
 {% block header %}
     Welcome to the ThunderDome
@@ -15,28 +16,36 @@
   </figcaption>
 </figure>
 <h2 class="text-center">WTF?</h2>
-<p>This is site is currently under development.  This means it is not safe for people or their furpals/lizardkin/insectbros 
+<p>This is site is currently under development.  This means it is not safe for people or their furpals/lizardkin/insectbros
   and probably wont work <em>AT ALL!</em>. No data is safe, do not use real things. </p>
 <p>It is being developed for the following purposes:</p>
 <ul>
     <li>To teach me django, python, bootstrap etc</li>
     <li>To test out some ideas I had about whether or not the <a href ="https://forums.somethingawful.com/showthread.php?threadid=3953574">Thunderdome</a> concept,
-    currently running on the <a href="forums.somethingawful.com">Something Awful forums</a>, could be replicated/automated on another platform in the event something happened to those forums
+    currently running on the <a href="http://forums.somethingawful.com">Something Awful forums</a>, could be replicated/automated on another platform in the event something happened to those forums
     (this is, admittedly, less of a risk currently than it used to be, but who knows what the future holds?).</li>
     <li>To see how easy it is these days to make something with relatively modern tools and make it as accessible and <a href="https://securityheaders.com/?q=fumblemouse.pythonanywhere.com&hide=on&followRedirects=on">secure</a> as possible </li>
     <li>To make me incredibly rich by stealing other people's ideas and monetising them (stretch goal).</li>
 </ul>
 <h2 class="text-center">How does it work?</h2>
+<p>You can just <a href="{% url 'create story' %}">create a story </a>. Stories are private by default,  but you can make it public!
+To do this you have to check the 'public profile' box in your <a href="{% url 'change settings' %}"> Profile Settings</a> and also on the story itself.
+Not sure if the first button  is overkill, but it allows people to withdraw all their stories at once by unchecking it, which seems useful.
+</p>
+<p>You can also enter contests. Currently you have to do this via the Enter Contest button on the <a href="{% url 'view current contests' %}"> Current Contests </a> page, using a new story.
+At this point I think using an existing story is problematic, as people might have read it before judging and know the author's identity.</p>
+<h3>Contest Process</h3>
 <ol>
 <li>Someone creates a contest</li>
 <li>While that contest is open, users can enter stories into it</li>
-<li>Currently there is no scheduling (because this site is on a free hosting account), so the contest can be closed by a button on the <a href="{% url 'view current contests' %}"> Current Contests </a> page</li>
+<li>Currently there is no scheduling (because this site is on a free hosting account), so the contest can be closed by a button on the
+<a href="{% url 'view current contests' %}"> Current Contests </a> page. Do this once there are more than three entrants because...</li>
 <li>All entrants are then assigned three stories to critique. Users can see stories they are in line to judge in <a href="{% url 'judgemode' %}"> Judgemode </a> </li>
-<li>User/Judges critiques aren't final until they have submitted with the 'Final' checkbox checked, 
+<li>User/Judges critiques aren't final until they have submitted with the 'Final' checkbox checked,
   so they can take notes as they read each story</li>
-<li>Once all the critiques are in (current state viewable in <a href="{% url 'view current contests' %}"> Current Contests </a> 
+<li>Once all the critiques are in (current state viewable in <a href="{% url 'view current contests' %}"> Current Contests </a>
   another button on that page closes the competition and shows the result.
 Again, this would normally be automated but I am <em>incredibibly cheap</em>.</li>
 </ol>
-<img src="{% static 'baseapp/img/flourish.png' %}" alt="logo" class="rounded mx-auto d-block" />
+<img src="{% static 'baseapp/img/flourish.png' %}" alt="lovely flourish" class="rounded mx-auto d-block" height="225" width="300"  />
 {% endblock %}

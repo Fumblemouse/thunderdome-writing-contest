@@ -1,4 +1,5 @@
 {% extends "baseapp/base.html" %}
+{% block title %}ThunderDome: View story {% endblock %}
 {% load static %}
 {% block headtag %}
 
@@ -26,7 +27,7 @@
             <blockquote>{{ story_context.author.profile.bio | safe }}</blockquote>
         </div>
     {% endif %}
-    <h3>Critiques</h3>
+    <h2>Critiques</h2>
     {% for crit in story_context.crit_set.all %}
         {% if crit.content %}
             <div>{{ crit.content | safe }}</div>
