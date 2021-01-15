@@ -1,0 +1,26 @@
+{% extends "baseapp/base.html" %}
+{% block title %}ThunderDome: Activate {% endblock %}
+{% block headtag %}
+    {{ form.media }}
+{% endblock %}
+
+{% block header %}
+    Activate Account
+{% endblock %}
+
+
+{% block content %}
+
+{% if user.is_authenticated %}
+    <p>You are already logged in, doofus!</p>
+
+{% else %}
+    <p>Click the button to activate your account!</p>
+    <form method="post">
+        {% csrf_token %}
+        {% include 'baseapp/base-form.html' %}
+        <input type="submit" value="Activate Account" class="btn btn-primary" >
+    </form>
+
+{% endif %}
+{% endblock %}
