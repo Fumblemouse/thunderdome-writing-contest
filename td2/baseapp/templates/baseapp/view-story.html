@@ -27,11 +27,22 @@
             <blockquote>{{ story_context.author.profile.bio | safe }}</blockquote>
         </div>
     {% endif %}
-    <h2>Critiques</h2>
-    {% for crit in story_context.crit_set.all %}
-        {% if crit.content %}
-            <div>{{ crit.content | safe }}</div>
-            <div class="text-end">--{{ crit.reviewer }}</div>
-        {% endif %}
-    {% endfor %}
+    {% if story_context.crit_set.all %}
+        {% for crit in story_context.crit_set.all %}
+            {% if crit.content %}
+                <div>{{ crit.content | safe }}</div>
+                <div class="text-end">--{{ crit.reviewer }}</div>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        No critiques exist for this story
+    {% endif %}
 {% endblock %}
+{% block aside %}
+        {% if request.user == story_context.author %}
+            <nav aria-labelledby="edit-link" class="list-group">
+                <h2 id="end-links" class="h5">Edit Links</h2>
+                <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'edit story' story_context.id %}">Edit</a> 
+            </nav>
+        {% endif %}
+{% endblock %}        
