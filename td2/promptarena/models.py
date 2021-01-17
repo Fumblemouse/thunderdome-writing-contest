@@ -30,7 +30,7 @@ class Prompt(models.Model):
     )
     title = models.CharField(max_length=200, unique= True)
     content =  tinymce_models.HTMLField()
-    creation_date = models.DateTimeField( 'date created', auto_now_add=True)
+    creation_date = models.DateTimeField(auto_now_add=True)
     slug = AutoSlugField(max_length=200, unique=True)
 
     def __str__(self):
@@ -62,6 +62,7 @@ class Contest(models.Model):
     wordcount = models.PositiveIntegerField(default=1000)
     entrant_num = models.PositiveSmallIntegerField(default = 0)
     slug = AutoSlugField(max_length=200, default='no-contest-slug', unique=True)
+    creation_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         if self.prompt:
@@ -77,6 +78,8 @@ class Contest(models.Model):
         slug = self.slug
         if not self.id or slug.startswith('no-contest-') or slug=='':
             self.slug = "contest-" + slugify(self.prompt.title)
+        if self.is_active() and self.status != 'JUDGEMENT' and self.status != 'CLOSED':
+            self.status = 'OPEN'
         return super(Contest, self).save()
 
     def close(self):
@@ -143,15 +146,16 @@ class Contest(models.Model):
         #Create a result record for each item in the sorted array
         for count, result in enumerate(results_order):
             entry = Entry.objects.get(pk = result[0].pk)
-            entry.contest.entrant_num = len(results)
             entry.position = count + 1
             entry.score = sum(result[1])
             entry.save()
+        self.entrant_num = len(results)
         self.status = 'CLOSED'
         self.save()
 
     def get_final_crits(self):
-        return Crit.objects.filter(entry__contest = self, final = True)
+        """returns finished crits for a given contest"""
+        return Crit.objects.filter(entry__contest = self, final = True).order_by('reviewer')
 
 class Entry(models.Model):
     """Links stories and contests"""
@@ -159,6 +163,7 @@ class Entry(models.Model):
     contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
     position = models.PositiveSmallIntegerField(default=0)
     score = models.PositiveSmallIntegerField(default=0)
+    creation_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         if self.story and self.contest:
@@ -198,9 +203,9 @@ class Crit(models.Model):
         help_text="Check this box if you are finished with your critique. Be warned! - once submitted with this box checked no further edits can be made."
     )
     wordcount = models.PositiveIntegerField(default=100, null=True)
+    creation_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         if self.reviewer and self.entry:
             return str(self.entry.contest.prompt.title) + " : " + str(self.reviewer.username) + " reviews " + str(self.story.author.username) # pylint: disable=E1101
         return "ALERT - somehow this crit did not get set a title"
-

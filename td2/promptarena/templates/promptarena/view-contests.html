@@ -42,9 +42,9 @@
             </tr>
                 {% regroup contest.get_final_crits by reviewer as crit_list %}
                 {% for crit in crit_list %}
-            <tr>
-                <td></td><td></td> <td></td><td>{{ crit.grouper }}</td><td>{{crit.list|length}}</td>
-            </tr>
+                    <tr>
+                        <td></td><td></td> <td></td><td>{{ crit.grouper }}</td><td>{{crit.list|length}}</td>
+                    </tr>
                 {% endfor %}
         {% endif %}
 
@@ -53,6 +53,36 @@
 
 {% else %}
     <p>No Contests are currently active.</p>
+{% endif %}
+{% if old_contest_list %}
+<h2>Closed Contests</h2>
+<table class="table table-divided">
+    <tr>
+        <th>Prompt</th>
+        <th>Close date</th>
+        <th>WordCount</th>
+        <th>Action</th>
+        <th>Status</th>
+        <th>Entries</th>
+    </tr>
+    {% for contest in old_contest_list.all %}   
+        <tr>
+            <td><a href="{% url 'view full contest' contest.id %}">{{ contest.prompt.title }}</a></td>
+            <td>{{ contest.expiry_date }}</td>
+            <td>{{ contest.wordcount }}</td>
+            <td>
+                <a href="{% url 'view judgement contest' contest.id %}" class="btn btn-primary">View Results</a>
+            </td>
+            <td>
+                    {{ contest.status }}
+            </td>
+            <td>
+                {{contest.entry_set.count}}
+            </td>
+        </tr>
+
+    {% endfor %}
+    </table>
 {% endif %}
 
 {% endblock %}

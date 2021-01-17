@@ -32,18 +32,18 @@
 To do this you have to check the 'public profile' box in your <a href="{% url 'change settings' %}"> Profile Settings</a> and also on the story itself.
 Not sure if the first button  is overkill, but it allows people to withdraw all their stories at once by unchecking it, which seems useful.
 </p>
-<p>You can also enter contests. Currently you have to do this via the Enter Contest button on the <a href="{% url 'view current contests' %}"> Current Contests </a> page, using a new story.
+<p>You can also enter contests. Currently you have to do this via the Enter Contest button on the <a href="{% url 'view contests' %}"> Current Contests </a> page, using a new story.
 At this point I think using an existing story is problematic, as people might have read it before judging and know the author's identity.</p>
 <h3>Contest Process</h3>
 <ol>
 <li>Someone creates a contest</li>
 <li>While that contest is open, users can enter stories into it</li>
 <li>Currently there is no scheduling (because this site is on a free hosting account), so the contest can be closed by a button on the
-<a href="{% url 'view current contests' %}"> Current Contests </a> page. Do this once there are more than three entrants because...</li>
+<a href="{% url 'view contests' %}"> Current Contests </a> page. Do this once there are more than three entrants because...</li>
 <li>All entrants are then assigned three stories to critique. Users can see stories they are in line to judge in <a href="{% url 'judgemode' %}"> Judgemode </a> </li>
 <li>User/Judges critiques aren't final until they have submitted with the 'Final' checkbox checked,
   so they can take notes as they read each story</li>
-<li>Once all the critiques are in (current state viewable in <a href="{% url 'view current contests' %}"> Current Contests </a>
+<li>Once all the critiques are in (current state viewable in <a href="{% url 'view contests' %}"> Current Contests </a>
   another button on that page closes the competition and shows the result.
 Again, this would normally be automated but I am <em>incredibibly cheap</em>.</li>
 </ol>

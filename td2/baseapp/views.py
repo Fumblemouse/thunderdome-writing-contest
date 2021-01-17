@@ -43,7 +43,7 @@ def create_story(request):
     return render(request, 'baseapp/create-story.html', {'form': form})
 
 @login_required
-def edit_story(request, story_id = 0):
+def edit_story(request, author_slug = "", story_slug = ""):
     """update a magical story of myth and wonder"""
     # get the story to update
     story = get_object_or_404(Story, pk = story_id)
@@ -80,9 +80,9 @@ def view_stories(request):
 
     return render(request, 'baseapp/view-stories.html', {'stories_context': stories_context})
 
-def view_stories_by_author(request, username):
+def view_stories_by_author(request, author_slug =""):
     """User retrieves a list of available stories"""
-    author = get_object_or_404(get_user_model(), username=username)
+    author = get_object_or_404(get_user_model(), profile__slug=author_slug)
     if not request.user.is_staff:
         stories_context = Story.objects.filter(
             public_view_allowed = True,
@@ -106,10 +106,10 @@ def view_story_by_id(request, story_id = 0):
 
     return render(request, 'baseapp/view-story.html', {'story_context': story_context})
 
-def view_story_by_slug(request, slug = ''):
+def view_story_by_slug(request, author_slug="", story_slug = ""):
     """User views a story"""
     context = {}
-    context['story_context'] = get_object_or_404(Story, slug=slug)
+    context['story_context'] = get_object_or_404(Story, author__profile__slug =author_slug, slug = story_slug)
     if not check_story_permissions(request, context['story_context'].author):
         messages.error(request, "This story has been locked by the author.")
         return redirect('view stories')

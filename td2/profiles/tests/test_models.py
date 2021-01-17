@@ -9,12 +9,18 @@ class ProfileCreationTest(TestCase):
     def setUp(self):
         """set up user using usermodel"""
         #create the user and login
-        user = get_user_model()
-        self.user = user.objects.create_user(username='djangotestuser', password='12345')
-        
         #creating user creates profile because of save signals
-    
+        self.usermodel = get_user_model()
+        self.user = self.usermodel.objects.create_user(username='DjangoTestUser', password='12345')
+        self.profile = self.usermodel.objects.get(username = self.user.username).profile 
     def test_profile(self):
         """test that signal works to create associated profile"""
-        user = get_user_model()                                                                                    
-        profile = user.objects.get(username = self.user.username).profile
+        self.assertTrue(self.profile)
+    def test_profile_string_representation(self):
+        """test object name function works"""
+        self.profile = self.usermodel.objects.get(username = self.user.username).profile
+        self.assertEqual(str(self.profile), self.user.username)
+    def test_profile_slug(self):
+        """test profile slug is created on save"""
+        self.profile.save()
+        self.assertEqual(self.profile.slug, "djangotestuser")

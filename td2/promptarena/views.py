@@ -1,5 +1,4 @@
 """List of views"""
-import re
 # import the logging library
 import logging
 
@@ -15,7 +14,6 @@ from django.contrib import messages
 
 
 from baseapp.forms import StoryForm
-from baseapp.models import Story
 from baseapp.utils import HTML_wordcount
 
 from .forms import (PromptForm, CreateContestNewPromptForm, CreateContestOldPromptForm, EnterContestNewStoryForm, EnterCritForm,)
@@ -140,7 +138,7 @@ def enter_contest(request, contest_id,):
         )
     if contest_context.status != 'OPEN':
         messages.error(request, 'This contest is not currently open for new entries.')
-        return render(request, 'promptarena/view-current-contests.html', {})
+        return render(request, 'promptarena/view-contests.html', {})
 
 
     return render(request, 'promptarena/enter-contest.html', {
@@ -174,16 +172,23 @@ def view_full_contest(request, contest_id):
 
 
 
-def view_current_contests(request):
+def view_contests(request):
     """User views available contests"""
     current_contest_list = Contest.objects.filter (
         expiry_date__gte = timezone.now()
+    ).exclude(
+        status = 'CLOSED'
+    )
+
+    old_contest_list = Contest.objects.filter (
+         status = 'CLOSED'
     )
 
     context = {
         'current_contest_list': current_contest_list,
+        'old_contest_list': old_contest_list,
     }
-    return render(request, 'promptarena/view-current-contests.html', context)
+    return render(request, 'promptarena/view-contests.html', context)
 
 
 
@@ -233,15 +238,13 @@ def judgemode(request, crit_id = 0):
                 crit_form_uncommitted = crit_form.save(commit=False)
                 crit_form_uncommitted.wordcount = crit_wordcount
                 crit_form_uncommitted.reviewer = request.user
-                #crit_form_uncommitted.entry = crit.entry
-                #crit_form_uncommitted.story = crit.story
                 crit_form_uncommitted.save()
                 messages.success(request, 'You have successfully critted a contest entry')
 
     crit_list = Crit.objects.filter(
         reviewer = request.user,
         entry__contest__status = 'JUDGEMENT'
-    ).order_by('final')
+        ).order_by('final')
     context = {
         'crit_list': crit_list
     }
@@ -265,7 +268,7 @@ def judge_contest(request, contest_id = 0):
         return render(request, 'promptarena/view-full-contest.html', context)
     contest_context.judge()
     messages.success(request, 'You have successfully judged the contest')
-    context['entry_context'] = Entry.objects.filter(contest=contest_id)
+    context['entry_context'] = Entry.objects.filter(contest=contest_id).order_by('position')
     return render(request, 'promptarena/view-judgement-contest.html', context)
 
 def view_judgement_contest(request, contest_id = 0):
@@ -274,5 +277,5 @@ def view_judgement_contest(request, contest_id = 0):
     context = {
         'contest_context' : contest_context,
     }
-    context['results_context'] = Entry.objects.filter(contest=contest_id)
+    context['entry_context'] = Entry.objects.filter(contest=contest_id).order_by('position')
     return render(request, 'promptarena/view-judgement-contest.html', context)

@@ -20,10 +20,10 @@ class Story(models.Model):
     )
     title = models.CharField(max_length=255)
     content =  tinymce_models.HTMLField()
-    creation_date = models.DateTimeField('date created', auto_now_add=True,)
+    creation_date = models.DateTimeField(auto_now_add=True,)
     modified_date = models.DateTimeField(auto_now=True)
     public_view_allowed = models.BooleanField(verbose_name='Display to non-logged in users?')
-    slug = AutoSlugField(max_length=40, default='no-story-slug', unique=True)
+    slug = AutoSlugField(max_length=40, unique=True)
     wordcount = models.PositiveSmallIntegerField()
     #tags = models.JSONField(blank=True, null=True)
     #public_scores = models.JSONField(blank=True, null=True)
@@ -33,7 +33,7 @@ class Story(models.Model):
         """Additional field input"""
         #provides a story slug is one is missed
         slug = self.slug
-        if not self.id or slug == 'no-story-slug' or slug=='':
+        if not self.id or slug != slugify(self.title):
             self.slug = slugify(self.title)
 
         #Add wordcount
@@ -49,3 +49,6 @@ class Story(models.Model):
         return self.title
     class Meta:
         verbose_name_plural = "stories"
+        constraints = [
+            models.UniqueConstraint(fields=['title', 'author'], name='unique_titles_for_authors')
+        ]

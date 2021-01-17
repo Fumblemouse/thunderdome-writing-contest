@@ -11,6 +11,7 @@
             <th>UserName</th>
             <th>Position</th>
             <th>Total Score</th>
+            <th>Link</th>
 
         </tr>
     {% for entry in entry_context.all %}
@@ -18,6 +19,7 @@
             <td>{{ entry.story.author.username }}</a></td>
             <td>{{ entry.position }}</td>
             <td>{{ entry.score }}</td>
+            <td><a href="{% url 'view story by slug' entry.story.author.profile.slug entry.story.slug %}">{{ entry.story.title }}</a></td>
         </tr>
     {% endfor %}
     </table>

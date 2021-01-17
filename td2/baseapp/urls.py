@@ -8,12 +8,14 @@ urlpatterns = [
     path('', home, name='home'),
     path('create-story', create_story, name='create story'),
     path('<int:story_id>/edit-story', edit_story, name='edit story'),
-    path('<int:story_id>/view-story', view_story_by_id, name='view story by id'),
-    path('<slug:slug>/view-story', view_story_by_slug, name='view story by slug'),
+    #path('<int:story_id>/view-story', view_story_by_id, name='view story by id'),
+    #path('<slug:slug>/view-story', view_story_by_slug, name='view story by slug'),
+    path('<slug:author_slug>/view-stories', view_stories_by_author, name='view stories by author'),
+    path('<slug:author_slug>/<slug:story_slug>', view_story_by_slug, name='view story by slug'),
 
 
     path('view-stories', view_stories, name='view stories'),
-    path('<str:username>/view-stories', view_stories_by_author, name='view stories by author'),
+
     path('favicon.ico',
         RedirectView.as_view(
             url=staticfiles_storage.url('favicon.ico'),

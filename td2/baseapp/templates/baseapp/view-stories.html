@@ -20,8 +20,8 @@
         </thead>
         {% for story in stories_context %}
         <tr>
-            <td><a href="{% url 'view story by slug' story.slug %}">{{ story.title }}</a></td>
-            <td><a href="{% url 'view stories by author' story.author.username %}">{{ story.author }}</a></td>
+            <td><a href="{% url 'view story by slug' story.author.profile.slug story.slug %}">{{ story.title }}</a></td>
+            <td><a href="{% url 'view stories by author' story.author.profile.slug %}">{{ story.author }}</a></td>
         </tr>
         {% endfor  %}
     </table>
