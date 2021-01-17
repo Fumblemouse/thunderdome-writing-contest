@@ -52,7 +52,7 @@ def edit_prompt(request, prompt_id = 0):
     for contest in contests:
         if contest.status != 'UNOPENED' or 'CLOSED':
             messages.error(request, "Your prompt is currently being used in a contest.  It cannot be edited at this time.")
-            return redirect('view prompt', prompt_id = prompt_id)
+            return redirect('view full prompt', prompt_id = prompt_id)
     # create a form instance and populate it with data from the request or the :
     form = PromptForm(request.POST or None, instance = prompt)
     # check whether it's valid:
