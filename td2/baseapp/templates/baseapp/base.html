@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         {% load static %}
-
+        <script src="{static 'baseapp/js/gtm-head.js'}"></script>
         <meta name="robots" content="noindex, nofollow">
 
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -64,11 +64,11 @@
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'login' %}" >Login</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'sign up' %}">Sign Up</a>
                                 {% endif %}
-                            </nav> 
+                            </nav>
                             {% endblock %}
-                        
- 
-                        
+
+
+
                     </div>
                     <main class="col-md-8">
                         <div id="main-content">
@@ -95,8 +95,8 @@
                         <nav aria-labelledby="things-to-not-do-nav" class="list-group">
                             <h2 id="things-to-not-do-nav" class = 'h5'>Things to not do</h2>
                             <a  class="nav-link list-group-item list-group-item-action list-group-item-danger"href="{% url 'logout' %}" class="btn btn-danger" >Exit pursued by a bear</a>
-                        </nav>    
-                        {% endif %}   
+                        </nav>
+                        {% endif %}
 
                         {% block aside %}
 
