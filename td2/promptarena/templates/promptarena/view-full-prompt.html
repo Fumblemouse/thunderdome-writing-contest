@@ -5,8 +5,8 @@
 {% block content %}
 
 {% if prompt_context %}
-        <h2>{{ prompt_context.title }}</h2>
-        <p>{{ prompt_context.content | safe }}</p>
+    <h2>{{ prompt_context.title }}</h2>
+    <p>{{ prompt_context.content | safe }}</p>
 
 {% else %}
     <p>No Prompts are currently active.</p>

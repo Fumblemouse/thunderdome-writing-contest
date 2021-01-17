@@ -55,17 +55,20 @@
                             <nav aria-labelledby="things-to-do-nav" class="list-group">
                                 <h2 id="things-to-do-nav" class = 'h5'>Things to do</h2>
                                 {% if user.is_authenticated %}
-                                        <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create prompt' %}">Create Prompt</a>
-                                        <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create story' %}">Create Story</a>
-                                        <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create contest' %}">Create Contest</a>
-                                        <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'judgemode' %}">Judge Mode</a>
-                                        <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'profile' %}">Your Profile</a>
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create prompt' %}">Create Prompt</a>
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create story' %}">Create Story</a>
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create contest' %}">Create Contest</a>
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'judgemode' %}">Judge Mode</a>
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'profile' %}">Your Profile</a>
                                 {% else %}
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'login' %}" >Login</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'sign up' %}">Sign Up</a>
                                 {% endif %}
-                            </nav>
-                        {% endblock %}
+                            </nav> 
+                            {% endblock %}
+                        
+ 
+                        
                     </div>
                     <main class="col-md-8">
                         <div id="main-content">
@@ -88,17 +91,17 @@
                         {% if user.is_authenticated %}
                             <p>Hi {{ user.username }}!</p>
                         {% endif %}
-
+                        {% if user.is_authenticated %}
+                        <nav aria-labelledby="things-to-not-do-nav" class="list-group">
+                            <h2 id="things-to-not-do-nav" class = 'h5'>Things to not do</h2>
+                            <a  class="nav-link list-group-item list-group-item-action list-group-item-danger"href="{% url 'logout' %}" class="btn btn-danger" >Exit pursued by a bear</a>
+                        </nav>    
+                        {% endif %}   
 
                         {% block aside %}
 
                         {% endblock aside %}
 
-                        {% if user.is_authenticated %}
-                            <div class="btn-group-vertical">
-                                <a  href="{% url 'logout' %}" class="btn btn-danger" >Exit pursued by a bear</a>
-                            </div>
-                        {% endif %}
 
                     </nav>
 
@@ -108,6 +111,7 @@
                     <div class="col">
                         Copyright Fumblemouse 2020
                     </div>
+
                 </footer>
 
             </div>

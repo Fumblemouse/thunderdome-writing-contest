@@ -11,7 +11,7 @@ urlpatterns = [
     #path('<int:story_id>/view-story', view_story_by_id, name='view story by id'),
     #path('<slug:slug>/view-story', view_story_by_slug, name='view story by slug'),
     path('<slug:author_slug>/view-stories', view_stories_by_author, name='view stories by author'),
-    path('<slug:author_slug>/<slug:story_slug>', view_story_by_slug, name='view story by slug'),
+    path('<slug:author_slug>/<slug:story_slug>/read', view_story_by_slug, name='view story by slug'),
 
 
     path('view-stories', view_stories, name='view stories'),

@@ -200,7 +200,7 @@ def view_prompts(request):
     }
     return render(request, 'promptarena/view-prompts.html', context)
 
-def view_full_prompt(request, prompt_id):
+def view_full_prompt(request, prompt_id=""):
     """User views specific prompt and metadata"""
     prompt_context = get_object_or_404(Prompt, pk=prompt_id)
     context = {
