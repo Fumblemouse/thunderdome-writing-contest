@@ -43,7 +43,7 @@ def create_story(request):
     return render(request, 'baseapp/create-story.html', {'form': form})
 
 @login_required
-def edit_story(request, author_slug = "", story_slug = ""):
+def edit_story(request, story_id=""):
     """update a magical story of myth and wonder"""
     # get the story to update
     story = get_object_or_404(Story, pk = story_id)
@@ -64,7 +64,7 @@ def edit_story(request, author_slug = "", story_slug = ""):
         form.save()
         messages.success(request, 'Your story was updated successfully! Hopefully it doesn\'t suck.')
         # redirect to a new URL:
-        return redirect('view story by id', story_id = story.pk)
+        return redirect('view story by slug', author_slug = story.author.profile.slug, story_slug = story.slug)
 
     return render(request, 'baseapp/create-story.html', {'form': form})
 
