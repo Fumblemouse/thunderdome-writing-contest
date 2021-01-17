@@ -58,7 +58,7 @@ class Contest(models.Model):
     prompt = models.ForeignKey(Prompt, on_delete=models.SET_NULL, null=True) #Null = true to make on_delete work
     start_date = models.DateTimeField('Start Date')
     expiry_date = models.DateTimeField('Submit by Date')
-    status= models.CharField(choices=CONTEST_STATES, default='Unopened', max_length=9)
+    status= models.CharField(choices=CONTEST_STATES, default='UNOPENED', max_length=9)
     wordcount = models.PositiveIntegerField(default=1000)
     entrant_num = models.PositiveSmallIntegerField(default = 0)
     slug = AutoSlugField(max_length=200, default='no-contest-slug', unique=True)
@@ -81,6 +81,10 @@ class Contest(models.Model):
         if self.is_active() and self.status != 'JUDGEMENT' and self.status != 'CLOSED':
             self.status = 'OPEN'
         return super(Contest, self).save()
+
+    def open(self):
+        self.status = 'OPEN'
+        self.save()
 
     def close(self):
         """assign stories to judges"""

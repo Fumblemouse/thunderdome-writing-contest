@@ -162,6 +162,20 @@ def close_contest(request, contest_id):
     messages.success(request, 'You have successfully closed the contest')
     return render(request, 'promptarena/view-full-contest.html', context)
 
+@login_required
+def open_contest(request, contest_id):
+    """User closes specific contest """
+    contest_context = get_object_or_404(Contest, pk=contest_id)
+    context = {
+        'contest_context' : contest_context,
+    }
+    if contest_context.status == 'OPEN':
+        messages.error(request, "It's already open")
+        return render(request, 'promptarena/view-full-contest.html', context)
+    contest_context.open()
+    messages.success(request, 'You have successfully opened the contest')
+    return render(request, 'promptarena/view-full-contest.html', context)
+
 def view_full_contest(request, contest_id):
     """User views specific prompt and metadata"""
     contest_context = get_object_or_404(Contest, pk=contest_id)

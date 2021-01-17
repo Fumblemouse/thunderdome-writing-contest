@@ -11,6 +11,7 @@ urlpatterns = [
     #view things
     path('<int:contest_id>/view-full-contest', views.view_full_contest, name='view full contest'),
     path('<int:contest_id>/close-contest', views.close_contest, name='close contest'),
+    path('<int:contest_id>/open-contest', views.open_contest, name='open contest'),
     path('view-contests', views.view_contests, name='view contests'),
     path('view-prompts', views.view_prompts, name='view prompts'),
     path('<int:prompt_id>/view-full-prompt', views.view_full_prompt, name='view full prompt'),

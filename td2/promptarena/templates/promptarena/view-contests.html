@@ -20,10 +20,12 @@
             <td><a href="{% url 'view full contest' contest.id %}">{{ contest.prompt.title }}</a></td>
             <td>{{ contest.expiry_date }}</td>
             <td>{{ contest.wordcount }}</td>
-            <td>
+            <td>{% if contest.status == 'UNOPENED' %}
+                <a href="{% url 'open contest' contest.id %}" class="btn btn-warning">Open Contest</a>
+                {% endif %}
                 {% if contest.status == 'OPEN' %}
                     <a href="{% url 'enter contest' contest.id %}" class="btn btn-primary">Enter</a>
-                    <a href="{% url 'close contest' contest.id %}" class="btn btn-warning">Close contest</a></td>
+                    <a href="{% url 'close contest' contest.id %}" class="btn btn-warning">Close Entries</a></td>
                 {% endif %}
                 {% if contest.status == 'JUDGEMENT' %}
                     <a href="{% url 'judge contest' contest.id %}" class="btn btn-primary">Judge</a>
