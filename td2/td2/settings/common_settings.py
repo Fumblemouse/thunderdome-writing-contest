@@ -172,7 +172,7 @@ CSP_STYLE_SRC = (
 CSP_IMG_SRC =("'self'", 'data:')
 #TODO remove unsafe inline
 CSP_SCRIPT_SRC = ("'self'", 'https://cdn.jsdelivr.net', 'https://www.googletagmanager.com')
-
+CSP_CONNECT_SRC = ('https://www.google-analytics.com/')
 CSP_FONT_SRC = "https://fonts.gstatic.com"
 
 #Feature Policy
