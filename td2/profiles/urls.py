@@ -16,7 +16,7 @@ urlpatterns = [
     path('login/',
         views.LoginView.as_view(
             template_name="registration/login.html",
-            authentication_form=UserLoginForm
+            authentication_form=UserLoginForm,
             ),
         name='login'
     ),

@@ -83,6 +83,7 @@ class Contest(models.Model):
         return super(Contest, self).save()
 
     def open(self):
+        """Sets status to open"""
         self.status = 'OPEN'
         self.save()
 

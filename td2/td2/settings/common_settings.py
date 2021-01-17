@@ -204,5 +204,3 @@ PERMISSIONS_POLICY = {
 #    'web-share' : [],
 #    'xr-spatial-tracking2' : [],
     }
-
-
