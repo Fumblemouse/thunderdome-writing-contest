@@ -4,6 +4,8 @@
 
 {% block content %}
 
+<p><em>NB:</em>Yellow buttons are there to physically change contest states - 
+    they would normally be done by scheduled timers.</p>
 
 {% if current_contest_list %}
     <table class="table table-divided">
@@ -28,7 +30,7 @@
                     <a href="{% url 'close contest' contest.id %}" class="btn btn-warning">Close Entries</a></td>
                 {% endif %}
                 {% if contest.status == 'JUDGEMENT' %}
-                    <a href="{% url 'judge contest' contest.id %}" class="btn btn-primary">Judge</a>
+                    <a href="{% url 'judge contest' contest.id %}" class="btn btn-warning">Close Judging</a>
                 {% endif %}
             </td>
             <td>
