@@ -31,10 +31,11 @@ class Story(models.Model):
     #def save(self, *args, **kwargs):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         """Additional field input"""
-        #provides a story slug is one is missed
+        #provides a slug is one is missed
         slug = self.slug
-        if not self.id or slug != slugify(self.title):
-            self.slug = slugify(self.title)
+        slugified = slugify(self.title)
+        if not self.id or slug != slugified:
+            self.slug = slugified
 
         #Add wordcount
         content = self.content

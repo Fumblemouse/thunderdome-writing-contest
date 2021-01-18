@@ -1,4 +1,4 @@
-"""Test models for users and profiles"""
+"""Test models for Stories"""
 from django.test import TestCase
 from baseapp.models import Story
 
@@ -19,7 +19,7 @@ class StoryModelTest(TestCase):
         self.story.public_view_allowed = False
         self.story.title = "my changed title"
         self.story.save()
-        self.assertTrue(self.story.slug == "my-changed-title")   
+        self.assertTrue(self.story.slug == "my-changed-title")
     def test_story_wordcount(self):
         self.story.public_view_allowed = False
         self.story.content = "1 2 3 4 5 6 7 8 9 10"

@@ -39,8 +39,9 @@ class Prompt(models.Model):
     #def save(self, *args, **kwargs):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         slug = self.slug
-        if not self.id or slug == 'no-prompt-slug' or slug=='':
-            self.slug = slugify(self.title)
+        slugified = slugify(self.title)
+        if not self.id or slug != slugified:
+            self.slug = slugified
         return super(Prompt, self).save()
 
 class Contest(models.Model):
@@ -75,9 +76,11 @@ class Contest(models.Model):
 
     #def save(self, *args, **kwargs):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        #provides a slug is one is missed
         slug = self.slug
-        if not self.id or slug.startswith('no-contest-') or slug=='':
-            self.slug = "contest-" + slugify(self.prompt.title)
+        slugified = slugify(self.prompt.title)
+        if not self.id or slug != slugified:
+            self.slug = slugified
         if self.is_active() and self.status != 'JUDGEMENT' and self.status != 'CLOSED':
             self.status = 'OPEN'
         return super(Contest, self).save()
