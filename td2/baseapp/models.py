@@ -42,7 +42,7 @@ class Story(models.Model):
         words_to_count = strip_tags(content)
         wordcount = len(re.findall(r'\w+', words_to_count))
         self.wordcount = wordcount
-        super(Story, self).save()
+        return super(Story, self).save()
 
 
     def __str__(self):

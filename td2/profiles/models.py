@@ -30,8 +30,9 @@ class Profile(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         slug = self.slug
-        if not self.pk or slug=='':
-            self.slug = slugify(self.user.username)
+        slugified = slugify(self.user.username)
+        if not self.pk or slug != slugified:
+            self.slug = slugified
         return super(Profile, self).save()
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

@@ -1,29 +1,54 @@
-"""Test framework for users and profiles"""
+"""Test framework for users and profile views"""
 from django.test import TestCase
 from django.urls import reverse
 # Create your tests here.
 from django.contrib.auth import get_user_model
 from profiles.models import Profile
+from baseapp.tests.test_utils import login_testuser, set_up_story_private, set_up_story_public
 
-class TestProfileView(TestCase):
+class TestProfileViewsAccess(TestCase):
     def setUp(self):
         """set up user using usermodel"""
         #create the user and login
-        user = get_user_model()
-        self.user = user.objects.create_user(username='djangotestuser', password='12345')
+        User = get_user_model()
+        self.user = User.objects.create_user(username='djangotestuser', password='12345abcde')
+        self.user.profile.timezone = "Africa/Abidjan"
+        self.user.save()
 
-    def test_settings_form(self):
-        #Use the view to create a profile
-        self.client.login(username='djangotestuser', password='12345')
-        #get the newly created profile and add to it via the form
-        self.profile = Profile.objects.get(user = self.user.pk)
-        response = self.client.post(
-            reverse('change settings'),
-            {'bio': 'born', 'public_profile': False, 'timezone': 'Pacific/Auckland'}
-        )
-        #TODO - check 301 in mySQL 302 in sqlLite3
-        self.assertEqual(response.status_code, 301)
-        #self.profile.refresh_from_db()
-        #self.assertEqual(self.profile.bio, 'born')
-        #self.assertEqual(self.profile.public_profile, False)
-        #self.assertEqual(self.profile.timezone, 'Pacific/Auckland')
+    def test_set_timezone_user_not_logged_in(self):
+        response = self.client.get(reverse('set timezone'))
+        self.assertRedirects(response, reverse('login'))
+
+    def test_set_timezone_user_logged_in(self):
+        login_testuser(self, self.user)
+        response = self.client.get(reverse('set timezone'))
+        self.assertRedirects(response, reverse('home'))
+
+    def test_signup_user_logged_in(self):
+        login_testuser(self, self.user)
+        response = self.client.get(reverse('sign up'))
+        self.assertRedirects(response, reverse('profile'))
+
+    def test_signup_user_logged_in(self):
+        response = self.client.get(reverse('sign up'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'registration/sign-up.html')
+
+    def test_settings_user_not_logged_in(self):
+        response = self.client.get(reverse('change settings'))
+        self.assertRedirects(response, '/accounts/login/?next=/settings/')
+
+    def test_settings_user_logged_in(self):
+        login_testuser(self, self.user)
+        response = self.client.get(reverse('change settings'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'profiles/settings.html')
+
+        def test_profile_user_logged_in(self):
+        login_testuser(self, self.user)
+        response = self.client.get(reverse('profile'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'profiles/profile.html')
+
+
+

@@ -36,7 +36,7 @@ def set_timezone(request):
         return redirect(reverse('home'))
     else:
         messages.warning(request, 'You have failed to provide a valid username or password')
-    return render(request, 'registration/login.html', {})
+    return redirect(reverse('login'))
 
 
 def sign_up(request):
@@ -159,4 +159,3 @@ def p_logout(request):
     logout(request)
     messages.success(request, 'You have managed to logout. Byeeee!')
     return redirect(reverse('home'))
-    

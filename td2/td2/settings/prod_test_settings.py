@@ -1,7 +1,10 @@
 """Settings for production environment"""
 import os
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+TEMPLATE_DEBUG = False
+DEBUG_LOGGING = False
+PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher']
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -21,7 +24,7 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 #SECURE_HSTS_PRELOAD = True
 
 ## that requests over HTTP are redirected to HTTPS. aslo can config in webserver
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = False
 
 # for more security
 CSRF_COOKIE_SECURE = True

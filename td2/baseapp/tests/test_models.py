@@ -25,3 +25,8 @@ class StoryModelTest(TestCase):
         self.story.content = "1 2 3 4 5 6 7 8 9 10"
         self.story.save()
         self.assertTrue(self.story.wordcount == 10)
+    def test_story_save_returns_objects(self):
+        self.story.public_view_allowed = False
+        self.story.content = "1 2 3 4 5 6 7 8 9 10"
+        self.returned_story = self.story.save()
+        self.assertTrue(self.story.id == 1)

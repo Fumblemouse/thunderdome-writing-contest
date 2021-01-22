@@ -1,48 +1,268 @@
 """Test framework for users and profiles"""
 from django.test import TestCase
 from django.urls import reverse
+from django.contrib.auth import get_user_model
 
 from baseapp.models import Story
+from baseapp.tests.test_utils import login_testuser, set_up_story_private, set_up_story_public
 # Create your tests here.
-#things to check
-#1. users can only get to create and edit stories if they are logged in
-#2. users cannot view stories  if author has account as not viewable
-#3. users cannot view stories  if author has story  as not viewable
 
-"""class Story_Views_Test(SetUp_Class):
 
-    def setUp(self):
-        set up user using usermodel
-        #create the user and login
-        user = get_user_model()
-        self.user = user.objects.create_user(username='djangotestuser1', password='12345')
-        Story.objects.create(title = "test story 1", author = self.user, content = "test story 1 content")
+class BaseAppViewTest(TestCase):
+    """test views are available (login happens where needed)"""
+    @classmethod
+    def setUpTestData(cls):
+        User = get_user_model()
+        cls.user = User.objects.create_user(username='djangotestuser1', password='12345abcde')
+        cls.user.save()
+        cls.story = Story(title="My Story", content="This is a story all about how...", author = cls.user, public_view_allowed = False)
+        cls.story.save()
 
-    def test_edit_story_view_no_login(self):
-        response = self.client.get.reverse("/")
-        self.assertEqual(response.status_code, 302)
-
-    def test_home_view_no_login(self):
-        user_login = self.client.login(email="user@mp.com", password="user")
-        self.assertTrue(user_login)
-        response = self.client.get("/")
-        self.assertEqual(response.status_code, 302)        
-
-    def test_add_user_view(self):
-        response = self.client.get("include url for add user view")
+    def test_home_view_exists(self):
+        response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "include template name to render the response")
+        self.assertTemplateUsed(response, 'baseapp/home.html')
 
-    # Invalid Data
-    def test_add_user_invalidform_view(self):
-        response = self.client.post("include url to post the data given", {'email': "admin@mp.com", 'password': "", 'first_name': "mp", 'phone': 12345678})
-        self.assertTrue('"error": true' in response.content)
-
-    # Valid Data
-    def test_add_admin_form_view(self):
-        user_count = User.objects.count()
-        response = self.client.post("include url to post the data given", {'email': "user@mp.com", 'password': "user", 'first_name': "user"})
+    def test_create_story_view_exists(self):
+        login_testuser(self, 'djangotestuser1')
+        response = self.client.get(reverse('create story'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(User.objects.count(), user_count+1)
-        self.assertTrue('"error": false' in response.content)
-        """
+        self.assertTemplateUsed(response, 'baseapp/create-story.html')
+
+    def test_edit_story_view_exists(self):
+        login_testuser(self, 'djangotestuser1')
+        response = self.client.get(reverse('edit story' , kwargs = {"story_id": self.story.pk}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'baseapp/create-story.html')
+
+    def test_view_story_by_slug_view_exists(self):
+        login_testuser(self, 'djangotestuser1')
+        response = self.client.get(reverse('view story by slug', kwargs = {"author_slug":self.story.author.profile.slug, "story_slug":self.story.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'baseapp/view-story.html')
+
+    def test_view_story_by_id_exists(self):
+        login_testuser(self, 'djangotestuser1')
+        response = self.client.get(reverse('view story by id', kwargs = {"story_id":self.story.pk}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'baseapp/view-story.html')
+
+    def test_view_stories_view_exists(self):
+        response = self.client.get(reverse('view stories'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'baseapp/view-stories.html')
+
+    def test_view_stories_by_author_view_exists(self):
+        response = self.client.get(reverse('view stories by author', kwargs = {"author_slug":self.story.author.profile.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'baseapp/view-stories.html')
+
+class BaseAppRestrictedViewTByLoginest(TestCase):
+    """test views restricted to logged in users are restricted"""
+    @classmethod
+    def setUpTestData(cls):
+        User = get_user_model()
+        cls.user = User.objects.create_user(username='djangotestuser1', password='12345abcde')
+        cls.user.save()
+        cls.story = Story(title="My Story", content="This is a story all about how...", author = cls.user, public_view_allowed = False)
+        cls.story.save()
+    def test_create_story_view_restricted(self):
+        response = self.client.get(reverse('create story'))
+        #assertRedirects(response, expected_url, status_code=302, target_status_code=200, msg_prefix='', fetch_redirect_response=True)
+        self.assertRedirects(response, '/accounts/login/?next=/create-story')
+
+    def test_edit_story_view_restricted(self):
+        response = self.client.get(reverse('edit story', kwargs = {"story_id": self.story.pk}))
+        self.assertRedirects(response, '/accounts/login/?next=/1/edit-story')
+
+    def test_view_story_by_id_restricted(self):
+        response = self.client.get(reverse('view story by id', kwargs = {"story_id": self.story.pk}))
+        self.assertRedirects(response, '/accounts/login/?next=/1/view-story')
+
+class BaseAppRestrictedViewByAuthorTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        User = get_user_model()
+        cls.user = User.objects.create_user(username='djangotestauthor', password='12345abcde')
+        cls.reader = User.objects.create_user(username='djangotestreader', password='12345abcde')
+        cls.user.save()
+        cls.reader.save()
+
+    #test view story by ID
+
+    def test_view_story_by_id_author_private_story_private_user_not_logged_in(self):
+        set_up_story_private(self)
+        response = self.client.get(reverse('view story by id', kwargs = {"story_id": self.story.pk}))
+        self.assertRedirects(response, '/accounts/login/?next=/1/view-story')
+
+    def test_view_story_by_id_author_private_story_public_user_not_logged_in(self):
+        """Should fail as author private beats story private"""
+        set_up_story_public(self)
+        response = self.client.get(reverse('view story by id', kwargs = {"story_id": self.story.pk}))
+        self.assertRedirects(response, '/accounts/login/?next=/1/view-story')
+
+    def test_view_story_by_id_author_private_story_public_user_logged_in(self):
+        login_testuser(self, 'djangotestreader')
+        set_up_story_public(self)
+        response = self.client.get(reverse('view story by id', kwargs = {"story_id": self.story.pk}))
+        self.assertRedirects(response, reverse('view stories'))
+
+    def test_view_story_by_id_author_private_story_private_user_logged_in(self):
+        set_up_story_private(self)
+        login_testuser(self, 'djangotestreader')
+        response = self.client.get(reverse('view story by id', kwargs = {"story_id": self.story.pk}))
+        self.assertRedirects(response, reverse('view stories'))
+
+    def test_view_story_by_id_author_public_story_private_user_logged_in(self):
+        set_up_story_private(self)
+        print(self.user.profile.public_profile)
+        self.user.profile.save()
+        login_testuser(self, 'djangotestreader')
+        response = self.client.get(reverse('view story by id', kwargs = {"story_id": self.story.pk}))
+        self.assertRedirects(response, reverse('view stories'))
+
+    def test_view_story_by_id_author_public_story_private_user_logged_in(self):
+        set_up_story_private(self)
+        self.user.profile.public_profile = True
+        self.user.profile.save()
+        login_testuser(self, 'djangotestreader')
+        response = self.client.get(reverse('view story by id', kwargs = {"story_id": self.story.pk}))
+        self.assertRedirects(response, reverse('view stories'))
+
+    def test_view_story_by_id_author_public_story_public_user_logged_in(self):
+        set_up_story_public(self)
+        self.user.profile.public_profile = True
+        self.user.profile.save()
+        login_testuser(self, 'djangotestreader')
+        response = self.client.get(reverse('view story by id', kwargs = {"story_id": self.story.pk}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'baseapp/view-story.html')
+
+    #Test view story by slug
+
+    def test_view_story_by_slug_author_private_story_private_user_not_logged_in(self):
+        set_up_story_private(self)
+        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.profile.slug}))
+        self.assertRedirects(response, reverse('view stories'))
+
+    def test_view_story_by_slug_author_private_story_public_user_not_logged_in(self):
+        """Should fail as author private beats story  private"""
+        set_up_story_public(self)
+        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.profile.slug}))
+        self.assertRedirects(response, reverse('view stories'))
+
+    def test_view_story_by_slug_author_public_story_private_user_not_logged_in(self):
+        set_up_story_private(self)
+        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.profile.slug}))
+        self.assertRedirects(response, reverse('view stories'))
+
+    def test_view_story_by_slug_author_public_story_public_user_not_logged_in(self):
+        set_up_story_public(self)
+        self.user.profile.public_profile = True
+        self.user.profile.save()
+        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.profile.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'baseapp/view-story.html')
+
+    def test_view_story_by_slug_author_private_story_private_user_logged_in(self):
+        set_up_story_private(self)
+        login_testuser(self, 'djangotestreader')
+        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.profile.slug}))
+        self.assertRedirects(response, reverse('view stories'))
+
+    def test_view_story_by_slug_author_private_story_public_user_logged_in(self):
+        set_up_story_public(self)
+        login_testuser(self, 'djangotestreader')
+        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.profile.slug}))
+        self.assertRedirects(response, reverse('view stories'))
+
+    def test_view_story_by_slug_author_private_story_public_user_logged_in(self):
+        login_testuser(self, 'djangotestreader')
+        set_up_story_public(self)
+        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.profile.slug}))
+        self.assertRedirects(response, reverse('view stories'))
+
+    def test_view_story_by_slug_author_public_story_private_user_logged_in(self):
+        """Should fail as author private beats story  private"""
+        set_up_story_private(self)
+        login_testuser(self, 'djangotestreader')
+        self.user.profile.public_profile = True
+        self.user.profile.save()
+        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.profile.slug}))
+        self.assertRedirects(response, reverse('view stories'))
+
+    def test_view_story_by_slug_author_public_story_public_user_logged_in(self):
+        login_testuser(self, 'djangotestreader')
+        set_up_story_public(self)
+        self.user.profile.public_profile = True
+        self.user.profile.save()
+        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.profile.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'baseapp/view-story.html')
+
+        #Test author access
+
+    def test_view_story_by_slug_author_private_story_private_user_author(self):
+        set_up_story_private(self)
+        login_testuser(self, 'djangotestauthor')
+        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.profile.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'baseapp/view-story.html')
+
+    def test_view_story_by_slug_author_private_story_public_user_author(self):
+        set_up_story_public(self)
+        login_testuser(self, 'djangotestauthor')
+        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.profile.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'baseapp/view-story.html')
+
+    def test_view_story_by_slug_author_private_story_public_user_author(self):
+        login_testuser(self, 'djangotestauthor')
+        set_up_story_public(self)
+        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.profile.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'baseapp/view-story.html')
+
+    def test_view_story_by_slug_author_public_story_private_user_author(self):
+        set_up_story_private(self)
+        login_testuser(self, 'djangotestauthor')
+        self.user.profile.public_profile = True
+        self.user.profile.save()
+        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.profile.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'baseapp/view-story.html')
+
+    def test_view_story_by_slug_author_public_story_public_user_author(self):
+        login_testuser(self, 'djangotestauthor')
+        set_up_story_public(self)
+        self.user.profile.public_profile = True
+        self.user.profile.save()
+        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.profile.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'baseapp/view-story.html')
+
+        #test edit story access
+
+    def test_edit_story_user_author(self):
+        set_up_story_private(self)
+        login_testuser(self, 'djangotestauthor')
+        response = self.client.get(reverse('edit story', kwargs = {"story_id": self.story.pk}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'baseapp/create-story.html')
+
+    def test_edit_story_user_not_author(self):
+        set_up_story_private(self)
+        login_testuser(self, 'djangotestreader')
+        response = self.client.get(reverse('edit story', kwargs = {"story_id": self.story.pk}))
+        self.assertRedirects(response, reverse('view stories'))
+
+###TODO: Edit story entry test
+
+
+
+
+
+
+
+
+

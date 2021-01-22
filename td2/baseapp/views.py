@@ -32,10 +32,10 @@ def create_story(request):
         if form.is_valid():
             # process the data in form.cleaned_data as required
             form.instance.author = request.user
-            form.save()
+            saved_form = form.save()
             messages.success(request, 'Your story was submitted successfully! Hopefully it doesn\'t suck.')
             # redirect to a new URL:
-            return HttpResponseRedirect('create-story')
+            return redirect('view story by id', story_id = saved_form.pk)
     # if a GET (or any other method) we'll create a blank form
     else:
         form = StoryForm()
@@ -47,7 +47,7 @@ def edit_story(request, story_id=""):
     """update a magical story of myth and wonder"""
     # get the story to update
     story = get_object_or_404(Story, pk = story_id)
-    if not check_story_permissions(request, story.author):
+    if not check_story_permissions(request, story):
         messages.error(request, "Only the author can edit their own stories.")
         return redirect('view stories')
     entries = Entry.objects.filter(story = story_id)
@@ -97,10 +97,11 @@ def view_stories_by_author(request, author_slug =""):
     author_context = author
     return render(request, 'baseapp/view-stories.html', {'stories_context': stories_context, 'author_context': author_context})
 
+@login_required
 def view_story_by_id(request, story_id = 0):
     """User views a story"""
     story_context = get_object_or_404(Story, pk=story_id)
-    if not check_story_permissions(request, story_context.author) and not request.user.is_staff:
+    if not check_story_permissions(request, story_context):
         messages.error(request, "This story has been locked by the author.")
         return redirect('view stories')
 
@@ -110,7 +111,7 @@ def view_story_by_slug(request, author_slug="", story_slug = ""):
     """User views a story"""
     context = {}
     context['story_context'] = get_object_or_404(Story, author__profile__slug =author_slug, slug = story_slug)
-    if not check_story_permissions(request, context['story_context'].author):
+    if not check_story_permissions(request, context['story_context']):
         messages.error(request, "This story has been locked by the author.")
         return redirect('view stories')
     context['crit_context'] = Crit.objects.filter (

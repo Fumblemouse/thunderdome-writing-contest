@@ -112,9 +112,7 @@ class Contest(models.Model):
         while loop <= loopmax:
             shuffled_stories = sattolo_cycle(stories.copy())
             judge_temp = self.assign_stories(shuffled_stories, judges_with_stories)
-            if judge_temp == "error":
-                print(judges_with_stories)
-            else:
+            if judge_temp != "duplicate error":
                 judges_with_stories = judge_temp
                 loop += 1
 
@@ -133,18 +131,18 @@ class Contest(models.Model):
 	    #test for pre-existing things
         for judge in enumerate(judges_with_stories):
             if shuffled_stories[judge[0]] in judges_with_stories[judge[0]][1]:
-                return "error"
+                return "duplicate error"
         #nothing pre-existing - merge the array
         for story in enumerate(judges_with_stories):
             judges_with_stories[story[0]][1].append(shuffled_stories[story[0]])
         return judges_with_stories
 
     def judge(self):
-        """Count, Sort the results and"""
+        """Count, Sort the results and close the contest"""
         crits = Crit.objects.filter(entry__contest__pk = self.pk)
         results = {}
         results_order = {}
-        #create a dictionary with entry as key and an array of scores from judges, and
+        #create a dictionary with entry as key and an array of scores from judges
         for crit in crits:
             results.setdefault(crit.entry, [])
             results[crit.entry].append(crit.score)
@@ -217,3 +215,7 @@ class Crit(models.Model):
         if self.reviewer and self.entry:
             return str(self.entry.contest.prompt.title) + " : " + str(self.reviewer.username) + " reviews " + str(self.story.author.username) # pylint: disable=E1101
         return "ALERT - somehow this crit did not get set a title"
+
+
+
+

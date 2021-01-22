@@ -16,14 +16,12 @@ def HTML_wordcount(string):
     wordcount = len(re.findall(r'\S+', words_to_count))
     return wordcount
 
-def check_story_permissions(request, author, story=0):
+def check_story_permissions(request, story=0):
     """checks if user is author or staff
     failing that, checks to see if user has opened their work generally
     the if story has been opened to the public"""
-    if author == request.user or request.user.is_staff:
+    if story.author == request.user or request.user.is_staff:
         result = True
     else:
-        result =  author.profile.public_profile
-        if story:
-            result = result and story.public_view_allowed
+        result =  story.author.profile.public_profile and story.public_view_allowed
     return result

@@ -52,10 +52,10 @@ class EnterContestNewStoryForm(BaseForm):
         super(EnterContestNewStoryForm, self).__init__(*args, **kwargs)
 
     def clean(self):
-      # check if wordcount is excessive
-
+        # check if wordcount is excessive
         if self.story_wordcount > self.contest_wordcount:
             raise forms.ValidationError("More words than wordcount. Kill your darlings!")
+        # check if expiry date is past
         if self.expiry_date < timezone.now():
             raise forms.ValidationError("The deadline for that contest is over.")
         return self.cleaned_data  # never forget this! ;o)
