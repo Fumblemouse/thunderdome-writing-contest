@@ -19,9 +19,9 @@
         </tr>
     {% for contest in current_contest_list.all %}
         <tr>
-            <td><a href="{% url 'view full contest' contest.id %}">{{ contest.prompt.title }}</a></td>
+            <td><a href="{% url 'view contest details' contest.id %}">{{ contest.prompt.title }}</a></td>
             <td>{{ contest.expiry_date }}</td>
-            <td>{{ contest.wordcount }}</td>
+            <td>{{ contest.max_wordcount }}</td>
             <td>{% if contest.status == 'UNOPENED' %}
                 <a href="{% url 'open contest' contest.id %}" class="btn btn-warning">Open Contest</a>
                 {% endif %}
@@ -71,11 +71,11 @@
     </tr>
     {% for contest in old_contest_list.all %}   
         <tr>
-            <td><a href="{% url 'view full contest' contest.id %}">{{ contest.prompt.title }}</a></td>
+            <td><a href="{% url 'view contest details' contest.id %}">{{ contest.prompt.title }}</a></td>
             <td>{{ contest.expiry_date }}</td>
             <td>{{ contest.wordcount }}</td>
             <td>
-                <a href="{% url 'view judgement contest' contest.id %}" class="btn btn-primary">View Results</a>
+                <a href="{% url 'view contest judgement' contest.id %}" class="btn btn-primary">View Results</a>
             </td>
             <td>
                     {{ contest.status }}

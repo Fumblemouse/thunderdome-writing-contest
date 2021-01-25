@@ -4,9 +4,9 @@ from django.urls import reverse
 # Create your tests here.
 from django.contrib.auth import get_user_model
 from profiles.models import Profile
-from baseapp.tests.test_utils import login_testuser, set_up_story_private, set_up_story_public
+from baseapp.tests.test_utils import BaseAppTestCase
 
-class TestProfileViewsAccess(TestCase):
+class TestProfileViewsAccess(BaseAppTestCase):
     def setUp(self):
         """set up user using usermodel"""
         #create the user and login
@@ -20,7 +20,7 @@ class TestProfileViewsAccess(TestCase):
         self.assertRedirects(response, reverse('login'))
 
     def test_set_timezone_user_logged_in(self):
-        login_testuser(self, self.user)
+        self.login_testuser(self.user)
         response = self.client.get(reverse('set timezone'))
         self.assertRedirects(response, reverse('home'))
 
@@ -39,13 +39,13 @@ class TestProfileViewsAccess(TestCase):
         self.assertRedirects(response, '/accounts/login/?next=/settings/')
 
     def test_settings_user_logged_in(self):
-        login_testuser(self, self.user)
+        self.login_testuser(self.user)
         response = self.client.get(reverse('change settings'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'profiles/settings.html')
 
-        def test_profile_user_logged_in(self):
-        login_testuser(self, self.user)
+    def test_profile_user_logged_in(self):
+        self.login_testuser(self.user)
         response = self.client.get(reverse('profile'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'profiles/profile.html')

@@ -72,7 +72,7 @@ def view_stories(request):
     """User retrieves a list of available stories"""
     if not request.user.is_staff:
         stories_context = Story.objects.filter(
-            public_view_allowed = True,
+            public = True,
             author__profile__public_profile = True,
         )
     else:
@@ -85,7 +85,7 @@ def view_stories_by_author(request, author_slug =""):
     author = get_object_or_404(get_user_model(), profile__slug=author_slug)
     if not request.user.is_staff:
         stories_context = Story.objects.filter(
-            public_view_allowed = True,
+            public = True,
             author = author,
             author__profile__public_profile = True
         )

@@ -21,7 +21,7 @@ class CreateContestNewPromptFormtTest(TestCase):
     """Create a contest with a new prompt form test"""
     def setUp(self):
         """set up"""
-        self.form = CreateContestNewPromptForm(data={"wordcount": 10, "expiry_date": timezone.now() + timezone.timedelta(7), "start_date": timezone.now()})
+        self.form = CreateContestNewPromptForm(data={"max_wordcount": 10, "expiry_date": timezone.now() + timezone.timedelta(7), "start_date": timezone.now()})
     def test_create_contest_new_prompt_form_valid(self):
         """validate the form"""
         self.assertTrue(self.form.is_valid)
@@ -33,7 +33,7 @@ class CreateContestOldPromptFormTest(TestCase):
         self.prompt = Prompt(title = "Prompt1", content="this is a <b>prompt</b>")
         self.form = CreateContestOldPromptForm(data={
             "prompt": self.prompt,
-            "wordcount": 10,
+            "max_wordcount": 10,
             "expiry_date": timezone.now() + timezone.timedelta(7),
             "start_date": timezone.now()
         })
@@ -47,26 +47,26 @@ class EnterContestNewStoryFormTest(TestCase):
         """set up"""
         self.prompt = Prompt(title = "Prompt1", content="this is a <b>prompt</b>")
         self.prompt.save()
-        self.story = Story(title="Story1", content="this is content", public_view_allowed=False)
+        self.story = Story(title="Story1", content="this is content", public=False)
         self.story.save()
-        self.contest = Contest(wordcount = 10, expiry_date = timezone.now() + timezone.timedelta(7), start_date = timezone.now(), prompt=self.prompt)
+        self.contest = Contest(max_wordcount = 10, expiry_date = timezone.now() + timezone.timedelta(7), start_date = timezone.now(), prompt=self.prompt)
         self.contest.save()
         self.form = EnterContestNewStoryForm(data={},
             story_wordcount = HTML_wordcount(self.story.content),
-            contest_wordcount = self.contest.wordcount,
+            contest_max_wordcount = self.contest.max_wordcount,
             contest_expiry_date = self.contest.expiry_date
         )
     def test_enter_contest_new_story_is_valid(self):
         """test form is valid"""
         self.assertTrue(self.form.is_valid())
 
-    def test_enter_contest_form_exceeds_wordcount(self):
+    def test_enter_contest_new_story_form_exceeds_wordcount(self):
         """test wordcount limit"""
-        self.contest.wordcount = 1
+        self.contest.max_wordcount = 1
         self.contest.save()
         self.form = EnterContestNewStoryForm(data={},
             story_wordcount = HTML_wordcount(self.story.content),
-            contest_wordcount = self.contest.wordcount,
+            contest_max_wordcount = self.contest.max_wordcount,
             contest_expiry_date = self.contest.expiry_date
         )
         self.assertFalse(self.form.is_valid())
@@ -78,7 +78,7 @@ class EnterContestNewStoryFormTest(TestCase):
         self.contest.save()
         self.form = EnterContestNewStoryForm(data={},
             story_wordcount = HTML_wordcount(self.story.content),
-            contest_wordcount = self.contest.wordcount,
+            contest_max_wordcount = self.contest.max_wordcount,
             contest_expiry_date = self.contest.expiry_date
         )
         self.assertFalse(self.form.is_valid())

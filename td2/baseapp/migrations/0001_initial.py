@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('content', tinymce.models.HTMLField()),
                 ('creation_date', models.DateTimeField(auto_now_add=True, verbose_name='date created')),
                 ('modified_date', models.DateTimeField(auto_now=True)),
-                ('public_view_allowed', models.BooleanField(verbose_name='Display to non-logged in users?')),
+                ('public', models.BooleanField(verbose_name='Display to non-logged in users?')),
                 ('slug', autoslug.fields.AutoSlugField(default='no-story-slug', max_length=40, unique=True)),
                 ('wordcount', models.PositiveSmallIntegerField()),
                 ('author', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),

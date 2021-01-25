@@ -5,7 +5,7 @@ import logging
 from django.utils import timezone
 
 
-from django.http import HttpResponseRedirect
+#from django.http import HttpResponseRedirect
 #from django.core.exceptions import ValidationError
 
 from django.shortcuts import get_object_or_404, render, redirect
@@ -14,9 +14,16 @@ from django.contrib import messages
 
 
 from baseapp.forms import StoryForm
+from baseapp.models import Story
 from baseapp.utils import HTML_wordcount
 
-from .forms import (PromptForm, CreateContestNewPromptForm, CreateContestOldPromptForm, EnterContestNewStoryForm, EnterCritForm,)
+from .forms import (
+    PromptForm,
+    CreateContestNewPromptForm,
+    CreateContestOldPromptForm,
+    EnterContestNewStoryForm,
+    EnterContestOldStoryForm,
+    EnterCritForm,)
 from .models import Prompt, Contest, Crit, Entry
 
 
@@ -39,7 +46,7 @@ def create_prompt(request):
         form_uncommitted.creator = request.user
         form_uncommitted.save()
         messages.success(request, 'Your prompt was submitted successfully! Hopefully it doesn\'t suck.')
-        return redirect('view full prompt', prompt_id = form_uncommitted.pk)
+        return redirect('view prompt details', prompt_id = form_uncommitted.pk)
     context['form'] = form
     return render(request, "promptarena/create-prompt.html", context)
 
@@ -52,7 +59,7 @@ def edit_prompt(request, prompt_id = 0):
     for contest in contests:
         if contest.status != 'UNOPENED' or 'CLOSED':
             messages.error(request, "Your prompt is currently being used in a contest.  It cannot be edited at this time.")
-            return redirect('view full prompt', prompt_id = prompt_id)
+            return redirect('view prompt details', prompt_id = prompt_id)
     # create a form instance and populate it with data from the request or the :
     form = PromptForm(request.POST or None, instance = prompt)
     # check whether it's valid:
@@ -60,7 +67,7 @@ def edit_prompt(request, prompt_id = 0):
         form.save()
         messages.success(request, 'Your prompt was updated successfully! Hopefully it doesn\'t suck.')
         # redirect to a new URL:
-        return redirect('view full prompt', prompt_id = prompt.pk)
+        return redirect('view prompt details', prompt_id = prompt.pk)
 
     return render(request, 'promptarena/create-prompt.html', {'form': form})
 
@@ -82,7 +89,7 @@ def create_contest_new_prompt(request):
         contest_form_uncommitted.prompt = prompt_form_uncommitted
         contest_form_uncommitted.save()
         messages.success(request, 'Your contest was submitted successfully! Hopefully it doesn\'t suck.')
-        return HttpResponseRedirect('/')
+        return redirect('view contests')
 
     return render(request, "promptarena/create-contest-new-prompt.html", {'prompt_form': prompt_form, 'contest_form': contest_form})
 
@@ -96,13 +103,13 @@ def create_contest_old_prompt(request):
 
         form.save()
         messages.success(request, 'Your contest was submitted successfully! Hopefully it doesn\'t suck.')
-
+        return redirect('view contests')
     return render(request, "promptarena/create-contest-old-prompt.html", {'form': form})
 
 
 
 @login_required
-def enter_contest(request, contest_id,):
+def enter_contest_new_story(request, contest_id,):
     """User enters new story"""
     contest_context = get_object_or_404(Contest, pk=contest_id)
     story_form = StoryForm(request.POST or None)
@@ -111,7 +118,7 @@ def enter_contest(request, contest_id,):
             story_wordcount = HTML_wordcount(story_form.instance.content)
             entry_form = EnterContestNewStoryForm(
                 request.POST,
-                contest_wordcount=contest_context.wordcount,
+                contest_max_wordcount=contest_context.wordcount,
                 story_wordcount=story_wordcount,
                 contest_expiry_date=contest_context.expiry_date,
             )
@@ -129,8 +136,8 @@ def enter_contest(request, contest_id,):
                 entry_form_uncommitted.save()
 
                 messages.success(request, 'Your entry was submitted successfully! Hopefully it doesn\'t suck.')
-                return HttpResponseRedirect('/')
-        return render(request, 'promptarena/enter-contest.html', {
+                return redirect('view contest')
+        return render(request, 'promptarena/enter-contest-new-story.html', {
             'contest_context' : contest_context,
             'entry_form': entry_form,
             'story_form' : story_form,
@@ -141,12 +148,57 @@ def enter_contest(request, contest_id,):
         return render(request, 'promptarena/view-contests.html', {})
 
 
-    return render(request, 'promptarena/enter-contest.html', {
+    return render(request, 'promptarena/enter-contest-new-story.html', {
         'contest_context' : contest_context,
         #'entry_form': entry_form or None,
         'story_form' : story_form,
         }
     )
+
+@login_required
+def enter_contest_old_story(request, contest_id,):
+    """User enters new story from a list of their own non-public stories"""
+    contest_context = get_object_or_404(Contest, pk=contest_id)
+    if request.method == "POST":
+        chosen_story = get_object_or_404(Story, pk=request.POST.get('story'))
+        entry_form = EnterContestOldStoryForm(request.POST,
+            contest_expiry_date =  contest_context.expiry_date,
+            contest_max_wordcount=contest_context.max_wordcount,
+            story_wordcount=chosen_story.wordcount,
+        )
+        if entry_form.is_valid():
+            #add contest to entry
+            entry_form_uncommitted = entry_form.save(commit = False)
+            entry_form_uncommitted.contest = contest_context
+
+            entry_form_uncommitted.save()
+
+            messages.success(request, 'Your entry was submitted successfully! Hopefully it doesn\'t suck.')
+            return redirect('view contests')
+        messages.error(request, 'Something went wrong')
+        return render(request, 'promptarena/enter-contest-old-story.html', {
+            'contest_context' : contest_context,
+            'entry_form': entry_form,
+            }
+        )
+    if contest_context.status != 'OPEN':
+        messages.error(request, 'This contest is not currently open for new entries.')
+        return render(request, 'promptarena/view-contests.html', {})
+
+    story_context = Story.objects.filter(
+        author = request.user,
+        has_been_public = False
+    )
+
+    return render(request, 'promptarena/enter-contest-old-story.html', {
+        'contest_context' : contest_context,
+        'story_context' : story_context,
+        #'entry_form': entry_form or None,
+        }
+    )
+
+
+
 
 @login_required
 def close_contest(request, contest_id):
@@ -157,10 +209,10 @@ def close_contest(request, contest_id):
     }
     if contest_context.status != 'OPEN':
         messages.error(request, 'You cannot close a contest that is not open')
-        return render(request, 'promptarena/view-full-contest.html', context)
+        return render(request, 'promptarena/view-contest-details.html', context)
     contest_context.close()
     messages.success(request, 'You have successfully closed the contest')
-    return render(request, 'promptarena/view-full-contest.html', context)
+    return render(request, 'promptarena/view-contest-details.html', context)
 
 @login_required
 def open_contest(request, contest_id):
@@ -171,18 +223,18 @@ def open_contest(request, contest_id):
     }
     if contest_context.status == 'OPEN':
         messages.error(request, "It's already open")
-        return render(request, 'promptarena/view-full-contest.html', context)
+        return render(request, 'promptarena/view-contest-details.html', context)
     contest_context.open()
     messages.success(request, 'You have successfully opened the contest')
-    return render(request, 'promptarena/view-full-contest.html', context)
+    return render(request, 'promptarena/view-contest-details.html', context)
 
-def view_full_contest(request, contest_id):
+def view_contest_details(request, contest_id):
     """User views specific prompt and metadata"""
     contest_context = get_object_or_404(Contest, pk=contest_id)
     context = {
         'contest_context' : contest_context,
     }
-    return render(request, 'promptarena/view-full-contest.html', context)
+    return render(request, 'promptarena/view-contest-details.html', context)
 
 
 
@@ -214,13 +266,13 @@ def view_prompts(request):
     }
     return render(request, 'promptarena/view-prompts.html', context)
 
-def view_full_prompt(request, prompt_id=""):
+def view_prompt_details(request, prompt_id=""):
     """User views specific prompt and metadata"""
     prompt_context = get_object_or_404(Prompt, pk=prompt_id)
     context = {
         'prompt_context' : prompt_context,
     }
-    return render(request, 'promptarena/view-full-prompt.html', context)
+    return render(request, 'promptarena/view-prompt-details.html', context)
 
 @login_required
 def judgemode(request, crit_id = 0):
@@ -279,17 +331,17 @@ def judge_contest(request, contest_id = 0):
     }
     if contest_context.status != 'JUDGEMENT':
         messages.error(request, 'You cannot judge a contest that is not ready for judgement')
-        return render(request, 'promptarena/view-full-contest.html', context)
+        return render(request, 'promptarena/view-contest-details.html', context)
     contest_context.judge()
     messages.success(request, 'You have successfully judged the contest')
     context['entry_context'] = Entry.objects.filter(contest=contest_id).order_by('position')
-    return render(request, 'promptarena/view-judgement-contest.html', context)
+    return render(request, 'promptarena/view-contest-judgement.html', context)
 
-def view_judgement_contest(request, contest_id = 0):
+def view_contest_judgement(request, contest_id = 0):
     """Let they that have understanding count the number of the crits"""
     contest_context = get_object_or_404(Contest, pk=contest_id)
     context = {
         'contest_context' : contest_context,
     }
     context['entry_context'] = Entry.objects.filter(contest=contest_id).order_by('position')
-    return render(request, 'promptarena/view-judgement-contest.html', context)
+    return render(request, 'promptarena/view-contest-judgement.html', context)

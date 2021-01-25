@@ -22,9 +22,12 @@ class Story(models.Model):
     content =  tinymce_models.HTMLField()
     creation_date = models.DateTimeField(auto_now_add=True,)
     modified_date = models.DateTimeField(auto_now=True)
-    public_view_allowed = models.BooleanField(verbose_name='Display to non-logged in users?')
+    public = models.BooleanField(
+        verbose_name='Show publically?',
+        help_text = 'Caution: Displaying a story publcially will exclude it from future contests')
     slug = AutoSlugField(max_length=40, unique=True)
     wordcount = models.PositiveSmallIntegerField()
+    has_been_public = models.BooleanField(default=False)
     #tags = models.JSONField(blank=True, null=True)
     #public_scores = models.JSONField(blank=True, null=True)
 
@@ -36,6 +39,9 @@ class Story(models.Model):
         slugified = slugify(self.title)
         if not self.id or slug != slugified:
             self.slug = slugified
+        #set flag if saved for public view
+        if self.public:
+            self.has_been_public = True
 
         #Add wordcount
         content = self.content

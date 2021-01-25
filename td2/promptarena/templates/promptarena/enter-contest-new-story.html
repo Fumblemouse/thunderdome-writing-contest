@@ -8,11 +8,14 @@ Enter Contest
 {% endblock %}
 
 {% block content %}
-
+<nav class="nav nav-tabs">
+    <a href="{% url 'enter contest' contest_context.pk %}" class="nav-link active" aria-current="page">Enter the contest with a new story</a>
+    <a class="nav-link" href="{% url 'enter contest old story' contest_context.pk %}">Enter the contest with a story already written</a>
+</nav>
 {% if contest_context %}
         <h3>{{ contest_context.prompt.title }}</h3>
         <p>{{ contest_context.prompt.content | safe }}</p>
-        <p>Word limit: {{ contest_context.wordcount }}</p>
+        <p>Word limit: {{ contest_context.max_wordcount }}</p>
 {% else %}
     <div class="warning">No contest found - check the url.</div>
 {% endif %}

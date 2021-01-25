@@ -8,7 +8,7 @@
 {% if prompts_context %}
     <ul class="list-group">
     {% for prompt in prompts_context.all %}
-        <li class="list-group-item"><a href="{% url 'view full prompt' prompt.id %}">{{ prompt.title }}</a></li>
+        <li class="list-group-item"><a href="{% url 'view prompt details' prompt.id %}">{{ prompt.title }}</a></li>
     {% endfor %}
     </ul>
 {% else %}

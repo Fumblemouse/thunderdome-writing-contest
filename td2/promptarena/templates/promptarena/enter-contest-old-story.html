@@ -1,0 +1,39 @@
+{% extends "baseapp/base.html" %}
+{% block title %}ThunderDome: Enter contest {% endblock %}
+{% block headtag %}
+    {{ story_form.media }}
+{% endblock %}
+{% block header %}
+Enter Contest
+{% endblock %}
+
+{% block content %}
+<nav class="nav nav-tabs">
+    <a href="{% url 'enter contest' contest_context.pk %}" class="nav-link" aria-current="page">Enter the contest with a new story</a>
+    <a class="nav-link active" href="{% url 'enter contest old story' contest_context.pk %}">Enter the contest with a story already written</a>
+</nav>
+{% if contest_context %}
+        <h3>{{ contest_context.prompt.title }}</h3>
+        <p>{{ contest_context.prompt.content | safe }}</p>
+        <p>Word limit: {{ contest_context.max_wordcount }}</p>
+{% else %}
+    <div class="warning">No contest found - check the url.</div>
+{% endif %}
+
+<form method = "post">
+
+        {% csrf_token %}
+            <select class="form-control" name="story">
+        {% for story in story_context %}
+                <option value="{{story.id}}">{{story.title}}</option>
+        {% endfor %}
+            </select>
+        {% include 'baseapp/base-form.html' %}
+
+    <input type="submit" value="Submit" class='btn btn-primary'>
+
+</form>
+
+
+
+{% endblock %}

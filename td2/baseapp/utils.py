@@ -23,5 +23,5 @@ def check_story_permissions(request, story=0):
     if story.author == request.user or request.user.is_staff:
         result = True
     else:
-        result =  story.author.profile.public_profile and story.public_view_allowed
+        result =  story.author.profile.public_profile and story.public
     return result
