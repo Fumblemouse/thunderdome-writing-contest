@@ -28,12 +28,13 @@
     <li>To make me incredibly rich by stealing other people's ideas and monetising them (stretch goal).</li>
 </ul>
 <h2 class="text-center">How does it work?</h2>
-<p>You can just <a href="{% url 'create story' %}">create a story </a>. Stories are private by default,  but you can make it public!
-To do this you have to check the 'public profile' box in your <a href="{% url 'change settings' %}"> Profile Settings</a> and also on the story itself.
-Not sure if the first button  is overkill, but it allows people to withdraw all their stories at once by unchecking it, which seems useful.
-</p>
-<p>You can also enter contests. Currently you have to do this via the Enter Contest button on the <a href="{% url 'view contests' %}"> Current Contests </a> page, using a new story.
-At this point I think using an existing story is problematic, as people might have read it before judging and know the author's identity.</p>
+<p>You can just <a href="{% url 'create story' %}">create a story </a>. Stories are private by default,  but you can make it public by checking the 'Show publically?' box when you create it.</p>
+
+<p>NB: Contest Entries <em>must have always been private</em> in order to be entered</p>
+
+<p>NBB: To hide all your stories, you can uncheck  'public profile' box in your <a href="{% url 'change settings' %}"> Profile Settings</a>. Turning it on again will go back to the indivudual story settings</p>
+
+<p>You can also enter contests. Currently you have to do this via the Enter Contest button on the <a href="{% url 'view contests' %}"> Current Contests </a> page using an existing private story or a new one entirely.
 <h3>Contest Process</h3>
 <ol>
 <li>Someone creates a contest</li>
@@ -44,8 +45,8 @@ At this point I think using an existing story is problematic, as people might ha
 <li>User/Judges critiques aren't final until they have submitted with the 'Final' checkbox checked,
   so they can take notes as they read each story</li>
 <li>Once all the critiques are in (current state viewable in <a href="{% url 'view contests' %}"> Current Contests </a>
-  another button on that page closes the competition and shows the result.
-Again, this would normally be automated but I am <em>incredibibly cheap</em>.</li>
+  another button on that page closes the competition and shows the result. Or it closes automagically and results become available from the contests page if my most recent code change works.
+</li>
 </ol>
 <img src="{% static 'baseapp/img/flourish.png' %}" alt="lovely flourish" class="rounded mx-auto d-block" height="225" width="300"  />
 {% endblock %}

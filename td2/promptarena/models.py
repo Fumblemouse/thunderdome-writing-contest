@@ -64,7 +64,7 @@ class Contest(models.Model):
 
     CONTEST_TYPES = [
         (INTERNAL_JUDGE_CONTEST, 'Internal Judge Contest'),
-        (BRAWL_CONTEST, 'Brawl')
+        #(BRAWL_CONTEST, 'Brawl')
     ]
     prompt = models.ForeignKey(Prompt, on_delete=models.SET_NULL, null=True) #Null = true to make on_delete work
     start_date = models.DateTimeField('Start Date')

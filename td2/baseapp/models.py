@@ -24,7 +24,7 @@ class Story(models.Model):
     modified_date = models.DateTimeField(auto_now=True)
     public = models.BooleanField(
         verbose_name='Show publically?',
-        help_text = 'Caution: Displaying a story publcially will exclude it from future contests')
+        help_text = 'Caution: Displaying a story publically will exclude it from future contests')
     slug = AutoSlugField(max_length=40, unique=True)
     wordcount = models.PositiveSmallIntegerField()
     has_been_public = models.BooleanField(default=False)

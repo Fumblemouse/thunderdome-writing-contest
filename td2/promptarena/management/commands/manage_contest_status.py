@@ -20,5 +20,6 @@ class Command(BaseCommand):
                     crit_num = Crit.objects.filter(entry__contest = contest).count()
                     if crit_num >= 3*contest.entrant_num:
                         contest.judge()
+            #we close the connection otherwise mySQL errors out after a big nap and fills the error log.
             connection.close()
             time.sleep(60*5)
