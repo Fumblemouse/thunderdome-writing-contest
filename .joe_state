@@ -1,0 +1,31 @@
+# JOE state file v1.0
+search
+done
+macros
+done
+files
+	"/home/Fumblemouse/.git/COMMIT_EDITMSG\n"
+done
+find
+done
+replace
+done
+run
+done
+build
+done
+grep
+done
+cmd
+done
+math
+done
+yank
+	"ai"
+	"t"
+	":wq"
+	"es"
+done
+file_pos
+	1 "/home/Fumblemouse/.git/COMMIT_EDITMSG"
+done

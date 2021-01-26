@@ -1,0 +1,31 @@
+{% extends "baseapp/base.html" %}
+{% block title %}ThunderDome: View Contest Judgement {% endblock %}
+{% block header %}Contest Judgement{% endblock %}
+
+{% block content %}
+
+
+{% if entry_context %}
+    <table class="table table-divided">
+        <tr>
+            <th>UserName</th>
+            <th>Position</th>
+            <th>Total Score</th>
+            <th>Link</th>
+
+        </tr>
+    {% for entry in entry_context.all %}
+        <tr>
+            <td>{{ entry.story.author.username }}</a></td>
+            <td>{{ entry.position }}</td>
+            <td>{{ entry.score }}</td>
+            <td><a href="{% url 'view story by slug' entry.story.author.profile.slug entry.story.slug %}">{{ entry.story.title }}</a></td>
+        </tr>
+    {% endfor %}
+    </table>
+
+{% else %}
+    <p>No Contests are currently active.</p>
+{% endif %}
+
+{% endblock %}

@@ -4,7 +4,8 @@ from django.utils import timezone
 from django import forms
 from django.utils.html import strip_tags
 #from django.utils.translation import gettext_lazy as _
-from baseapp.forms import BaseForm
+from baseapp.forms import BaseForm, StoryForm
+from baseapp.models import Story
 
 
 
@@ -31,6 +32,13 @@ class CreateContestOldPromptForm(BaseForm):
     class Meta:
         model = Contest
         fields = ('prompt','max_wordcount','start_date','expiry_date' )
+
+class ContestStoryForm(BaseForm):
+    """User enters Story and Title"""
+
+    class Meta:
+        model = Story
+        fields = ('title', 'content')
 
 class EnterContestNewStoryForm(BaseForm):
     """User creates New Story to enter contest"""

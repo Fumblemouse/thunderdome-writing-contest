@@ -13,7 +13,7 @@ class BaseAppTestCase(TestCase):
     def create_testuser(self):
         """create default user"""
         User = get_user_model()
-        self.user = User.objects.create_user(username='djangotestuser1', password='12345abcde')
+        self.user = User.objects.create_user(username='djangotestuser', password='12345abcde')
         return self.user
 
     def login_testuser(self, username):
@@ -31,10 +31,13 @@ class BaseAppTestCase(TestCase):
         self.story = Story(title="My Story", content="This is a story all about how...", author = self.user, public = True)
         self.story.save()
 
-    def set_up_contest(self, mode):
-        """Re-usable routine to set up contest object"""
+    def set_up_prompt(self):
         self.prompt = Prompt(title="My Prompt title")
         self.prompt.save()
+
+    def set_up_contest(self, mode):
+        """Re-usable routine to set up contest object"""
+        self.set_up_prompt()
         self.contest = mode(prompt=self.prompt,
             start_date = timezone.now(),
             expiry_date = timezone.now() + timezone.timedelta(7),
@@ -47,7 +50,7 @@ class BaseAppTestCase(TestCase):
         self.stories = []
         self.entries = []
         for user_num in range(5):
-            self.users.append(user.objects.create_user(username='djangotestuser{}'.format(user_num), password='1234{}'.format(user_num)))
+            self.users.append(user.objects.create_user(username='djangotestuser{}'.format(user_num), password='{}2345abcde'.format(user_num)))
             #users[-1] = last in list
             self.users[-1].save()
         for user in self.users:

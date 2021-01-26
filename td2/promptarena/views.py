@@ -19,6 +19,7 @@ from baseapp.utils import HTML_wordcount
 
 from .forms import (
     PromptForm,
+    ContestStoryForm,
     CreateContestNewPromptForm,
     CreateContestOldPromptForm,
     EnterContestNewStoryForm,
@@ -112,7 +113,7 @@ def create_contest_old_prompt(request):
 def enter_contest_new_story(request, contest_id,):
     """User enters new story"""
     contest_context = get_object_or_404(Contest, pk=contest_id)
-    story_form = StoryForm(request.POST or None)
+    story_form = ContestStoryForm(request.POST or None)
     if request.method == "POST":
         if story_form.is_valid():
             story_wordcount = HTML_wordcount(story_form.instance.content)
@@ -198,21 +199,10 @@ def enter_contest_old_story(request, contest_id,):
     )
 
 
+###These are for opening, closing and judging contests by 'hand' rather than programmatic methods
+#as such theey are not long for this world.
+#as we now have scheduling
 
-
-@login_required
-def close_contest(request, contest_id):
-    """User closes specific contest """
-    contest_context = get_object_or_404(Contest, pk=contest_id)
-    context = {
-        'contest_context' : contest_context,
-    }
-    if contest_context.status != 'OPEN':
-        messages.error(request, 'You cannot close a contest that is not open')
-        return render(request, 'promptarena/view-contest-details.html', context)
-    contest_context.close()
-    messages.success(request, 'You have successfully closed the contest')
-    return render(request, 'promptarena/view-contest-details.html', context)
 
 @login_required
 def open_contest(request, contest_id):
@@ -228,6 +218,55 @@ def open_contest(request, contest_id):
     messages.success(request, 'You have successfully opened the contest')
     return render(request, 'promptarena/view-contest-details.html', context)
 
+@login_required
+def close_contest(request, contest_id):
+    """User closes specific contest """
+    contest_context = get_object_or_404(Contest, pk=contest_id)
+    context = {
+        'contest_context' : contest_context,
+    }
+    if contest_context.status != 'OPEN':
+        messages.error(request, 'You cannot close a contest that is not open')
+        return render(request, 'promptarena/view-contest-details.html', context)
+    contest_context.close()
+    messages.success(request, 'You have successfully closed the contest')
+    return render(request, 'promptarena/view-contest-details.html', context)
+
+
+@login_required
+def judge_contest(request, contest_id = 0):
+    """Let they that have understanding count the number of the crits"""
+    contest_context = get_object_or_404(Contest, pk=contest_id)
+    context = {
+        'contest_context' : contest_context,
+    }
+    if contest_context.status != 'JUDGEMENT':
+        messages.error(request, 'You cannot judge a contest that is not ready for judgement')
+        return render(request, 'promptarena/view-contest-details.html', context)
+    contest_context.judge()
+    messages.success(request, 'You have successfully judged the contest')
+    context['entry_context'] = Entry.objects.filter(contest=contest_id).order_by('position')
+    return render(request, 'promptarena/view-contest-judgement.html', context)
+
+### Back to actual views
+
+def view_prompt_details(request, prompt_id=""):
+    """User views specific prompt and metadata"""
+    prompt_context = get_object_or_404(Prompt, pk=prompt_id)
+    context = {
+        'prompt_context' : prompt_context,
+    }
+    return render(request, 'promptarena/view-prompt-details.html', context)
+
+def view_prompts(request):
+    """view all prompts in a list"""
+    prompts_context = Prompt.objects.all
+    context = {
+        'prompts_context': prompts_context,
+    }
+    return render(request, 'promptarena/view-prompts.html', context)
+
+
 def view_contest_details(request, contest_id):
     """User views specific prompt and metadata"""
     contest_context = get_object_or_404(Contest, pk=contest_id)
@@ -235,8 +274,6 @@ def view_contest_details(request, contest_id):
         'contest_context' : contest_context,
     }
     return render(request, 'promptarena/view-contest-details.html', context)
-
-
 
 def view_contests(request):
     """User views available contests"""
@@ -255,24 +292,6 @@ def view_contests(request):
         'old_contest_list': old_contest_list,
     }
     return render(request, 'promptarena/view-contests.html', context)
-
-
-
-def view_prompts(request):
-    """view all prompts in a list"""
-    prompts_context = Prompt.objects.all
-    context = {
-        'prompts_context': prompts_context,
-    }
-    return render(request, 'promptarena/view-prompts.html', context)
-
-def view_prompt_details(request, prompt_id=""):
-    """User views specific prompt and metadata"""
-    prompt_context = get_object_or_404(Prompt, pk=prompt_id)
-    context = {
-        'prompt_context' : prompt_context,
-    }
-    return render(request, 'promptarena/view-prompt-details.html', context)
 
 @login_required
 def judgemode(request, crit_id = 0):
@@ -320,22 +339,6 @@ def judgemode(request, crit_id = 0):
     return render(request, 'promptarena/judgemode.html', context)
 
 
-
-
-@login_required
-def judge_contest(request, contest_id = 0):
-    """Let they that have understanding count the number of the crits"""
-    contest_context = get_object_or_404(Contest, pk=contest_id)
-    context = {
-        'contest_context' : contest_context,
-    }
-    if contest_context.status != 'JUDGEMENT':
-        messages.error(request, 'You cannot judge a contest that is not ready for judgement')
-        return render(request, 'promptarena/view-contest-details.html', context)
-    contest_context.judge()
-    messages.success(request, 'You have successfully judged the contest')
-    context['entry_context'] = Entry.objects.filter(contest=contest_id).order_by('position')
-    return render(request, 'promptarena/view-contest-judgement.html', context)
 
 def view_contest_judgement(request, contest_id = 0):
     """Let they that have understanding count the number of the crits"""

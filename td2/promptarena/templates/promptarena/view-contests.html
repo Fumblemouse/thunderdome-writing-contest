@@ -4,8 +4,8 @@
 
 {% block content %}
 
-<p><em>NB:</em> Yellow buttons are there to physically change contest states - 
-    they would normally be done by scheduled timers.</p>
+<p><em>NB:</em> Yellow buttons are there to physically change contest states -
+    they <strike>would normally be</strike> are now done by scheduled timers!</p>
 
 {% if current_contest_list %}
     <table class="table table-divided">
@@ -69,7 +69,7 @@
         <th>Status</th>
         <th>Entries</th>
     </tr>
-    {% for contest in old_contest_list.all %}   
+    {% for contest in old_contest_list.all %}
         <tr>
             <td><a href="{% url 'view contest details' contest.id %}">{{ contest.prompt.title }}</a></td>
             <td>{{ contest.expiry_date }}</td>

@@ -35,7 +35,7 @@ class InternalJudgeContestModelTest(BaseAppTestCase):
     def test_contest_string_representation(self):
         """test nameing string"""
         self.assertEqual(str(self.contest), self.contest.prompt.title)
-    #Save tests
+    ###Save tests
     def test_contest_save_function(self):
         """test modified save routine that creates new slug"""
         self.assertTrue(self.contest.slug == "my-prompt-title")
@@ -51,7 +51,7 @@ class InternalJudgeContestModelTest(BaseAppTestCase):
         self.contest.set_open()
         self.assertTrue(self.contest.status == "OPEN")
 
-    #Close tests
+    ###Close tests
     def test_ij_contest_close_function(self):
         """tests close function which changes status"""
 
@@ -63,7 +63,8 @@ class InternalJudgeContestModelTest(BaseAppTestCase):
         self.set_up_contest_components()
         self.contest.close()
         self.assertEqual(Crit.objects.filter(entry__contest = self.contest).count(), 15)
-    #Judge tests
+
+    ###Judge tests
     def test_contest_judge_function(self):
         """Tests function reaches end and sets contest.status"""
         self.set_up_contest_components()
@@ -79,7 +80,7 @@ class InternalJudgeContestModelTest(BaseAppTestCase):
         self.contest.judge()
         self.assertTrue(self.contest.entrant_num > 0)
     def test_contest_judge_entry_updates(self):
-        """test function reaches end and sets contest entrant_num"""
+        """test function reaches end and handles entries and scores for entries"""
         self.set_up_contest_components()
         self.contest.close()
         self.score_contest()
@@ -99,7 +100,7 @@ class EntryModelTest(BaseAppTestCase):
         self.entry = Entry(contest = self.contest, story = self.stories[0])
         self.entry.save()
     def test_entry_string_representation(self):
-        """test str"""
+        """test str representation"""
         self.assertEqual(str(self.entry), str(self.entry.story.author) + " : " + self.entry.contest.prompt.title)
     def test_entry_verbose_name_plural(self):
         """test verbose name plural"""

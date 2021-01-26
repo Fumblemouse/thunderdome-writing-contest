@@ -3,7 +3,7 @@ from django.test import TestCase
 # Create your tests here.
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from promptarena.forms import PromptForm, CreateContestNewPromptForm, CreateContestOldPromptForm, EnterContestNewStoryForm
+from promptarena.forms import PromptForm, CreateContestNewPromptForm, CreateContestOldPromptForm, EnterContestNewStoryForm, ContestStoryForm
 from promptarena.models import Prompt, Contest
 from baseapp.models import Story
 from baseapp.utils import HTML_wordcount
@@ -14,6 +14,15 @@ class PromptFormTest(TestCase):
         """Set up"""
         self.form = PromptForm(data={"title": "prompt title", "content": "This is a <b>prompt<b>"})
     def test_prompt_form_valid(self):
+        """test form is valid"""
+        self.assertTrue(self.form.is_valid)
+
+class ContestStoryFormTest(TestCase):
+    """Story in a contest form test"""
+    def setUp(self):
+        """Set up"""
+        self.form = ContestStoryForm(data={"title": "Story title", "content": "This is a <b>story<b>"})
+    def test_contest_story_form_valid(self):
         """test form is valid"""
         self.assertTrue(self.form.is_valid)
 

@@ -22,25 +22,25 @@ class BaseAppViewTest(BaseAppTestCase):
         self.assertTemplateUsed(response, 'baseapp/home.html')
 
     def test_create_story_view_exists(self):
-        self.login_testuser('djangotestuser1')
+        self.login_testuser('djangotestuser')
         response = self.client.get(reverse('create story'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'baseapp/create-story.html')
 
     def test_edit_story_view_exists(self):
-        self.login_testuser('djangotestuser1')
+        self.login_testuser('djangotestuser')
         response = self.client.get(reverse('edit story' , kwargs = {"story_id": self.story.pk}))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'baseapp/create-story.html')
 
     def test_view_story_by_slug_view_exists(self):
-        self.login_testuser('djangotestuser1')
+        self.login_testuser('djangotestuser')
         response = self.client.get(reverse('view story by slug', kwargs = {"author_slug":self.story.author.profile.slug, "story_slug":self.story.slug}))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'baseapp/view-story.html')
 
     def test_view_story_by_id_exists(self):
-        self.login_testuser('djangotestuser1')
+        self.login_testuser('djangotestuser')
         response = self.client.get(reverse('view story by id', kwargs = {"story_id":self.story.pk}))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'baseapp/view-story.html')
@@ -55,15 +55,14 @@ class BaseAppViewTest(BaseAppTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'baseapp/view-stories.html')
 
-class BaseAppRestrictedViewTByLoginest(BaseAppTestCase):
+class BaseAppRestrictedViewTByLogin(BaseAppTestCase):
     """test views restricted to logged in users are restricted"""
     @classmethod
     def setUpTestData(cls):
         User = get_user_model()
-        cls.user = User.objects.create_user(username='djangotestuser1', password='12345abcde')
+        cls.create_testuser(cls)
         cls.user.save()
-        cls.story = Story(title="My Story", content="This is a story all about how...", author = cls.user, public = False)
-        cls.story.save()
+        cls.set_up_story_private(cls)
     def test_create_story_view_restricted(self):
         response = self.client.get(reverse('create story'))
         #assertRedirects(response, expected_url, status_code=302, target_status_code=200, msg_prefix='', fetch_redirect_response=True)
