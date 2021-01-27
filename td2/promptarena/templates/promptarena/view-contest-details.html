@@ -2,7 +2,7 @@
 {% block title %}ThunderDome: View contest{% endblock %}
 {% block header %}
 {% if contest_context %}
-        {{ contest_context.prompt.title }}
+        {{ contest_context.title }}
 {% else %}
     ????what up???
 {% endif %}
@@ -12,7 +12,7 @@
 {% block content %}
 
 {% if contest_context %}
-        <p>{{ contest_context.prompt.content | safe }}</p>
+        <p>{{ contest_context.content | safe }}</p>
         {% if user.is_authenticated and contest_contex.status == 'OPEN' %}
             <p><a href="{% url 'enter contest' contest_context.id %}" class="btn btn-primary">Enter</a></p>
         {% endif %}

@@ -88,6 +88,8 @@ def create_contest_new_prompt(request):
         #save w/o comitting then add prompt and save
         contest_form_uncommitted = contest_form.save(commit=False)
         contest_form_uncommitted.prompt = prompt_form_uncommitted
+        contest_form_uncommitted.title = prompt_form_uncommitted.prompt.title
+        contest_form_uncomitted.content = prompt_form_uncommitted.prompt.content
         contest_form_uncommitted.save()
         messages.success(request, 'Your contest was submitted successfully! Hopefully it doesn\'t suck.')
         return redirect('view contests')
@@ -100,9 +102,11 @@ def create_contest_old_prompt(request):
     #context = {}
     form = CreateContestOldPromptForm(request.POST or None)
     if form.is_valid():
-        form.save(commit=False)
-
-        form.save()
+        form_uncommitted = form.save(commit=False)
+        #Take a snapshot of prompt content
+        form_uncommitted.title = form_uncommitted.prompt.title
+        form_uncomitted.content = form_uncommitted.prompt.content
+        form_uncommitted.save()
         messages.success(request, 'Your contest was submitted successfully! Hopefully it doesn\'t suck.')
         return redirect('view contests')
     return render(request, "promptarena/create-contest-old-prompt.html", {'form': form})
@@ -128,9 +132,11 @@ def enter_contest_new_story(request, contest_id,):
                 story_form_uncommitted = story_form.save(commit=False)
                 story_form_uncommitted.author = request.user
 
-                #add contest to entry
+                #add contest and snapshot of story (title and content) to entry
                 entry_form_uncommitted = entry_form.save(commit = False)
                 entry_form_uncommitted.story = story_form_uncommitted
+                entry_form_uncommitted.title = story_form_uncommitted.title
+                entry_form_uncommitted.content = story_form_uncommitted.content
                 entry_form_uncommitted.contest = contest_context
 
                 story_form_uncommitted.save()
@@ -171,7 +177,8 @@ def enter_contest_old_story(request, contest_id,):
             #add contest to entry
             entry_form_uncommitted = entry_form.save(commit = False)
             entry_form_uncommitted.contest = contest_context
-
+            entry_form_uncommitted.title = chosen_story.title
+            entry_form_uncommitted.content = chosen_story.content
             entry_form_uncommitted.save()
 
             messages.success(request, 'Your entry was submitted successfully! Hopefully it doesn\'t suck.')

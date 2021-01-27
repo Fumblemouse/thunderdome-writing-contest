@@ -67,6 +67,8 @@ class Contest(models.Model):
         #(BRAWL_CONTEST, 'Brawl')
     ]
     prompt = models.ForeignKey(Prompt, on_delete=models.SET_NULL, null=True) #Null = true to make on_delete work
+    title = models.CharField(max_length=200, unique= True)
+    content =  tinymce_models.HTMLField()
     start_date = models.DateTimeField('Start Date')
     expiry_date = models.DateTimeField('Submit by Date')
     mode = models.CharField(choices=CONTEST_TYPES, default='INTERNAL JUDGE CONTEST', max_length=22)
@@ -291,10 +293,12 @@ class Entry(models.Model):
     position = models.PositiveSmallIntegerField(default=0)
     score = models.PositiveSmallIntegerField(default=0)
     creation_date = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(max_length=255)
+    content =  tinymce_models.HTMLField()
 
     def __str__(self):
         if self.story and self.contest:
-            return str(self.story.author) + " : " + self.contest.prompt.title
+            return str(self.story.author) + " : " + self.title
         return "ALERT - somehow this entry did not get set a title"
 
     class Meta:
