@@ -13,7 +13,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 
-from baseapp.forms import StoryForm
 from baseapp.models import Story
 from baseapp.utils import HTML_wordcount
 
@@ -150,7 +149,7 @@ def enter_contest_new_story(request, contest_id,):
             'story_form' : story_form,
             }
         )
-    if contest_context.status != 'OPEN':
+    if contest_context and contest_context.status != 'OPEN':
         messages.error(request, 'This contest is not currently open for new entries.')
         return render(request, 'promptarena/view-contests.html', {})
 

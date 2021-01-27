@@ -20,7 +20,7 @@ def check_story_permissions(request, story=0):
     """checks if user is author or staff
     failing that, checks to see if user has opened their work generally
     the if story has been opened to the public"""
-    if story.author == request.user or request.user.is_staff:
+    if story.author.pk == request.user.pk or request.user.is_staff:
         result = True
     else:
         result =  story.author.profile.public_profile and story.public
