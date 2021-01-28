@@ -101,7 +101,7 @@ class EntryModelTest(BaseAppTestCase):
         self.entry.save()
     def test_entry_string_representation(self):
         """test str representation"""
-        self.assertEqual(str(self.entry), str(self.entry.story.author) + " : " + self.entry.contest.prompt.title)
+        self.assertEqual(str(self.entry), str(self.entry.story.author) + " : " + self.entry.title)
     def test_entry_verbose_name_plural(self):
         """test verbose name plural"""
         self.assertEqual(str(Entry._meta.verbose_name_plural), "entries")

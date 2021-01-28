@@ -21,4 +21,4 @@ class StoryForm(BaseForm):
 
     class Meta:
         model = Story
-        fields = ('title', 'content','public')
+        fields = ('title', 'content','access')

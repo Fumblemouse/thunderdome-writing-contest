@@ -13,6 +13,17 @@ from tinymce import models as tinymce_models
 # Create your models here.
 class Story(models.Model):
     """Story - the heart of it all"""
+    PRIVATE = 0
+    LOGGED_IN = 1
+    PUBLIC = 2
+    ACCESS_CHOICES = (
+        (PRIVATE, 'Only your darkest heart'),
+        (LOGGED_IN, 'Logged-in users of taste and distinction'),
+        (PUBLIC, 'The great unwashed'),
+    )
+
+
+
     author = models.ForeignKey(
       get_user_model(),
       on_delete=models.SET_NULL,
@@ -22,9 +33,11 @@ class Story(models.Model):
     content =  tinymce_models.HTMLField()
     creation_date = models.DateTimeField(auto_now_add=True,)
     modified_date = models.DateTimeField(auto_now=True)
-    public = models.BooleanField(
-        verbose_name='Show publically?',
-        help_text = 'Caution: Displaying a story publically will exclude it from future contests')
+    access = models.PositiveSmallIntegerField(
+        verbose_name='Who can see your story?',
+        help_text = 'Caution: Making your story non-private will exclude it from entering contests',
+        default = PRIVATE,
+        choices = ACCESS_CHOICES)
     slug = AutoSlugField(max_length=40, unique=True)
     wordcount = models.PositiveSmallIntegerField()
     has_been_public = models.BooleanField(default=False)
@@ -40,7 +53,7 @@ class Story(models.Model):
         if not self.id or slug != slugified:
             self.slug = slugified
         #set flag if saved for public view
-        if self.public:
+        if self.access > 0:
             self.has_been_public = True
 
         #Add wordcount

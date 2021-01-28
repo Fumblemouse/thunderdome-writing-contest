@@ -46,14 +46,21 @@ class BaseAppTestCase(TestCase):
         """creates private story"""
         if author == "":
             author = self.user
-        self.story = Story(title="My Story", content="This is a story all about how...", author = author, public = False)
+        self.story = Story(title="My Story", content="This is a story all about how...", author = author, access = Story.PRIVATE)
+        self.story.save()
+
+    def set_up_story_logged_in(self, author = ""):
+        """creates private story"""
+        if author == "":
+            author = self.user
+        self.story = Story(title="My Story", content="This is a story all about how...", author = author, access = Story.LOGGED_IN)
         self.story.save()
 
     def set_up_story_public(self, author = ""):
         """creates private story"""
         if author == "":
             author = self.user
-        self.story = Story(title="My Story", content="This is a story all about how...", author = author, public = True)
+        self.story = Story(title="My Story", content="This is a story all about how...", author = author, access = Story.PUBLIC)
         self.story.save()
 
     def set_up_prompt(self):
@@ -80,7 +87,7 @@ class BaseAppTestCase(TestCase):
             #users[-1] = last in list
             self.users[-1].save()
         for user in self.users:
-            self.stories.append(Story(author = user, public=False))
+            self.stories.append(Story(author = user, access=Story.PRIVATE))
             self.stories[-1].save()
         for story in self.stories:
             self.entries.append(Entry(contest = self.contest, story=story))

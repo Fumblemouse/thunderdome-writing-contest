@@ -104,7 +104,7 @@ def create_contest_old_prompt(request):
         form_uncommitted = form.save(commit=False)
         #Take a snapshot of prompt content
         form_uncommitted.title = form_uncommitted.prompt.title
-        form_uncomitted.content = form_uncommitted.prompt.content
+        form_uncommitted.content = form_uncommitted.prompt.content
         form_uncommitted.save()
         messages.success(request, 'Your contest was submitted successfully! Hopefully it doesn\'t suck.')
         return redirect('view contests')
@@ -122,7 +122,7 @@ def enter_contest_new_story(request, contest_id,):
             story_wordcount = HTML_wordcount(story_form.instance.content)
             entry_form = EnterContestNewStoryForm(
                 request.POST,
-                contest_max_wordcount=contest_context.wordcount,
+                contest_max_wordcount=contest_context.max_wordcount,
                 story_wordcount=story_wordcount,
                 contest_expiry_date=contest_context.expiry_date,
             )

@@ -70,28 +70,39 @@ def edit_story(request, story_id=""):
 
 def view_stories(request):
     """User retrieves a list of available stories"""
-    if not request.user.is_staff:
+    if request.user.is_authenticated:
         stories_context = Story.objects.filter(
-            public = True,
+            access__gte = Story.LOGGED_IN,
             author__profile__public_profile = True,
         )
-    else:
+    elif request.user.is_staff:
         stories_context = Story.objects.all()
+    else:
+        stories_context = Story.objects.filter(
+            access__gte = Story.PUBLIC,
+            author__profile__public_profile = True,
+        )
 
     return render(request, 'baseapp/view-stories.html', {'stories_context': stories_context})
 
 def view_stories_by_author(request, author_slug =""):
     """User retrieves a list of available stories"""
     author = get_object_or_404(get_user_model(), profile__slug=author_slug)
-    if not request.user.is_staff:
+    if request.user.is_staff:
         stories_context = Story.objects.filter(
-            public = True,
+            author = author,
+        )
+    elif request.user.is_authenticated:
+        stories_context = Story.objects.filter(
+            access__gte= 1,
             author = author,
             author__profile__public_profile = True
         )
     else:
         stories_context = Story.objects.filter(
+            access__gte= 2,
             author = author,
+            author__profile__public_profile = True
         )
 
     author_context = author

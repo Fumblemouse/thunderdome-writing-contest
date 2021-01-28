@@ -67,7 +67,7 @@ class Contest(models.Model):
         #(BRAWL_CONTEST, 'Brawl')
     ]
     prompt = models.ForeignKey(Prompt, on_delete=models.SET_NULL, null=True) #Null = true to make on_delete work
-    title = models.CharField(max_length=200, unique= True)
+    title = models.CharField(max_length=200, unique= True, blank=True)
     content =  tinymce_models.HTMLField()
     start_date = models.DateTimeField('Start Date')
     expiry_date = models.DateTimeField('Submit by Date')

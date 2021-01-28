@@ -56,7 +56,7 @@ class EnterContestNewStoryFormTest(TestCase):
         """set up"""
         self.prompt = Prompt(title = "Prompt1", content="this is a <b>prompt</b>")
         self.prompt.save()
-        self.story = Story(title="Story1", content="this is content", public=False)
+        self.story = Story(title="Story1", content="this is content", access=Story.PRIVATE)
         self.story.save()
         self.contest = Contest(max_wordcount = 10, expiry_date = timezone.now() + timezone.timedelta(7), start_date = timezone.now(), prompt=self.prompt)
         self.contest.save()

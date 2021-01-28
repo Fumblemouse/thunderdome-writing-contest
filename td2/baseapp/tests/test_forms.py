@@ -3,6 +3,7 @@ from django.test import TestCase
 # Create your tests here.
 from django.contrib.auth import get_user_model
 from baseapp.forms import StoryForm
+from baseapp.models import Story
 
 class Story_Form_Test(TestCase):
     """Test user of story form"""
@@ -14,7 +15,7 @@ class Story_Form_Test(TestCase):
 
     def test_storyform_valid(self):
         """test form is valid"""
-        form = StoryForm(data={"title": "Test Story 1", "content":"This the body of Test story 1"})
+        form = StoryForm(data={"title": "Test Story 1", "content":"This the body of Test story 1", 'access': Story.PRIVATE})
 
         self.assertTrue(
             form.is_valid()
@@ -29,7 +30,7 @@ class Story_Form_Test(TestCase):
         )
     def test_base_form_characteristics(self):
         """test base form child is inheriting characteristics"""
-        form = StoryForm(data={"title": "Test Story 1", "content":"This the body of Test story 1", "public":False})
+        form = StoryForm(data={"title": "Test Story 1", "content":"This the body of Test story 1", "access":Story.PRIVATE})
         for fieldname,field in form.fields.items():
             if "Boolean" not in str(field):
                 self.assertTrue('form-control' in field.widget.attrs['class'])
