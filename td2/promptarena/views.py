@@ -87,8 +87,8 @@ def create_contest_new_prompt(request):
         #save w/o comitting then add prompt and save
         contest_form_uncommitted = contest_form.save(commit=False)
         contest_form_uncommitted.prompt = prompt_form_uncommitted
-        contest_form_uncommitted.title = prompt_form_uncommitted.prompt.title
-        contest_form_uncomitted.content = prompt_form_uncommitted.prompt.content
+        contest_form_uncommitted.title = prompt_form_uncommitted.title
+        contest_form_uncommitted.content = prompt_form_uncommitted.content
         contest_form_uncommitted.save()
         messages.success(request, 'Your contest was submitted successfully! Hopefully it doesn\'t suck.')
         return redirect('view contests')
@@ -142,7 +142,7 @@ def enter_contest_new_story(request, contest_id,):
                 entry_form_uncommitted.save()
 
                 messages.success(request, 'Your entry was submitted successfully! Hopefully it doesn\'t suck.')
-                return redirect('view contest')
+                return redirect('view contests')
         return render(request, 'promptarena/enter-contest-new-story.html', {
             'contest_context' : contest_context,
             'entry_form': entry_form,

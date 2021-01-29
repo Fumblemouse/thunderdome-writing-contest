@@ -35,7 +35,7 @@
         </tr>
     {% for story in stories_context %}
         <tr>
-            <td><a href="{% url 'view story by slug' story.author.profile.slug story.slug %}">{{ story.title }}</a></td>
+            <td><a href="{% url 'view story by slug' story.author.slug story.slug %}">{{ story.title }}</a></td>
             <td><a href = "{% url 'edit story' story.id %}">Edit</a></td>
         </tr>
     {% endfor %}

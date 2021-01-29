@@ -22,8 +22,6 @@ def check_story_permissions(request, story=0):
     the if story has been opened to the public"""
     if story.author.pk == request.user.pk or request.user.is_staff:
         result = True
-    elif not story.author.profile.public_profile:
-        result = False
     elif story.access > 0 and request.user.is_authenticated:
         result = True
     elif story.access > 1:

@@ -19,7 +19,7 @@
             <td>{{ entry.story.author.username }}</a></td>
             <td>{{ entry.position }}</td>
             <td>{{ entry.score }}</td>
-            <td><a href="{% url 'view story by slug' entry.story.author.profile.slug entry.story.slug %}">{{ entry.story.title }}</a></td>
+            <td><a href="{% url 'view story by slug' entry.story.author.slug entry.story.slug %}">{{ entry.story.title }}</a></td>
         </tr>
     {% endfor %}
     </table>

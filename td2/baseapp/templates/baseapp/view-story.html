@@ -21,10 +21,10 @@
 
     {% endif %}
     <img src = "{% static 'baseapp/img/flourish.png' %}" alt="Ending typographical flourish" class="rounded mx-auto d-block" />
-    {% if story_context.author.profile.bio %}
+    {% if story_context.author.bio %}
         <div id="bio">
             <p>About the author:</p>
-            <blockquote>{{ story_context.author.profile.bio | safe }}</blockquote>
+            <blockquote>{{ story_context.author.bio | safe }}</blockquote>
         </div>
     {% endif %}
     {% if story_context.crit_set.all %}

@@ -64,7 +64,7 @@ def edit_story(request, story_id=""):
         form.save()
         messages.success(request, 'Your story was updated successfully! Hopefully it doesn\'t suck.')
         # redirect to a new URL:
-        return redirect('view story by slug', author_slug = story.author.profile.slug, story_slug = story.slug)
+        return redirect('view story by slug', author_slug = story.author.slug, story_slug = story.slug)
 
     return render(request, 'baseapp/create-story.html', {'form': form})
 
@@ -73,21 +73,19 @@ def view_stories(request):
     if request.user.is_authenticated:
         stories_context = Story.objects.filter(
             access__gte = Story.LOGGED_IN,
-            author__profile__public_profile = True,
         )
     elif request.user.is_staff:
         stories_context = Story.objects.all()
     else:
         stories_context = Story.objects.filter(
             access__gte = Story.PUBLIC,
-            author__profile__public_profile = True,
         )
 
     return render(request, 'baseapp/view-stories.html', {'stories_context': stories_context})
 
 def view_stories_by_author(request, author_slug =""):
     """User retrieves a list of available stories"""
-    author = get_object_or_404(get_user_model(), profile__slug=author_slug)
+    author = get_object_or_404(get_user_model(), slug=author_slug)
     if request.user.is_staff:
         stories_context = Story.objects.filter(
             author = author,
@@ -96,13 +94,11 @@ def view_stories_by_author(request, author_slug =""):
         stories_context = Story.objects.filter(
             access__gte= 1,
             author = author,
-            author__profile__public_profile = True
         )
     else:
         stories_context = Story.objects.filter(
             access__gte= 2,
             author = author,
-            author__profile__public_profile = True
         )
 
     author_context = author
@@ -121,7 +117,7 @@ def view_story_by_id(request, story_id = 0):
 def view_story_by_slug(request, author_slug="", story_slug = ""):
     """User views a story"""
     context = {}
-    context['story_context'] = get_object_or_404(Story, author__profile__slug =author_slug, slug = story_slug)
+    context['story_context'] = get_object_or_404(Story, author__slug =author_slug, slug = story_slug)
     if not check_story_permissions(request, context['story_context']):
         messages.error(request, "This story has been locked by the author.")
         return redirect('view stories')

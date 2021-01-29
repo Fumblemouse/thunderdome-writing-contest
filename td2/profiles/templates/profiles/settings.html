@@ -1,7 +1,7 @@
 {% extends "profiles/profile.html" %}
 {% block title %}ThunderDome: Profile Settings{% endblock %}
 {% block headtag %}
-    {{ profile_form.media }}
+    {{ user_form.media }}
 {% endblock %}
 {% block header %}
       Settings: {{request.user.username}}
@@ -11,8 +11,7 @@
 <div>
     <form method="POST">
         {% csrf_token %}
-        {% include 'baseapp/base-form.html' with form=user_form %}
-        {% include 'baseapp/base-form.html' with form=profile_form %}
+        {% include 'baseapp/base-form.html' %}
 
         {% load tz %}
         {% get_current_timezone as TIME_ZONE %}

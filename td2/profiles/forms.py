@@ -4,19 +4,22 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import get_user_model
 from baseapp.forms import BaseForm
-from .models import Profile
+from .models import CustomUser
 
-class BaseUserCreationForm(UserCreationForm):
+class CustomUserCreationForm(UserCreationForm):
     """BaseForm to bootstrapping"""
     def __init__(self, *args, **kwargs):
-        super(BaseUserCreationForm, self).__init__(*args, **kwargs)
+        super(CustomUserCreationForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             if "Boolean" not in str(field):
                 field.widget.attrs['class'] = 'form-control'
             else:
                 field.widget.attrs['class'] = 'form-check-input'
+    class Meta:
+        model = CustomUser
+        fields = 'username', 'password'
 
-class SignUpForm(BaseUserCreationForm):
+class SignUpForm(CustomUserCreationForm):
     """Sign up form"""
     first_name = forms.CharField(max_length=100, help_text='Optional', required=False)
     last_name = forms.CharField(max_length=100, help_text='Also optional', required=False)
@@ -30,15 +33,16 @@ class UserUpdateForm(BaseForm):
     """Update user fields"""
     class Meta:
         model=get_user_model()
-        fields=['email', 'first_name', 'last_name']
+        fields=['email', 'first_name', 'last_name', 'bio', 'highest_access']
 
-
+"""
 class ProfileUpdateForm(BaseForm):
-    """update profile model fields"""
+    update profile model fields
 
     class Meta:
         model = Profile
         fields = 'bio', 'public_profile'
+"""
 
 class UserLoginForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):

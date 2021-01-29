@@ -28,7 +28,7 @@ class BaseAppTestCase(TestCase):
     def setUpTestData(cls):
         cls.User = get_user_model()
         cls.user = cls.User.objects.create_user(username='djangotestuser', password='12345abcde')
-        cls.user.profile.timezone = "Africa/Abidjan"
+        cls.user.timezone = "Africa/Abidjan"
         cls.user.save()
 
 

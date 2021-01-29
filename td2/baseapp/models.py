@@ -8,8 +8,6 @@ from django.utils.html import strip_tags
 from autoslug import AutoSlugField
 from tinymce import models as tinymce_models
 
-
-
 # Create your models here.
 class Story(models.Model):
     """Story - the heart of it all"""
@@ -21,9 +19,6 @@ class Story(models.Model):
         (LOGGED_IN, 'Logged-in users of taste and distinction'),
         (PUBLIC, 'The great unwashed'),
     )
-
-
-
     author = models.ForeignKey(
       get_user_model(),
       on_delete=models.SET_NULL,
@@ -33,6 +28,7 @@ class Story(models.Model):
     content =  tinymce_models.HTMLField()
     creation_date = models.DateTimeField(auto_now_add=True,)
     modified_date = models.DateTimeField(auto_now=True)
+    ACCESS_CHOICES = ACCESS_CHOICES
     access = models.PositiveSmallIntegerField(
         verbose_name='Who can see your story?',
         help_text = 'Caution: Making your story non-private will exclude it from entering contests',
