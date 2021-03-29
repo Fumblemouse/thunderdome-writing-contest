@@ -1,12 +1,12 @@
 """Test framework for users and profiles"""
 from django.test import TestCase
-# Create your tests here.
-from django.contrib.auth import get_user_model
 from django.utils import timezone
 from promptarena.forms import PromptForm, CreateContestNewPromptForm, CreateContestOldPromptForm, EnterContestNewStoryForm, ContestStoryForm
 from promptarena.models import Prompt, Contest
 from baseapp.models import Story
 from baseapp.utils import HTML_wordcount
+
+# Create your tests here.
 
 class PromptFormTest(TestCase):
     """Prompt form test"""
@@ -92,5 +92,3 @@ class EnterContestNewStoryFormTest(TestCase):
         )
         self.assertFalse(self.form.is_valid())
         self.assertTrue("The deadline for that contest is over." in self.form.non_field_errors())
-
-

@@ -99,7 +99,6 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
 
     def test_view_story_by_id_story_private(self):
         """test redirect for view story by id if:
-         
          story private"""
         #user not logged in
         self.set_up_story_private()
@@ -128,7 +127,6 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
 
     def test_view_story_by_slug_story_private(self):
         """test redirect for view story by slug if:
-         
          story private"""
         #user not logged in
         self.set_up_story_private()
@@ -140,8 +138,7 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
         self.assertRedirects(response, reverse('view stories'))
 
     def test_view_story_by_slug_story_logged_in(self):
-        """test redirect for view story by slug if:
-         
+        """test redirect for view story by slug if
          story public
          user not logged in"""
         self.set_up_story_logged_in()
@@ -155,7 +152,6 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
 
     def test_view_story_by_slug_story_public(self):
         """test redirect for view story by slug if:
-         
          story public
          user not logged in"""
         self.set_up_story_public()
@@ -168,16 +164,10 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'baseapp/view-story.html')
 
-    
-  
-   
-
-
-        #Test author access
+    #Test author access
 
     def test_view_story_by_slug_story_private_user_author(self):
         """test redirect for view story by slug if:
-         
          story private
          user  author"""
         self.set_up_story_private(self.author)
@@ -188,7 +178,6 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
 
     def test_view_story_by_slug_story_logged_in_user_author(self):
         """test redirect for view story by slug if:
-         
          story public
          user  author"""
         self.login_testuser('djangotestauthor')
@@ -200,7 +189,6 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
 
     def test_view_story_by_slug_story_public_user_author(self):
         """test redirect for view story by slug if:
-         
          story public
          user  author"""
         self.login_testuser('djangotestauthor')
@@ -209,17 +197,10 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'baseapp/view-story.html')
 
-
-
-
-
-
-
-        #test edit story access
+    #test edit story access
 
     def test_edit_story_user_author(self):
         """test redirect  edit story if:
-         
          story private
          user  author"""
         self.set_up_story_private(self.author)
@@ -230,12 +211,9 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
 
     def test_edit_story_user_not_author(self):
         """test redirect  edit story if:
-         
          story private
          user not author"""
         self.set_up_story_private()
         self.login_testuser('djangotestreader')
         response = self.client.get(reverse('edit story', kwargs = {"story_id": self.story.pk}))
         self.assertRedirects(response, reverse('view stories'))
-
-###TODO: Edit story entry test"""

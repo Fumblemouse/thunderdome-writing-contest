@@ -7,22 +7,11 @@ from django.test import TestCase
 from baseapp.models import Story
 from promptarena.models import Prompt, Entry, Crit
 
+ # pylint: disable=attribute-defined-outside-init
+ # disabled because Django test classes set up variables/attributes in bespoke methods
+
 class BaseAppTestCase(TestCase):
     """Handy TestClass Extension that can also perform functions to create useful entities"""
-
-
-    def __init__(self, *args, **kwargs):
-        """Class with routines for testing contest as doing little jobs"""
-        super(BaseAppTestCase, self).__init__(*args, **kwargs)
-
-        #self.login=None
-        #self.story = None
-        #self.prompt = None
-        #self.contest = None
-        #self.users = None
-        #self.stories = None
-        #self.entries = None
-        #self.crits = None
 
     @classmethod
     def setUpTestData(cls):
@@ -43,21 +32,22 @@ class BaseAppTestCase(TestCase):
         self.login = self.client.login(username=username, password='12345abcde')
 
     def set_up_story_private(self, author = ""):
-        """creates private story"""
+        """creates private privacy story"""
         if author == "":
             author = self.user
         self.story = Story(title="My Story", content="This is a story all about how...", author = author, access = Story.PRIVATE)
         self.story.save()
 
+
     def set_up_story_logged_in(self, author = ""):
-        """creates private story"""
+        """creates logged-in privacy story"""
         if author == "":
             author = self.user
         self.story = Story(title="My Story", content="This is a story all about how...", author = author, access = Story.LOGGED_IN)
         self.story.save()
 
     def set_up_story_public(self, author = ""):
-        """creates private story"""
+        """creates public privacy story"""
         if author == "":
             author = self.user
         self.story = Story(title="My Story", content="This is a story all about how...", author = author, access = Story.PUBLIC)
@@ -78,7 +68,12 @@ class BaseAppTestCase(TestCase):
             )
 
     def set_up_contest_components(self):
-        """reusable routine to set up contest associated objects"""
+        """reusable routine to set up contest associated objects
+        sets up:
+            5 users
+            5 stories
+            5 entries
+        """
         self.users = []
         self.stories = []
         self.entries = []

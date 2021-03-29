@@ -131,9 +131,9 @@ class InternalJudgeContest(Contest):
     class Meta:
         proxy=True
 
-    def save(self, *args, **kwargs):
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.mode = 'INTERNAL JUDGE CONTEST'
-        return super(InternalJudgeContest, self).save(*args, **kwargs)
+        return super(InternalJudgeContest, self).save()
 
     def close(self):
         """assign stories to judges"""
@@ -187,6 +187,10 @@ class InternalJudgeContest(Contest):
         crits = Crit.objects.filter(entry__contest__pk = self.pk)
         results = {}
         results_order = {}
+        #previous score is used to track multiple entries with the same score
+        previous_score = 0
+        #additive determines placing.  Multiple 1sts means next lowest is 2nd
+        additive = 1
         #create a dictionary with entry as key and an array of scores from judges
         for crit in crits:
             results.setdefault(crit.entry, [])
@@ -197,9 +201,26 @@ class InternalJudgeContest(Contest):
         #Create a result record for each item in the sorted array
         for count, result in enumerate(results_order):
             entry = Entry.objects.get(pk = result[0].pk)
-            entry.position = count + 1
+            if previous_score != sum(result[1]):
+                entry.position = count + additive
+            else:
+                additive -= 1
+                entry.position = count + additive
+
             entry.score = sum(result[1])
+            previous_score = sum(result[1])
+            if entry.position == 1:
+                entry.story.author.wins += 1
+            elif entry.position == 2:
+                entry.story.author.hms += 1
+            elif entry.position == (results_order.length + additive)-1:
+                entry.story.author.dms += 1
+            elif entry.position == results_order.length + additive:
+                entry.story.author.losses += 1    
             entry.save()
+            #add result to profile
+            
+
         self.entrant_num = len(results)
         self.status = 'CLOSED'
         self.save()
@@ -219,7 +240,7 @@ class BrawlContest(Contest):
     def close(self):
         """assign stories to judges"""
         #get list of entries to this contest
-        entries = Entry.objects.filter(contest = self.contest)
+        entries = Entry.objects.filter(contest = self)
         #get list of entrants and stories from entries
         stories = entries.values_list('story', flat=True)
         stories = list(stories)
