@@ -90,6 +90,34 @@ class InternalJudgeContestModelTest(BaseAppTestCase):
             self.assertTrue(entry.position > 0)
             self.assertTrue(entry.score > 0)
 
+
+    def test_contest_profile_updates(self):
+        """test function reaches end and checks profiles updated with stats """
+        win = 0
+        loss = 0
+        hm = 0
+        dm = 0
+        self.set_up_contest_components()
+        self.contest.close()
+        self.score_contest()
+        self.contest.judge()
+        for entry in self.entries:
+            entry.refresh_from_db()
+            if entry.story.author.wins == 1:
+                win += 1
+            if entry.story.author.losses == 1:
+                loss += 1
+            if entry.story.author.hms == 1:
+                hm += 1
+            if entry.story.author.dms == 1:
+                dm += 1
+        self.assertTrue(win)
+        self.assertTrue(hm)
+        self.assertTrue(dm)
+        self.assertTrue(loss)
+
+
+
 class EntryModelTest(BaseAppTestCase):
     """Test A Entry"""
     def setUp(self):

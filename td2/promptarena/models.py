@@ -200,26 +200,36 @@ class InternalJudgeContest(Contest):
         results_order = sorted(results.items(), key=lambda x: sum(x[1]), reverse=True)
         #Create a result record for each item in the sorted array
         for count, result in enumerate(results_order):
+            score = sum(result[1])
             entry = Entry.objects.get(pk = result[0].pk)
-            if previous_score != sum(result[1]):
-                entry.position = count + additive
-            else:
+            if previous_score == score:
                 additive -= 1
-                entry.position = count + additive
+            entry.position = count + additive
 
-            entry.score = sum(result[1])
-            previous_score = sum(result[1])
+            entry.score = score
+            entry.save()
+            previous_score = score
+
+        #add result to profile once placings are assigned
+        for result in results_order:
+
+            entry = Entry.objects.get(pk = result[0].pk)
             if entry.position == 1:
                 entry.story.author.wins += 1
+                entry.story.author.save()
+                #print('win: ', entry.position)
             elif entry.position == 2:
                 entry.story.author.hms += 1
-            elif entry.position == (results_order.length + additive)-1:
+                entry.story.author.save()
+                #print('hm: ', entry.position)
+            elif entry.position == (len(results_order) + additive)-2:
                 entry.story.author.dms += 1
-            elif entry.position == results_order.length + additive:
-                entry.story.author.losses += 1    
-            entry.save()
-            #add result to profile
-            
+                entry.story.author.save()
+                #print('dm: ', entry.position)
+            elif entry.position == (len(results_order) + additive)-1:
+                entry.story.author.losses += 1
+                entry.story.author.save()
+                #print('loss: ', entry.position)
 
         self.entrant_num = len(results)
         self.status = 'CLOSED'
