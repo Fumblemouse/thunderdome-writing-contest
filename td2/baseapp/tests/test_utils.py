@@ -8,7 +8,7 @@ from baseapp.models import Story
 from promptarena.models import Prompt, Entry, Crit
 
  # pylint: disable=attribute-defined-outside-init
- # disabled because Django test classes set up variables/attributes in bespoke methods
+ # disabled because Django test classes set up variables/attributes in bespoke methods!
 
 class BaseAppTestCase(TestCase):
     """Handy TestClass Extension that can also perform functions to create useful entities"""
