@@ -1,7 +1,7 @@
 """BASE reference models used across multiple apps"""
 import re
 from django.db import models
-#from django.utils import timezone
+from django.urls import reverse
 from django.utils.text import slugify
 from django.contrib.auth import get_user_model
 from django.utils.html import strip_tags
@@ -10,7 +10,12 @@ from tinymce import models as tinymce_models
 
 # Create your models here.
 class Story(models.Model):
-    """Story - the heart of it all"""
+    """Story - the heart of it all
+    defines:
+        _Str_
+        save
+        get_absolute_url
+    """
     PRIVATE = 0
     LOGGED_IN = 1
     PUBLIC = 2
@@ -22,7 +27,8 @@ class Story(models.Model):
     author = models.ForeignKey(
       get_user_model(),
       on_delete=models.SET_NULL,
-      null=True
+      null=True,
+      related_name = 'stories'
     )
     title = models.CharField(max_length=255)
     content =  tinymce_models.HTMLField()
@@ -39,6 +45,16 @@ class Story(models.Model):
     has_been_public = models.BooleanField(default=False)
     #tags = models.JSONField(blank=True, null=True)
     #public_scores = models.JSONField(blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = "stories"
+        constraints = [
+            models.UniqueConstraint(fields=['title', 'author'], name='unique_titles_for_authors')
+        ]
+
+    def __str__(self):
+        '''sits up and says hello'''
+        return self.title
 
     #def save(self, *args, **kwargs):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
@@ -59,12 +75,9 @@ class Story(models.Model):
         self.wordcount = wordcount
         return super(Story, self).save()
 
-
-    def __str__(self):
-        '''sits up and says hello'''
-        return self.title
-    class Meta:
-        verbose_name_plural = "stories"
-        constraints = [
-            models.UniqueConstraint(fields=['title', 'author'], name='unique_titles_for_authors')
-        ]
+    def get_absolute_url(self):
+        """Returns a permalink for the story"""
+        return reverse('view story by slug', kwargs = {
+                                                        'author_slug': self.author.slug,
+                                                        'story_slug' : self.slug
+                                                        })

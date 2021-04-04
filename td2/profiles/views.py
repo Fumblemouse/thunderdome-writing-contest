@@ -1,4 +1,3 @@
-"""Views for Profiles app"""
 import logging
 from django.contrib.auth import  logout
 from django.contrib.auth import get_user_model

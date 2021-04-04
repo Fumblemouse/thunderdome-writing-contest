@@ -33,7 +33,7 @@ class UserUpdateForm(BaseForm):
     """Update user fields"""
     class Meta:
         model=get_user_model()
-        fields=['email', 'first_name', 'last_name', 'bio', 'highest_access']
+        fields= ('email', 'first_name', 'last_name', 'bio', 'highest_access')
 
 """
 class ProfileUpdateForm(BaseForm):

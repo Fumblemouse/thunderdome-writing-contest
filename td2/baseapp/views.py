@@ -1,9 +1,7 @@
 """views for baseapp"""
-from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-
 from django.contrib.auth import get_user_model
 
 from .forms import StoryForm
@@ -13,8 +11,6 @@ from baseapp.utils import check_story_permissions
 
 import logging
 logger = logging.getLogger(__name__)
-
-
 
 # Create your views here.
 def home(request):

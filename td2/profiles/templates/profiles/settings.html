@@ -11,7 +11,7 @@
 <div>
     <form method="POST">
         {% csrf_token %}
-        {% include 'baseapp/base-form.html' %}
+        {% include 'baseapp/base-form.html' with form=user_form %}
 
         {% load tz %}
         {% get_current_timezone as TIME_ZONE %}

@@ -130,11 +130,11 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
          story private"""
         #user not logged in
         self.set_up_story_private()
-        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.slug}))
+        response = self.client.get(self.story.get_absolute_url())
         self.assertRedirects(response, reverse('view stories'))
         #log user in
         self.login_testuser('djangotestreader')
-        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.slug}))
+        response = self.client.get(self.story.get_absolute_url())
         self.assertRedirects(response, reverse('view stories'))
 
     def test_view_story_by_slug_story_logged_in(self):
@@ -142,11 +142,11 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
          story public
          user not logged in"""
         self.set_up_story_logged_in()
-        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.slug}))
+        response = self.client.get(self.story.get_absolute_url())
         self.assertRedirects(response, reverse('view stories'))
         #user logs in
         self.login_testuser('djangotestreader')
-        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.slug}))
+        response = self.client.get(self.story.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'baseapp/view-story.html')
 
@@ -155,12 +155,12 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
          story public
          user not logged in"""
         self.set_up_story_public()
-        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.slug}))
+        response = self.client.get(self.story.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'baseapp/view-story.html')
         #user logs in
         self.login_testuser('djangotestreader')
-        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.slug}))
+        response = self.client.get(self.story.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'baseapp/view-story.html')
 
@@ -172,7 +172,7 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
          user  author"""
         self.set_up_story_private(self.author)
         self.login_testuser('djangotestauthor')
-        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.slug}))
+        response = self.client.get(self.story.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'baseapp/view-story.html')
 
@@ -182,7 +182,7 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
          user  author"""
         self.login_testuser('djangotestauthor')
         self.set_up_story_public(author = self.author)
-        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.slug}))
+        response = self.client.get(self.story.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'baseapp/view-story.html')
 
@@ -193,7 +193,7 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
          user  author"""
         self.login_testuser('djangotestauthor')
         self.set_up_story_public(author = self.author)
-        response = self.client.get(reverse('view story by slug', kwargs = {"story_slug": self.story.slug, "author_slug":self.story.author.slug}))
+        response = self.client.get(self.story.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'baseapp/view-story.html')
 

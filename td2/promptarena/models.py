@@ -19,9 +19,6 @@ from tinymce import models as tinymce_models
 from baseapp.models import Story
 from baseapp.utils import sattolo_cycle
 
-#from django.apps import apps
-#Story = apps.get_model('baseapp', 'Story')
-
 # Create your models here.
 
 class Prompt(models.Model):
@@ -29,7 +26,8 @@ class Prompt(models.Model):
     creator = models.ForeignKey(
       get_user_model(),
       on_delete=models.SET_NULL,
-      null=True
+      null=True,
+      related_name = 'prompts',
     )
     title = models.CharField(max_length=200, unique= True)
     content =  tinymce_models.HTMLField()
@@ -66,7 +64,16 @@ class Contest(models.Model):
         (INTERNAL_JUDGE_CONTEST, 'Internal Judge Contest'),
         #(BRAWL_CONTEST, 'Brawl')
     ]
-    prompt = models.ForeignKey(Prompt, on_delete=models.SET_NULL, null=True) #Null = true to make on_delete work
+    prompt = models.ForeignKey(
+        Prompt,
+        on_delete=models.SET_NULL,
+        null=True, #Null = true to make on_delete work
+        related_name = 'contests')
+
+    judges = models.ManyToManyField(
+        get_user_model(),
+        related_name = 'contests_judged'
+    )
     title = models.CharField(max_length=200, unique= True, blank=True)
     content =  tinymce_models.HTMLField()
     start_date = models.DateTimeField('Start Date')
@@ -83,10 +90,6 @@ class Contest(models.Model):
             return self.prompt.title
         return "ALERT - somehow this contest did not get set a title"
 
-    def is_active(self):
-        '''returns true if expiry date is passed'''
-        return self.expiry_date > timezone.now() > self.start_date
-
     #def save(self, *args, **kwargs):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         #provides a slug is one is missed
@@ -97,6 +100,10 @@ class Contest(models.Model):
         if self.is_active() and self.status != 'JUDGEMENT' and self.status != 'CLOSED':
             self.status = 'OPEN'
         return super(Contest, self).save()
+
+    def is_active(self):
+        '''returns true if expiry date is passed'''
+        return self.expiry_date > timezone.now() > self.start_date
 
     def set_open(self):
         """Sets status to open"""
@@ -235,7 +242,7 @@ class InternalJudgeContest(Contest):
         self.status = 'CLOSED'
         self.save()
 
-class BrawlContest(Contest):
+class ExternalJudgeContest(Contest):
     """
     Child class of Contest where judging is done by other contestants
     defines:
@@ -318,22 +325,28 @@ class BrawlContest(Contest):
 
 class Entry(models.Model):
     """Links stories and contests"""
-    story = models.ForeignKey(Story, on_delete=models.CASCADE)
+    story = models.ForeignKey(
+        Story,
+        on_delete=models.CASCADE,
+        related_name = 'stories')
+
     #NB - this is referring to the baseclass Contest, which means there are joins in any query
-    contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
+    contest = models.ForeignKey(Contest,
+        on_delete=models.CASCADE,
+        related_name = 'entries')
     position = models.PositiveSmallIntegerField(default=0)
     score = models.PositiveSmallIntegerField(default=0)
     creation_date = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=255)
     content =  tinymce_models.HTMLField()
 
+    class Meta:
+        verbose_name_plural = "entries"
+
     def __str__(self):
         if self.story and self.contest:
             return str(self.story.author) + " : " + self.title
         return "ALERT - somehow this entry did not get set a title"
-
-    class Meta:
-        verbose_name_plural = "entries"
 
 
 class Crit(models.Model):
@@ -352,13 +365,23 @@ class Crit(models.Model):
         (HI_MID_SCORE, 'High Middle'),
         (HI_SCORE, 'High')
     ]
-    story = models.ForeignKey(Story, on_delete=models.CASCADE)
-    entry = models.ForeignKey(Entry, on_delete=models.SET_NULL, null=True)
-    reviewer = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True)
+    story = models.ForeignKey(
+        Story,
+        on_delete=models.CASCADE,
+        related_name = 'crits')
+    entry = models.ForeignKey(
+        Entry,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name = 'crits')
+    reviewer = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name = 'crits')
     content = tinymce_models.HTMLField(help_text='Please enter your comments here')
     score = models.IntegerField(choices=SCORE_CHOICES, default=UNSCORED)
     final = models.BooleanField(
-        blank = True,
         default=False,
         help_text="Check this box if you are finished with your critique. Be warned! - once submitted with this box checked no further edits can be made."
     )
