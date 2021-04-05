@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'django_permissions_policy.PermissionsPolicyMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -57,7 +58,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'csp.middleware.CSPMiddleware',
-    'django_feature_policy.PermissionsPolicyMiddleware',
     'td2.td2_middleware.TimezoneMiddleware',
 ]
 
@@ -177,7 +177,7 @@ CSP_SCRIPT_SRC = ("'self'", 'https://cdn.jsdelivr.net', 'https://www.googletagma
 CSP_CONNECT_SRC = ('https://www.google-analytics.com/')
 CSP_FONT_SRC = "https://fonts.gstatic.com"
 
-#Feature Policy
+#Permissions Policy
 PERMISSIONS_POLICY = {
     'accelerometer' : [],
 #    'ambient-light-sensor' : [],

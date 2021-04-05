@@ -81,9 +81,11 @@ class BaseAppTestCase(TestCase):
             self.users.append(self.User.objects.create_user(username='djangotestuser{}'.format(user_num), password='{}2345abcde'.format(user_num)))
             #users[-1] = last in list
             self.users[-1].save()
+
         for user in self.users:
             self.stories.append(Story(author = user, access=Story.PRIVATE))
             self.stories[-1].save()
+
         for story in self.stories:
             self.entries.append(Entry(contest = self.contest, story=story))
             self.entries[-1].save()

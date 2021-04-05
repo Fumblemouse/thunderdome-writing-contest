@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from baseapp.forms import StoryForm
 from baseapp.models import Story
 
-class Story_Form_Test(TestCase):
+class StoryFormTest(TestCase):
     """Test user of story form"""
     def setUp(self):
         """set up user using usermodel"""

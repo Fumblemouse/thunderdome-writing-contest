@@ -1,6 +1,9 @@
 """Test framework for users and profiles"""
 from django.urls import reverse
+
 from baseapp.tests.test_utils import BaseAppTestCase
+from baseapp.models import Story
+from promptarena.models import InternalJudgeContest
 # Create your tests here.
 
 
@@ -217,3 +220,55 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
         self.login_testuser('djangotestreader')
         response = self.client.get(reverse('edit story', kwargs = {"story_id": self.story.pk}))
         self.assertRedirects(response, reverse('view stories'))
+
+class TestUtilsBaseAppFunctionsTest(BaseAppTestCase):
+    """Tests a lot of form submission in promptarena views"""
+    def test_login_user(self):
+        """Checks login function is working"""
+        self.login_testuser('djangotestuser')
+        self.assertTrue(self.user.is_authenticated)
+
+
+    def test_set_up_story_private(self):
+        """creates private privacy story"""
+        self.client.login(username='djangotestuser', password='12345abcde')
+        data = {
+            'title':"My Story",
+            'content':"This is a story all about how...",
+            'author' : self.user,
+            'access' : Story.PRIVATE,
+            }
+        response = self.client.post(reverse('create story'), data)
+        self.assertRedirects(response, '/1/view-story')
+
+    def test_edit_story_in_contest(self):
+        """tests editing of story in non-open contests"""
+        self.set_up_contest(InternalJudgeContest)
+        self.contest.save()
+        self.set_up_contest_components()
+        self.client.login(username='djangotestuser0', password='02345abcde')
+        story = Story.objects.get(author__username = 'djangotestuser0')
+        response = self.client.get('/' + str(story.pk) + '/edit-story')
+        self.assertRedirects(response, '/' + str(story.pk) + '/view-story')
+
+    def test_edit_story_redirect_after_post(self):
+        """test edit goes to right place"""
+        data = {
+            'title':"My Story",
+            'content':"This is a story all about how...",
+            'author' : self.user,
+            'access' : Story.PRIVATE,
+            }
+
+        self.client.login(username='djangotestuser', password='12345abcde')
+        response = self.client.post(reverse('create story'), data)
+
+        data = {
+            'title':"My title changed story",
+            'content':"This is a story all about how...",
+            'author' : self.user,
+            'access' : Story.PRIVATE,
+            }
+
+        response = self.client.post('/1/edit-story', data)
+        self.assertRedirects(response, '/djangotestuser/my-title-changed-story/read')

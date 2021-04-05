@@ -1,7 +1,5 @@
 """Test models for Stories"""
-from django.test import TestCase
 from promptarena.models import Prompt,  InternalJudgeContest, Entry, Crit
-from baseapp.models import Story
 from baseapp.tests.test_utils import BaseAppTestCase
 
 
@@ -95,8 +93,8 @@ class InternalJudgeContestModelTest(BaseAppTestCase):
         """test function reaches end and checks profiles updated with stats """
         win = 0
         loss = 0
-        hm = 0
-        dm = 0
+        honourable_mention = 0
+        dishonourable_mention = 0
         self.set_up_contest_components()
         self.contest.close()
         self.score_contest()
@@ -108,12 +106,12 @@ class InternalJudgeContestModelTest(BaseAppTestCase):
             if entry.story.author.losses == 1:
                 loss += 1
             if entry.story.author.hms == 1:
-                hm += 1
+                honourable_mention += 1
             if entry.story.author.dms == 1:
-                dm += 1
+                dishonourable_mention += 1
         self.assertTrue(win)
-        self.assertTrue(hm)
-        self.assertTrue(dm)
+        self.assertTrue(honourable_mention)
+        self.assertTrue(dishonourable_mention)
         self.assertTrue(loss)
 
 
@@ -145,9 +143,4 @@ class CritModelTest(BaseAppTestCase):
         self.crit.save()
     def test_entry_string_representation(self):
         """test str"""
-        self.assertEqual(str(self.crit), str(self.crit.entry.contest.prompt.title) + " : " + str(self.crit.reviewer.username) + " reviews " + str(self.crit.story.author.username) )
-
-
-
-
-
+        self.assertEqual(str(self.crit), str(self.crit.entry.contest.prompt.title) + " : " + str(self.crit.reviewer.username) + " reviews " + str(self.crit.story.author) )

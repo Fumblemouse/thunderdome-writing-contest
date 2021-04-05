@@ -7,6 +7,7 @@ MODELS
     Stories: Written using prompts to enter contests
     Entry: Bridge between story and contest
     Crit: Criticism of particular entry
+    JudgeList: List of judges for a given contest (can be none or many)
 """
 from django.db import models
 from django.utils import timezone
@@ -70,10 +71,6 @@ class Contest(models.Model):
         null=True, #Null = true to make on_delete work
         related_name = 'contests')
 
-    judges = models.ManyToManyField(
-        get_user_model(),
-        related_name = 'contests_judged'
-    )
     title = models.CharField(max_length=200, unique= True, blank=True)
     content =  tinymce_models.HTMLField()
     start_date = models.DateTimeField('Start Date')
@@ -348,7 +345,6 @@ class Entry(models.Model):
             return str(self.story.author) + " : " + self.title
         return "ALERT - somehow this entry did not get set a title"
 
-
 class Crit(models.Model):
     """Reviews of stories"""
     UNSCORED = 0
@@ -392,3 +388,18 @@ class Crit(models.Model):
         if self.reviewer and self.entry:
             return str(self.entry.contest.prompt.title) + " : " + str(self.reviewer.username) + " reviews " + str(self.story.author.username) # pylint: disable=E1101
         return "ALERT - somehow this crit did not get set a title"
+
+"""Class JudgeList(models.Model):
+    List of judges for a contest
+    PRIMARY = 1
+    SECONDARY = 2
+    JUDGE_TYPES = [
+        (NOTSET, 'Select Judge Type'),
+        (PRIMARY, 'Divine'),
+        (SECONDARY, 'Demigod'),
+    ]
+    judge = models.OneToOneField(
+        get_user_model(),
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name = 'crits')"""
