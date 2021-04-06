@@ -112,6 +112,8 @@ class InternalJudgeContestModelTest(BaseAppTestCase):
         self.assertTrue(win)
         self.assertTrue(honourable_mention)
         self.assertTrue(dishonourable_mention)
+        if not dishonourable_mention:
+            print("w: " + str(win) + " l:" + str(loss) + " dm:" + str(dishonourable_mention) + " hm:" + str(honourable_mention))
         self.assertTrue(loss)
 
 

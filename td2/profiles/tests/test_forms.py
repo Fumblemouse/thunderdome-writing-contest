@@ -1,9 +1,8 @@
 """Test framework for users and profile forms"""
 from django.test import TestCase
 # Create your tests here.
-from django.contrib.auth import get_user_model
-from profiles.forms import SignUpForm, UserUpdateForm, UserLoginForm
-from baseapp.choices import PRIVATE
+from profiles.forms import SignUpForm, UserUpdateForm
+from profiles.models import CustomUser
 
 class SignUpFormTest(TestCase):
     """Signup form test"""
@@ -29,11 +28,11 @@ class UserUpdateFormTest(TestCase):
     """user update form test"""
     def setUp(self):
         self.form = UserUpdateForm(data={
-            "email": "fish@chips.com", 
-            "first_name": "Theodore", 
+            "email": "fish@chips.com",
+            "first_name": "Theodore",
             "last_name": "Roosevelt",
             "bio": "born",
-            "highest_access": PRIVATE})
+            "highest_access": CustomUser.PRIVATE})
     def test_user_update_form_valid(self):
         self.assertTrue(self.form.is_valid())
 

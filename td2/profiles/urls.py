@@ -20,6 +20,7 @@ urlpatterns = [
             ),
         name='login'
     ),
+
     path('set-timezone/', set_timezone, name="set timezone"),
     path('settings/', settings, name='change settings'),
     path('activate/<uidb64>/<token>/',activate, name='activate'),
