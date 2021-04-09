@@ -39,7 +39,7 @@ class UserUpdateFormTest(TestCase):
 class UserLoginFormTest(TestCase):
     """We are only testing the classes here because Django requires a legit login to validate against, which is a security risk"""
     def setUp(self):
-        self.form = UserUpdateForm(data={"username": "Tim", "password": "12345abcde"})
+        self.form = UserUpdateForm()
     def test_user_login_field_class(self):
         for fieldname,field in self.form.fields.items():
             if "Boolean" not in str(field):

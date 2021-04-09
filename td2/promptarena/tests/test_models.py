@@ -1,28 +1,7 @@
 """Test models for Stories"""
-from promptarena.models import Prompt,  InternalJudgeContest, Entry, Crit
+from promptarena.models import InternalJudgeContest, Entry, Crit
 from baseapp.tests.test_utils import BaseAppTestCase
 
-
-class PromptModelTest(BaseAppTestCase):
-    """Test A Prompt"""
-    def setUp(self):
-        """set up"""
-        self.prompt = Prompt(title="My Prompt title")
-    def test_prompt_string_representation(self):
-        """test str"""
-        self.assertEqual(str(self.prompt), self.prompt.title)
-    #def test_prompt_verbose_name_plural(self):
-    #    self.assertEqual(str(Prompt._meta.verbose_name_plural), "stories")
-    def test_prompt_save_function(self):
-        """test save"""
-        self.prompt.save()
-        self.assertTrue(self.prompt.slug == "my-prompt-title")
-    def test_prompt_save_title_again_function(self):
-        """test slug properly created wwhen prompt renamed"""
-        self.prompt.public = False
-        self.prompt.title = "my changed title"
-        self.prompt.save()
-        self.assertTrue(self.prompt.slug == "my-changed-title")
 
 class InternalJudgeContestModelTest(BaseAppTestCase):
     """Test A Contest"""
@@ -32,15 +11,14 @@ class InternalJudgeContestModelTest(BaseAppTestCase):
         self.contest.save()
     def test_contest_string_representation(self):
         """test nameing string"""
-        self.assertEqual(str(self.contest), self.contest.prompt.title)
+        self.assertEqual(str(self.contest), self.contest.title)
     ###Save tests
     def test_contest_save_function(self):
         """test modified save routine that creates new slug"""
-        self.assertTrue(self.contest.slug == "my-prompt-title")
+        self.assertTrue(self.contest.slug == "my-contest-title")
     def test_contest_save_title_again_function(self):
-        """tests modified save routine if prompt title changes"""
-        self.prompt.title = "my changed title"
-        self.prompt.save()
+        """tests modified save routine if contest title changes"""
+        self.contest.title = "My changed title"
         self.contest.save()
         self.assertTrue(self.contest.slug == "my-changed-title")
     #
@@ -112,8 +90,8 @@ class InternalJudgeContestModelTest(BaseAppTestCase):
         self.assertTrue(win)
         self.assertTrue(honourable_mention)
         self.assertTrue(dishonourable_mention)
-        if not dishonourable_mention:
-            print("w: " + str(win) + " l:" + str(loss) + " dm:" + str(dishonourable_mention) + " hm:" + str(honourable_mention))
+        #if not dishonourable_mention:
+        print("w: " + str(win) + " l:" + str(loss) + " dm:" + str(dishonourable_mention) + " hm:" + str(honourable_mention))
         self.assertTrue(loss)
 
 
@@ -141,8 +119,8 @@ class CritModelTest(BaseAppTestCase):
         self.set_up_contest(InternalJudgeContest)
         self.contest.save()
         self.set_up_contest_components()
-        self.crit = Crit(entry = self.entries[0], story = self.stories[0], reviewer = self.users[0])
+        self.crit = Crit(entry = self.entries[0], reviewer = self.users[0])
         self.crit.save()
     def test_entry_string_representation(self):
         """test str"""
-        self.assertEqual(str(self.crit), str(self.crit.entry.contest.prompt.title) + " : " + str(self.crit.reviewer.username) + " reviews " + str(self.crit.story.author) )
+        self.assertEqual(str(self.crit), str(self.crit.entry.contest.title) + " : " + str(self.crit.reviewer.username) + " reviews " + str(self.crit.entry.story.author) )

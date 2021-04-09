@@ -19,9 +19,11 @@ def HTML_wordcount(string):
 def check_story_permissions(request, story=0):
     """checks if user is author or staff
     failing that, checks to see if user has opened their work generally
-    the if story has been opened to the public"""
+    and if the story has been opened to the public"""
     if story.author.pk == request.user.pk or request.user.is_staff:
         result = True
+    elif story.author.private_profile:
+        result = False
     elif story.access > 0 and request.user.is_authenticated:
         result = True
     elif story.access > 1:

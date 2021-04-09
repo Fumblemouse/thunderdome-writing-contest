@@ -1,0 +1,30 @@
+{% extends "baseapp/base.html" %}
+{% block title %}ThunderDome: Create Contest {% endblock %}
+{% block headtag %}
+    {% load static %}
+    {{ prompt_form.media }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
+{% endblock %}
+{% block header %}
+    {% if form.title.value %}
+        Edit
+    {% else %}
+        Create
+    {% endif %}{% endblock %}
+
+{% block content %}
+
+<form method = "post">
+
+        {% csrf_token %}
+
+        {% include 'baseapp/base-form.html' %}
+
+    <input type="submit" value="Submit" class='btn btn-primary'>
+
+</form>
+<script src="{% static 'baseapp/js/flatpickr.js' %}"></script>
+{% endblock %}

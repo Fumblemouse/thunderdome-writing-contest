@@ -18,12 +18,14 @@ class StoryModelTest(TestCase):
         self.story.public = False
         self.story.save()
         self.assertTrue(self.story.slug == "my-story-title")
+
     def test_story_save_title_again_function(self):
         """Test story can update title"""
         self.story.public = False
         self.story.title = "my changed title"
         self.story.save()
         self.assertTrue(self.story.slug == "my-changed-title")
+
     def test_story_wordcount(self):
         """Test wordcount function"""
         self.story.public = False

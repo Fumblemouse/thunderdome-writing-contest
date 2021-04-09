@@ -20,9 +20,9 @@ class Story(models.Model):
     LOGGED_IN = 1
     PUBLIC = 2
     ACCESS_CHOICES = (
-        (PRIVATE, 'Only your darkest heart'),
-        (LOGGED_IN, 'Logged-in users of taste and distinction'),
-        (PUBLIC, 'The great unwashed'),
+        (PRIVATE, 'PRIVATE - Only your darkest heart'),
+        (LOGGED_IN, 'LOGGED-IN - users of taste and distinction'),
+        (PUBLIC, 'PUBLIC - Admit the great unwashed'),
     )
     author = models.ForeignKey(
       get_user_model(),
@@ -32,8 +32,6 @@ class Story(models.Model):
     )
     title = models.CharField(max_length=255)
     content =  tinymce_models.HTMLField()
-    creation_date = models.DateTimeField(auto_now_add=True,)
-    modified_date = models.DateTimeField(auto_now=True)
     ACCESS_CHOICES = ACCESS_CHOICES
     access = models.PositiveSmallIntegerField(
         verbose_name='Who can see your story?',
@@ -43,6 +41,8 @@ class Story(models.Model):
     slug = AutoSlugField(max_length=40, unique=True)
     wordcount = models.PositiveSmallIntegerField()
     has_been_public = models.BooleanField(default=False)
+    creation_date = models.DateTimeField(auto_now_add=True,)
+    modified_date = models.DateTimeField(auto_now=True)
     #tags = models.JSONField(blank=True, null=True)
     #public_scores = models.JSONField(blank=True, null=True)
 
@@ -62,7 +62,7 @@ class Story(models.Model):
         #provides a slug is one is missed
         slug = self.slug
         slugified = slugify(self.title)
-        if not self.id or slug != slugified:
+        if slug != slugified:
             self.slug = slugified
         #set flag if saved for public view
         if self.access > 0:
@@ -77,7 +77,9 @@ class Story(models.Model):
 
     def get_absolute_url(self):
         """Returns a permalink for the story"""
-        return reverse('view story by slug', kwargs = {
-                                                        'author_slug': self.author.slug,
-                                                        'story_slug' : self.slug
-                                                        })
+        #print(self.author.slug)
+        #print(self.slug)
+        #print(reverse('view story by slug', kwargs = { 'author_slug': self.author.slug,
+        #                                                'story_slug' : self.slug,
+        #                                                })
+        return reverse('view story by slug', kwargs = { 'author_slug': self__author.slug, 'story_slug' : self__slug, })

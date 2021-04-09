@@ -4,34 +4,28 @@ from django.utils import timezone
 from django import forms
 from django.utils.html import strip_tags
 #from django.utils.translation import gettext_lazy as _
-from baseapp.forms import BaseForm, StoryForm
+from baseapp.forms import BaseForm
 from baseapp.models import Story
 
 
 
 #from flatpickr import DateTimePickerInput
 
-from .models import Prompt, Contest, Entry, Crit
+from .models import Contest, Entry, Crit
 
-class PromptForm(BaseForm):
-    """User creates Prompt details"""
-    class Meta:
-        model = Prompt
-        fields = ('title', 'content',)
-
-class CreateContestNewPromptForm(BaseForm):
+class CreateContestForm(BaseForm):
     """User creates Prompt details"""
 
     class Meta:
         model = Contest
-        fields = ('max_wordcount', 'start_date','expiry_date' )
+        fields = ('title', 'content', 'max_wordcount', 'start_date','expiry_date' )
 
-class CreateContestOldPromptForm(BaseForm):
+class CopyContestForm(BaseForm):
     """User creates Prompt details"""
 
     class Meta:
         model = Contest
-        fields = ('prompt','max_wordcount','start_date','expiry_date' )
+        fields = ('title', 'content','max_wordcount','start_date','expiry_date' )
 
 class ContestStoryForm(BaseForm):
     """User enters Story and Title"""

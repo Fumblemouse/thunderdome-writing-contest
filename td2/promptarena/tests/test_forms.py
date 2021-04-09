@@ -1,21 +1,12 @@
 """Test framework for users and profiles"""
 from django.test import TestCase
 from django.utils import timezone
-from promptarena.forms import PromptForm, CreateContestNewPromptForm, CreateContestOldPromptForm, EnterContestNewStoryForm, ContestStoryForm
-from promptarena.models import Prompt, Contest
+from promptarena.forms import  CreateContestForm, EnterContestNewStoryForm, ContestStoryForm
+from promptarena.models import Contest
 from baseapp.models import Story
 from baseapp.utils import HTML_wordcount
 
 # Create your tests here.
-
-class PromptFormTest(TestCase):
-    """Prompt form test"""
-    def setUp(self):
-        """Set up"""
-        self.form = PromptForm(data={"title": "prompt title", "content": "This is a <b>prompt<b>"})
-    def test_prompt_form_valid(self):
-        """test form is valid"""
-        self.assertTrue(self.form.is_valid)
 
 class ContestStoryFormTest(TestCase):
     """Story in a contest form test"""
@@ -26,39 +17,23 @@ class ContestStoryFormTest(TestCase):
         """test form is valid"""
         self.assertTrue(self.form.is_valid)
 
-class CreateContestNewPromptFormtTest(TestCase):
-    """Create a contest with a new prompt form test"""
+class CreateContestFormtTest(TestCase):
+    """Create a contest with a new contest form test"""
     def setUp(self):
         """set up"""
-        self.form = CreateContestNewPromptForm(data={"max_wordcount": 10, "expiry_date": timezone.now() + timezone.timedelta(7), "start_date": timezone.now()})
-    def test_create_contest_new_prompt_form_valid(self):
+        self.form = CreateContestForm(data={"Title": "Contest Title", "Content": "This is a <b>contest<b>", "max_wordcount": 10, "expiry_date": timezone.now() + timezone.timedelta(7), "start_date": timezone.now()})
+    def test_create_contest_form_valid(self):
         """validate the form"""
         self.assertTrue(self.form.is_valid)
 
-class CreateContestOldPromptFormTest(TestCase):
-    """Create contest with an old prompt form test"""
-    def setUp(self):
-        """set up"""
-        self.prompt = Prompt(title = "Prompt1", content="this is a <b>prompt</b>")
-        self.form = CreateContestOldPromptForm(data={
-            "prompt": self.prompt,
-            "max_wordcount": 10,
-            "expiry_date": timezone.now() + timezone.timedelta(7),
-            "start_date": timezone.now()
-        })
-    def test_create_contest_old_prompt_form_valid(self):
-        """validate the form"""
-        self.assertTrue(self.form.is_valid)
 
 class EnterContestNewStoryFormTest(TestCase):
     """Enter contest with a new story form test"""
     def setUp(self):
         """set up"""
-        self.prompt = Prompt(title = "Prompt1", content="this is a <b>prompt</b>")
-        self.prompt.save()
-        self.story = Story(title="Story1", content="this is content", access=Story.PRIVATE)
+        self.story = Story(title="Story1", content="This is a <b>story</b>", access=Story.PRIVATE)
         self.story.save()
-        self.contest = Contest(max_wordcount = 10, expiry_date = timezone.now() + timezone.timedelta(7), start_date = timezone.now(), prompt=self.prompt)
+        self.contest = Contest(max_wordcount = 10, expiry_date = timezone.now() + timezone.timedelta(7), start_date = timezone.now(), title="Contest1", content="This is a <b>contest</b>")
         self.contest.save()
         self.form = EnterContestNewStoryForm(data={},
             story_wordcount = HTML_wordcount(self.story.content),

@@ -2,7 +2,7 @@
 from django.urls import reverse
 # Create your tests here.
 
-from promptarena.models import Crit, InternalJudgeContest
+from promptarena.models import InternalJudgeContest, Crit
 from baseapp.tests.test_utils import BaseAppTestCase
 # Create your tests here.
 
@@ -14,12 +14,6 @@ class PromptArenaViewTest(BaseAppTestCase):
         super(PromptArenaViewTest, cls).setUpTestData()
         cls.set_up_story_private(cls)
 
-    def test_view_prompts_view_exists(self):
-        """test view-prompts view existy"""
-        self.set_up_prompt()
-        response = self.client.get(reverse('view prompts'))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'promptarena/view-prompts.html')
 
     def test_view_contests_view_exists(self):
         """test view contests view exists"""
@@ -27,13 +21,6 @@ class PromptArenaViewTest(BaseAppTestCase):
         response = self.client.get(reverse('view contests'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'promptarena/view-contests.html')
-
-    def test_view_prompt_details_view_exists(self):
-        """test view prompt details view exists"""
-        self.set_up_prompt()
-        response = self.client.get(reverse('view prompt details', kwargs = {'prompt_id': self.prompt.pk}))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'promptarena/view-prompt-details.html')
 
     def test_view_contest_details_view_exists(self):
         """test view contest details view exists"""
@@ -43,36 +30,13 @@ class PromptArenaViewTest(BaseAppTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'promptarena/view-contest-details.html')
 
-    def test_create_prompt_view_exists(self):
-        """test create prompt view exists"""
-        self.login_testuser('djangotestuser')
-        response = self.client.get(reverse('create prompt'))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'promptarena/create-prompt.html')
 
-    def test_edit_prompt_view_exists(self):
-        """test edit prompt view exists"""
-        self.login_testuser('djangotestuser')
-        self.set_up_prompt()
-        response = self.client.get(reverse('edit prompt',  kwargs = {"prompt_id": self.prompt.pk}))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'promptarena/create-prompt.html')
-
-    def test_create_contest_new_prompt_view_exists(self):
+    def test_create_contest_view_exists(self):
         """test create contest with a new prompt view exists"""
         self.login_testuser('djangotestuser')
-        self.set_up_prompt()
         response = self.client.get(reverse('create contest'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'promptarena/create-contest-new-prompt.html')
-
-    def test_create_contest_old_prompt_view_exists(self):
-        """test create contest  with an old prompt view exists"""
-        self.login_testuser('djangotestuser')
-        self.set_up_prompt()
-        response = self.client.get(reverse('create contest old prompt'))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'promptarena/create-contest-old-prompt.html')
+        self.assertTemplateUsed(response, 'promptarena/create-contest.html')
 
     def test_enter_contest_new_story_view_exists(self):
         """test enter contest with new story view exists"""
@@ -109,34 +73,20 @@ class PromptArenaViewTest(BaseAppTestCase):
         self.set_up_contest_components()
         self.contest.close()
         self.login_testuser('djangotestuser1')
-        crits = Crit.objects.filter(reviewer = self.user)
+        crits = Crit.objects.filter(reviewer__username = 'djangotestuser1')
         for crit in crits:
             response = self.client.get(reverse('judgemode', kwargs = {'crit_id': crit.pk}))
             self.assertEqual(response.status_code, 200)
             self.assertTemplateUsed(response, 'promptarena/judgemode.html')
 
 class PromptArenaLoginAccessTest(BaseAppTestCase):
-    """Tes login required working for wherfe it is needed in promprtarena app"""
-    def test_create_prompt_view_restricted(self):
-        """test login required to access create prompt"""
-        response = self.client.get(reverse('create prompt'))
-        self.assertRedirects(response, '/accounts/login/?next=/create-prompt')
+    """Test login required working for where it is needed in promprtarena app"""
 
-    def test_edit_prompt_view_restricted(self):
-        """test login required to access edit prompt"""
-        self.set_up_prompt()
-        response = self.client.get(reverse('edit prompt', kwargs = {"prompt_id": self.prompt.pk}))
-        self.assertRedirects(response, '/accounts/login/?next=/1/edit-prompt')
 
     def test_create_contest_view_restricted(self):
         """test login required to access create contest"""
         response = self.client.get(reverse('create contest'))
         self.assertRedirects(response, '/accounts/login/?next=/create-contest')
-
-    def test_create_contest_old_prompt_view_restricted(self):
-        """test login required to access create contest with old prompt pages"""
-        response = self.client.get(reverse('create contest old prompt'))
-        self.assertRedirects(response, '/accounts/login/?next=/create-contest-old-prompt')
 
     def test_enter_contest_view_restricted(self):
         """test login required to access enter contest"""

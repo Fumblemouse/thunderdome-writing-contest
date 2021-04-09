@@ -37,7 +37,7 @@ class BaseAppViewTest(BaseAppTestCase):
     def test_view_story_by_slug_view_exists(self):
         """test view story by slug view exists"""
         self.login_testuser('djangotestuser')
-        response = self.client.get(reverse('view story by slug', kwargs = {"author_slug":self.story.author.slug, "story_slug":self.story.slug}))
+        response = self.client.get(self.story.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'baseapp/view-story.html')
 
@@ -126,6 +126,7 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
         self.assertTemplateUsed(response, 'baseapp/view-story.html')
 
 
+
     #Test view story by slug
 
     def test_view_story_by_slug_story_private(self):
@@ -173,7 +174,7 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
         """test redirect for view story by slug if:
          story private
          user  author"""
-        self.set_up_story_private(self.author)
+        self.set_up_story_private(author = self.author)
         self.login_testuser('djangotestauthor')
         response = self.client.get(self.story.get_absolute_url())
         self.assertEqual(response.status_code, 200)
@@ -184,7 +185,7 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
          story public
          user  author"""
         self.login_testuser('djangotestauthor')
-        self.set_up_story_public(author = self.author)
+        self.set_up_story_logged_in(author = self.author)
         response = self.client.get(self.story.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'baseapp/view-story.html')

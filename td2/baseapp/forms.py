@@ -11,8 +11,8 @@ class BaseForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             if "Boolean" not in str(field):
                 field.widget.attrs['class'] = 'form-control'
-            #else:
-            #    field.widget.attrs['class'] = 'form-check-input'
+            else:
+                field.widget.attrs['class'] = 'form-check-input'
 
 class StoryForm(BaseForm):
     """USer enters Story and Title"""

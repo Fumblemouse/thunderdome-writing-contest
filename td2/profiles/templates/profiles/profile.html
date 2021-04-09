@@ -42,16 +42,16 @@
     </table>
 {% endif %}
 
-{% if prompts_context %}
-<h2>prompts</h2>
+{% if contests_context %}
+<h2>Contests</h2>
     <table>
         <tr>
             <th>Title</th><th>Edit</th>
         </tr>
-    {% for prompt in prompts_context %}
+    {% for contest in contests_context %}
         <tr>
-            <td><a href="{% url 'view prompt details' prompt.id %}">{{ prompt.title }}</a></td>
-            <td><a href = "{% url 'edit prompt' prompt.id %}">Edit</a></td>
+            <td><a href="{% url 'view contest details' contest.id %}">{{ contest.title }}</a></td>
+            <td><a href = "{% url 'edit contest' contest.id %}">Edit</a></td>
         </tr>
     {% endfor %}
     </table>

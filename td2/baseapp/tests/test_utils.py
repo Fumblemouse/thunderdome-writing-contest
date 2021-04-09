@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.test import TestCase
 
 from baseapp.models import Story
-from promptarena.models import Prompt, Entry, Crit
+from promptarena.models import Crit, Entry
 
  # pylint: disable=attribute-defined-outside-init
  # disabled because Django test classes set up variables/attributes in bespoke methods!
@@ -21,14 +21,15 @@ class BaseAppTestCase(TestCase):
         cls.user.save()
 
 
-    def get_testuser(self):
+    #def get_testuser(self):
         """create default user"""
         #User = get_user_model()
         #self.user = User.objects.create_user(username='djangotestuser', password='12345abcde')
-        return self.user
+        #return self.user
 
     def login_testuser(self, username):
         """re-usable code to login class user"""
+
         self.login = self.client.login(username=username, password='12345abcde')
 
     def set_up_story_private(self, author = ""):
@@ -53,15 +54,10 @@ class BaseAppTestCase(TestCase):
         self.story = Story(title="My Story", content="This is a story all about how...", author = author, access = Story.PUBLIC)
         self.story.save()
 
-    def set_up_prompt(self):
-        """Creates a prompt"""
-        self.prompt = Prompt(title="My Prompt title")
-        self.prompt.save()
 
     def set_up_contest(self, mode):
         """Re-usable routine to set up contest object"""
-        self.set_up_prompt()
-        self.contest = mode(prompt=self.prompt,
+        self.contest = mode(title = "My Contest title",
             start_date = timezone.now(),
             expiry_date = timezone.now() + timezone.timedelta(7),
             status = 'OPEN'

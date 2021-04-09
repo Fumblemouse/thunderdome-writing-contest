@@ -1,7 +1,7 @@
 """Forms for profile app"""
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from django.contrib.auth import get_user_model
 from baseapp.forms import BaseForm
 from .models import CustomUser
@@ -33,7 +33,7 @@ class UserUpdateForm(BaseForm):
     """Update user fields"""
     class Meta:
         model=get_user_model()
-        fields= ('email', 'first_name', 'last_name', 'bio', 'highest_access')
+        fields= ('email', 'first_name', 'last_name', 'bio', 'private_profile', 'highest_access')
 
 """
 class ProfileUpdateForm(BaseForm):
@@ -49,12 +49,46 @@ class UserLoginForm(AuthenticationForm):
         super(UserLoginForm, self).__init__(*args, **kwargs)
 
     username = forms.CharField(widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder': '', 'id': 'hello'}))
+        attrs={'class': 'form-control', 'placeholder': '', 'id': 'username'}))
     password = forms.CharField(widget=forms.PasswordInput(
         attrs={
             'class': 'form-control',
             'placeholder': '',
-            'id': 'hi',
+            'id': 'password',
         }
     ))
+
+class UserPasswordChangeForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super(UserPasswordChangeForm, self).__init__(*args, **kwargs)
+
+    #class Meta:
+    old_password = forms.CharField(
+        widget=forms.PasswordInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': '',
+            'id': 'old_password',
+        }
+    ))
+    new_password1 = forms.CharField(
+        label="New password",
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': '',
+                'id': 'new_password1',
+            },
+        )
+    )
+    new_password2 = forms.CharField(
+        label="Confirm password",
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': '',
+                'id': 'new_password2',
+            },
+        )
+    )
 

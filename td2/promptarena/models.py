@@ -1,7 +1,6 @@
 """
 MODELS
 
-    Prompt: Things to write about
     Contest: Base Entity with a start date and end date
     InternalJudgeContest: Contest where contestants are judges - has own ruleset
     Stories: Written using prompts to enter contests
@@ -22,30 +21,6 @@ from baseapp.utils import sattolo_cycle
 
 # Create your models here.
 
-class Prompt(models.Model):
-    """Prompt - push to creativity"""
-    creator = models.ForeignKey(
-      get_user_model(),
-      on_delete=models.SET_NULL,
-      null=True,
-      related_name = 'prompts',
-    )
-    title = models.CharField(max_length=200, unique= True)
-    content =  tinymce_models.HTMLField()
-    creation_date = models.DateTimeField(auto_now_add=True)
-    slug = AutoSlugField(max_length=200, unique=True)
-
-    def __str__(self):
-        return self.title
-
-    #def save(self, *args, **kwargs):
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        slug = self.slug
-        slugified = slugify(self.title)
-        if not self.id or slug != slugified:
-            self.slug = slugified
-        return super(Prompt, self).save()
-
 class Contest(models.Model):
     """Contest- Competition Base Class"""
     UNOPENED = 'UNOPENED'
@@ -59,20 +34,25 @@ class Contest(models.Model):
         (CLOSED, 'Closed')
     ]
     INTERNAL_JUDGE_CONTEST = "INTERNAL JUDGE CONTEST"
-    BRAWL_CONTEST = "BRAWL"
+    EXTERNAL_JUDGE_CONTEST = "EXTERNAL JUDGE CONTEST"
 
     CONTEST_TYPES = [
         (INTERNAL_JUDGE_CONTEST, 'Internal Judge Contest'),
-        #(BRAWL_CONTEST, 'Brawl')
+        (EXTERNAL_JUDGE_CONTEST, 'External Judge Contest')
     ]
-    prompt = models.ForeignKey(
-        Prompt,
+    creator = models.ForeignKey(
+        get_user_model(),
         on_delete=models.SET_NULL,
-        null=True, #Null = true to make on_delete work
-        related_name = 'contests')
-
+        null=True,
+        related_name = 'contests'
+    )
     title = models.CharField(max_length=200, unique= True, blank=True)
     content =  tinymce_models.HTMLField()
+    judge = models.ManyToManyField(
+        get_user_model(),
+        through="Contest_Judges",
+        blank= True
+        )
     start_date = models.DateTimeField('Start Date')
     expiry_date = models.DateTimeField('Submit by Date')
     mode = models.CharField(choices=CONTEST_TYPES, default='INTERNAL JUDGE CONTEST', max_length=22)
@@ -80,18 +60,19 @@ class Contest(models.Model):
     max_wordcount = models.PositiveIntegerField(default=1000)
     entrant_num = models.PositiveSmallIntegerField(default = 0)
     slug = AutoSlugField(max_length=200, unique=True)
-    creation_date = models.DateTimeField(auto_now_add=True)
+    creation_date = models.DateTimeField(auto_now_add=True,)
+    modified_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        if self.prompt:
-            return self.prompt.title
+        if self.title:
+            return self.title
         return "ALERT - somehow this contest did not get set a title"
 
     #def save(self, *args, **kwargs):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         #provides a slug is one is missed
         slug = self.slug
-        slugified = slugify(self.prompt.title)
+        slugified = slugify(self.title)
         if not self.id or slug != slugified:
             self.slug = slugified
         if self.is_active() and self.status != 'JUDGEMENT' and self.status != 'CLOSED':
@@ -144,51 +125,50 @@ class InternalJudgeContest(Contest):
         #get list of entries to this contest
         entries = Entry.objects.filter(contest = self)
         #get list of entrants and stories from entries
-        stories = entries.values_list('story', flat=True)
-        stories = list(stories)
-        entrants = entries.values_list('story__author', flat=True)
-        entrants = list(entrants)
+        #stories = entries.values_list('story', flat=True)
+        #stories = list(stories)
+        #entrants = entries.values_list('story__author', flat=True)
+        #entrants = list(entrants)
 
         #setup container for creating crit requirements, fill it with [entrant [list,of,stories]]
-        judges_with_stories = list()
+        judges_with_entries = list()
 
-        for entrant in entrants:
-            judges_with_stories.append([entrant, []])
+        for entry in entries:
+            judges_with_entries.append([entry, []])
         loopmax = 3
 
         loop =1
         #breakpoint()
         while loop <= loopmax:
-            shuffled_stories = sattolo_cycle(stories.copy())
-            judge_temp = self.assign_stories(shuffled_stories, judges_with_stories)
+            shuffled_entries = sattolo_cycle(list(entries).copy())
+            judge_temp = self.assign_entries(shuffled_entries, judges_with_entries)
             if judge_temp != "duplicate error":
-                judges_with_stories = judge_temp
+                judges_with_entries = judge_temp
                 loop += 1
+        #print(judges_with_entries)
+        for judge in judges_with_entries:
 
-        for judge in judges_with_stories:
-            reviewer =  get_user_model().objects.get(pk = judge[0])
-            for story in judge[1]:
-                story_instance = Story.objects.get(pk = story)
-                contest_instance = self
-                entry = Entry.objects.get(contest = contest_instance, story=story_instance)
-                Crit.objects.create(story = story_instance, reviewer= reviewer, entry = entry )
+            reviewer =  judge[0].story.author
+
+            for entry in judge[1]:
+                Crit.objects.create(entry = entry, reviewer= reviewer )
         self.status = 'JUDGEMENT'
         self.save()
 
-    def assign_stories(self, shuffled_stories, judges_with_stories):
+    def assign_entries(self, shuffled_entries, judges_with_entries):
         """checks for duplicates and returns list if there are none"""
 	    #test for pre-existing things
-        for judge in enumerate(judges_with_stories):
-            if shuffled_stories[judge[0]] in judges_with_stories[judge[0]][1]:
+        for judge in enumerate(judges_with_entries):
+            if shuffled_entries[judge[0]] in judges_with_entries[judge[0]][1]:
                 return "duplicate error"
         #nothing pre-existing - merge the array
-        for story in enumerate(judges_with_stories):
-            judges_with_stories[story[0]][1].append(shuffled_stories[story[0]])
-        return judges_with_stories
+        for entry in enumerate(judges_with_entries):
+            judges_with_entries[entry[0]][1].append(shuffled_entries[entry[0]])
+        return judges_with_entries
 
     def judge(self):
         """Count, Sort the results and close the contest"""
-        crits = Crit.objects.filter(entry__contest__pk = self.pk)
+        crits = Crit.objects.filter(entry__contest = self)
         results = {}
         results_order = {}
         #previous score is used to track multiple entries with the same score
@@ -255,48 +235,19 @@ class ExternalJudgeContest(Contest):
         """assign stories to judges"""
         #get list of entries to this contest
         entries = Entry.objects.filter(contest = self)
-        #get list of entrants and stories from entries
-        stories = entries.values_list('story', flat=True)
-        stories = list(stories)
-        entrants = entries.values_list('story__author', flat=True)
-        entrants = list(entrants)
+        judges = self.judges.all()
+        judges.append(self.creator)
 
         #setup container for creating crit requirements, fill it with [entrant [list,of,stories]]
-        judges_with_stories = list()
 
-        for entrant in entrants:
-            judges_with_stories.append([entrant, []])
-        loopmax = 3
-
-        loop =1
-        #breakpoint()
-        while loop <= loopmax:
-            shuffled_stories = sattolo_cycle(stories.copy())
-            judge_temp = self.assign_stories(shuffled_stories, judges_with_stories)
-            if judge_temp != "duplicate error":
-                judges_with_stories = judge_temp
-                loop += 1
-
-        for judge in judges_with_stories:
-            reviewer =  get_user_model().objects.get(pk = judge[0])
-            for story in judge[1]:
-                story_instance = Story.objects.get(pk = story)
-                contest_instance = self
-                entry = Entry.objects.get(contest = contest_instance, story=story_instance)
-                Crit.objects.create(story = story_instance, reviewer= reviewer, entry = entry )
+        for judge in judges:
+            #judges_with_stories.append([judge, []])
+            shuffled_entries = sattolo_cycle(list(entries).copy())
+            for entry in shuffled_entries:
+                Crit.objects.create(entry = Entry.objects.get(pk = entry.id), reviewer = judge )
         self.status = 'JUDGEMENT'
         self.save()
 
-    def assign_stories(self, shuffled_stories, judges_with_stories):
-        """checks for duplicates and returns list if there are none"""
-	    #test for pre-existing things
-        for judge in enumerate(judges_with_stories):
-            if shuffled_stories[judge[0]] in judges_with_stories[judge[0]][1]:
-                return "duplicate error"
-        #nothing pre-existing - merge the array
-        for story in enumerate(judges_with_stories):
-            judges_with_stories[story[0]][1].append(shuffled_stories[story[0]])
-        return judges_with_stories
 
     def judge(self):
         """Count, Sort the results and close the contest"""
@@ -320,15 +271,77 @@ class ExternalJudgeContest(Contest):
         self.status = 'CLOSED'
         self.save()
 
+class Brawl(Contest):
+    """
+    Child class of Contest where judging is done by other contestants
+    defines:
+        close()
+        judge()
+        assign_stories()
+        judge()
+    """
+    class Meta:
+        proxy = True
+
+    def close(self):
+        """assign stories to judges"""
+        #get list of entries to this contest
+        entries = Entry.objects.filter(contest = self)
+        #setup container for creating crit requirements, fill it with [entrant [list,of,stories]]
+        shuffled_entries = sattolo_cycle(entries.copy())
+        for entry in shuffled_entries:
+            Crit.objects.create(entry = Entry.objects.get(pk = entry.id), reviewer = self.creator )
+        self.status = 'JUDGEMENT'
+        self.save()
+
+
+    def judge(self):
+        """Count, Sort the results and close the contest"""
+        crits = Crit.objects.filter(entry__contest__pk = self.pk)
+        results = {}
+        results_order = {}
+        #create a dictionary with entry as key and an array of scores from judges
+        for crit in crits:
+            results.setdefault(crit.entry, [])
+            results[crit.entry].append(crit.score)
+
+        #sort the dictionary based on sum of the scores array (descending)
+        results_order = sorted(results.items(), key=lambda x: sum(x[1]), reverse=True)
+        #Create a result record for each item in the sorted array
+        for count, result in enumerate(results_order):
+            entry = Entry.objects.get(pk = result[0].pk)
+            entry.position = count + 1
+            entry.score = sum(result[1])
+            entry.save()
+        self.entrant_num = len(results)
+        self.status = 'CLOSED'
+        self.save()
+
+
+
+
+class Contest_Judges (models.Model):
+    contest = models.ForeignKey(Contest,
+        on_delete=models.CASCADE,
+        related_name = 'judges'
+        )
+    judge = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name = 'judges')
+
+
 class Entry(models.Model):
     """Links stories and contests"""
     story = models.ForeignKey(
         Story,
         on_delete=models.CASCADE,
-        related_name = 'stories')
+        related_name = 'entries')
 
     #NB - this is referring to the baseclass Contest, which means there are joins in any query
-    contest = models.ForeignKey(Contest,
+    contest = models.ForeignKey(
+        Contest,
         on_delete=models.CASCADE,
         related_name = 'entries')
     position = models.PositiveSmallIntegerField(default=0)
@@ -361,10 +374,7 @@ class Crit(models.Model):
         (HI_MID_SCORE, 'High Middle'),
         (HI_SCORE, 'High')
     ]
-    story = models.ForeignKey(
-        Story,
-        on_delete=models.CASCADE,
-        related_name = 'crits')
+
     entry = models.ForeignKey(
         Entry,
         on_delete=models.SET_NULL,
@@ -386,20 +396,6 @@ class Crit(models.Model):
 
     def __str__(self):
         if self.reviewer and self.entry:
-            return str(self.entry.contest.prompt.title) + " : " + str(self.reviewer.username) + " reviews " + str(self.story.author.username) # pylint: disable=E1101
+            return str(self.entry.contest.title) + " : " + str(self.reviewer.username) + " reviews " + str(self.entry.story.author.username) # pylint: disable=E1101
         return "ALERT - somehow this crit did not get set a title"
 
-"""Class JudgeList(models.Model):
-    List of judges for a contest
-    PRIMARY = 1
-    SECONDARY = 2
-    JUDGE_TYPES = [
-        (NOTSET, 'Select Judge Type'),
-        (PRIMARY, 'Divine'),
-        (SECONDARY, 'Demigod'),
-    ]
-    judge = models.OneToOneField(
-        get_user_model(),
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name = 'crits')"""

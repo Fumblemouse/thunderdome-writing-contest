@@ -57,8 +57,8 @@
         {% endfor %} <!-- -->
 
     {% endif %}
-    <h2>{{ crit_context.story.title}}</h2>
-    {{ crit_context.story.content | safe }}
+    <h2>{{ crit_context.entry.title}}</h2>
+    {{ crit_context.entry.content | safe }}
     <img src="{% static 'baseapp/img/flourish.png' %}" alt="logo" class="rounded mx-auto d-block" />
     {% if not crit_context.final %}
         <form method = "post">

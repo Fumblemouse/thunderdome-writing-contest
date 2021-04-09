@@ -53,12 +53,10 @@
                                 <h2 id="things-to-see-nav" class="h5">Things to see</h2>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'view stories' %}">Stories</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'view contests' %}">View contests</a>
-                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'view prompts' %}">View prompts</a>
                             </nav>
                             <nav aria-labelledby="things-to-do-nav" class="list-group">
                                 <h2 id="things-to-do-nav" class = 'h5'>Things to do</h2>
                                 {% if user.is_authenticated %}
-                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create prompt' %}">Create Prompt</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create story' %}">Create Story</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create contest' %}">Create Contest</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'judgemode' %}">Judge Mode</a>
@@ -90,20 +88,24 @@
                         </div>
                     </main>
                     <nav class="col-md-2">
-
                         {% if user.is_authenticated %}
                             <p>Hi {{ user.username }}!</p>
-                        {% endif %}
-                        {% if user.is_authenticated %}
-                        <nav aria-labelledby="things-to-not-do-nav" class="list-group">
-                            <h2 id="things-to-not-do-nav" class = 'h5'>Things to not do</h2>
-                            <a  class="nav-link list-group-item list-group-item-action list-group-item-danger"href="{% url 'logout' %}" class="btn btn-danger" >Exit pursued by a bear</a>
-                        </nav>
+
                         {% endif %}
 
                         {% block aside %}
 
                         {% endblock aside %}
+
+                        {% if user.is_authenticated %}
+                            <nav aria-labelledby="things-to-not-do-nav" class="list-group" id="things-not-to-do">
+                                <h2 id="things-to-not-do-nav" class = 'h5'>Things to not do</h2>
+                                <a  class="nav-link list-group-item list-group-item-action list-group-item-danger"href="{% url 'logout' %}" class="btn btn-danger" >Exit pursued by a bear</a>
+                            </nav>
+
+                        {% endif %}
+
+
 
 
                     </nav>

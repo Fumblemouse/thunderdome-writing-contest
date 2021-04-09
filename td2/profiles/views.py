@@ -16,7 +16,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 from pytz import common_timezones
 from baseapp.models import Story
-from promptarena.models import Prompt
+from promptarena.models import Contest
 from .forms import SignUpForm, UserUpdateForm
 
 
@@ -112,10 +112,11 @@ def settings(request):
             stories = Story.objects.filter(
                 author = request.user
             )
-            story_num = len(stories)
+            story_num = 0
             for story in stories:
                 if story.access > request.user.highest_access:
                     story.access = request.user.highest_access
+                    story_num += 1
 
             if story_num:
                 messages.success(request, 'You have updated ' + str(story_num) + ' story permissions')
@@ -149,11 +150,11 @@ def profile(request):
         author = request.user.pk
     )
 
-    prompts_context = Prompt.objects.filter(
+    contests_context = Contest.objects.filter(
         creator = request.user.pk
     )
     context['stories_context'] = stories_context
-    context['prompts_context'] = prompts_context
+    context['contests_context'] = contests_context
     return render(request, 'profiles/profile.html', context)
 
 

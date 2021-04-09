@@ -32,7 +32,7 @@ class StoryFormTest(TestCase):
         """test base form child is inheriting characteristics"""
         form = StoryForm(data={"title": "Test Story 1", "content":"This the body of Test story 1", "access":Story.PRIVATE})
         for fieldname,field in form.fields.items():
-            if "Boolean" not in str(field):
+            #if "Boolean" not in str(field):
                 self.assertTrue('form-control' in field.widget.attrs['class'])
             #else:
             #    self.assertTrue('form-check-input' in field.widget.attrs['class'])

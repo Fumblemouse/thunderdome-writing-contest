@@ -93,6 +93,11 @@ blockquote {
     color:#000 !important;
   }
 
+  #things-to-not-do-nav {
+
+    padding-top:5em;
+  }
+
 @media (max-width: 768px) {
     #main-header {
 

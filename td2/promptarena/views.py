@@ -17,14 +17,13 @@ from baseapp.models import Story
 from baseapp.utils import HTML_wordcount
 
 from .forms import (
-    PromptForm,
     ContestStoryForm,
-    CreateContestNewPromptForm,
-    CreateContestOldPromptForm,
+    CreateContestForm,
+    #CopyContestForm,
     EnterContestNewStoryForm,
     EnterContestOldStoryForm,
     EnterCritForm,)
-from .models import Prompt, Contest, Crit, Entry
+from .models import  Contest, Crit, Entry
 
 
 # Get an instance of a logger
@@ -33,83 +32,47 @@ logger = logging.getLogger(__name__)
 
 # Create your views here.
 
-@login_required
-def create_prompt(request):
-    """User enters new prompt"""
-    context ={}
-    #create object for form
-    form = PromptForm(request.POST or None)
-     # check if form data is valid
-    if form.is_valid():
-        # save the form data to model
-        form_uncommitted = form.save(commit=False)
-        form_uncommitted.creator = request.user
-        form_uncommitted.save()
-        messages.success(request, 'Your prompt was submitted successfully! Hopefully it doesn\'t suck.')
-        return redirect('view prompt details', prompt_id = form_uncommitted.pk)
-    context['form'] = form
-    return render(request, "promptarena/create-prompt.html", context)
 
 @login_required
-def edit_prompt(request, prompt_id = 0):
-    """update a prompt"""
-    # get the story to update
-    prompt = get_object_or_404(Prompt, pk = prompt_id)
-    contests = Contest.objects.filter(prompt = prompt_id)
-    for contest in contests:
-        if contest.status != 'UNOPENED' or 'CLOSED':
-            messages.error(request, "Your prompt is currently being used in a contest.  It cannot be edited at this time.")
-            return redirect('view prompt details', prompt_id = prompt_id)
-    # create a form instance and populate it with data from the request or the :
-    form = PromptForm(request.POST or None, instance = prompt)
-    # check whether it's valid:
-    if form.is_valid():
-        form.save()
-        messages.success(request, 'Your prompt was updated successfully! Hopefully it doesn\'t suck.')
-        # redirect to a new URL:
-        return redirect('view prompt details', prompt_id = prompt.pk)
-
-    return render(request, 'promptarena/create-prompt.html', {'form': form})
-
-
-@login_required
-def create_contest_new_prompt(request):
-    """User enters new contest with a new prompt"""
+def create_contest(request):
+    """User creates a new contest"""
     #context = {}
-    prompt_form = PromptForm(request.POST or None)
-    contest_form = CreateContestNewPromptForm(request.POST or None)
-    if prompt_form.is_valid() and contest_form.is_valid():
-        #save w/o comitting then add user and save
-        prompt_form_uncommitted = prompt_form.save(commit=False)
-        prompt_form_uncommitted.creator = request.user
-        prompt_form_uncommitted.save()
+    contest_form = CreateContestForm(request.POST or None)
+    if  contest_form.is_valid():
 
-        #save w/o comitting then add prompt and save
+        #save w/o comitting then save
         contest_form_uncommitted = contest_form.save(commit=False)
-        contest_form_uncommitted.prompt = prompt_form_uncommitted
-        contest_form_uncommitted.title = prompt_form_uncommitted.title
-        contest_form_uncommitted.content = prompt_form_uncommitted.content
+        contest_form_uncommitted.creator = request.user
         contest_form_uncommitted.save()
         messages.success(request, 'Your contest was submitted successfully! Hopefully it doesn\'t suck.')
         return redirect('view contests')
 
-    return render(request, "promptarena/create-contest-new-prompt.html", {'prompt_form': prompt_form, 'contest_form': contest_form})
+    return render(request, "promptarena/create-contest.html", {'form': contest_form})
 
 @login_required
-def create_contest_old_prompt(request):
-    """User enters new contest re-using a prompt"""
+def edit_contest(request, contest_id = ""):
+    """User edits an existing contest"""
     #context = {}
-    form = CreateContestOldPromptForm(request.POST or None)
-    if form.is_valid():
-        form_uncommitted = form.save(commit=False)
-        #Take a snapshot of prompt content
-        form_uncommitted.title = form_uncommitted.prompt.title
-        form_uncommitted.content = form_uncommitted.prompt.content
-        form_uncommitted.save()
-        messages.success(request, 'Your contest was submitted successfully! Hopefully it doesn\'t suck.')
+    # get the story to update
+    contest = get_object_or_404(Contest, pk = contest_id)
+    if request.user != contest.creator:
+        messages.error(request, "Only the creator can edit their own contests.")
         return redirect('view contests')
-    return render(request, "promptarena/create-contest-old-prompt.html", {'form': form})
+    if contest.is_active:
+        messages.error(request, "Your contest is already live.  It cannot be edited at this time.")
+        return redirect('view contest details', contest_id = contest.pk)
 
+    contest_form = CreateContestForm(request.POST or None, instance = contest)
+    if  contest_form.is_valid():
+
+        #save w/o comitting then save
+        contest_form_uncommitted = contest_form.save(commit=False)
+        contest_form_uncommitted.creator = request.user
+        contest_form_uncommitted.save()
+        messages.success(request, 'Your contest was updated successfully! Hopefully you haven\'t confused everybody.')
+        return redirect('view contests')
+
+    return render(request, "promptarena/create-contest.html", {'form': contest_form})
 
 
 @login_required
@@ -200,7 +163,6 @@ def enter_contest_old_story(request, contest_id,):
     return render(request, 'promptarena/enter-contest-old-story.html', {
         'contest_context' : contest_context,
         'story_context' : story_context,
-        #'entry_form': entry_form or None,
         }
     )
 
@@ -255,23 +217,6 @@ def judge_contest(request, contest_id = 0):
     return render(request, 'promptarena/view-contest-judgement.html', context)
 
 ### Back to actual views
-
-def view_prompt_details(request, prompt_id=""):
-    """User views specific prompt and metadata"""
-    prompt_context = get_object_or_404(Prompt, pk=prompt_id)
-    context = {
-        'prompt_context' : prompt_context,
-    }
-    return render(request, 'promptarena/view-prompt-details.html', context)
-
-def view_prompts(request):
-    """view all prompts in a list"""
-    prompts_context = Prompt.objects.all
-    context = {
-        'prompts_context': prompts_context,
-    }
-    return render(request, 'promptarena/view-prompts.html', context)
-
 
 def view_contest_details(request, contest_id):
     """User views specific prompt and metadata"""

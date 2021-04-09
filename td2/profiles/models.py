@@ -13,21 +13,20 @@ class CustomUser(AbstractUser):
     LOGGED_IN = 1
     PUBLIC = 2
     ACCESS_CHOICES = (
-        (PRIVATE, 'Only your darkest heart'),
-        (LOGGED_IN, 'Logged-in users of taste and distinction'),
-        (PUBLIC, 'The great unwashed'),
+        (PRIVATE, 'PRIVATE: Only your darkest heart'),
+        (LOGGED_IN, 'LOGGED-IN: Fellow users of taste and distinction'),
+        (PUBLIC, 'PUBLIC: The great unwashed'),
     )
     bio = tinymce_models.HTMLField(blank=True, )
-    public_profile = models.BooleanField(
+    private_profile = models.BooleanField(
         default=False,
-        help_text='Leave this unchecked to keep your work private from anyone except necessary contestants.'
-        '<em>NB:</em> If checked, you will still  need to set public visibility on each story',
-        verbose_name='Public?',
+        help_text='Check this to keep your work private from anyone except your fellow contestants.',
+        verbose_name='Private profile',
     )
     highest_access = models.PositiveSmallIntegerField(
-        verbose_name='Sharing',
+        verbose_name='Restrict Story Sharing to:',
         help_text = 'Setting a value here will restrict all your stories to that \
-                    level of privacy or more private. Eg, Selecting "Logged in" will make all of your Public \
+                    level of privacy or more private. Eg, Selecting LOGGED-IN will make all of your PUBLIC \
                     stories only available to logged in users and prevent individual stories being set any higher. \
                     If this field is later set to a higher setting, individual stories \
                     will need their own privacy settings increased. Stories are Private by default',
