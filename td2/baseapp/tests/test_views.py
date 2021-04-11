@@ -262,7 +262,7 @@ class TestUtilsBaseAppFunctionsTest(BaseAppTestCase):
             }
 
         self.client.login(username='djangotestuser', password='12345abcde')
-        response = self.client.post(reverse('create story'), data)
+        self.client.post(reverse('create story'), data)
 
         data = {
             'title':"My title changed story",

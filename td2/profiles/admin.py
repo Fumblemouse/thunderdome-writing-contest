@@ -6,6 +6,7 @@ from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
 
 class CustomUserAdmin(UserAdmin):
+    """Custom User Admin Settings"""
     #Fieldsets is a tuple, and thus immutable so we create  a new one with our custom values wedged inside
     #a=a[:3]+(4,)+a[3:] <- Format
 

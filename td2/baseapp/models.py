@@ -3,10 +3,13 @@ import re
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
-from django.contrib.auth import get_user_model
 from django.utils.html import strip_tags
+from django.conf import settings
+
 from autoslug import AutoSlugField
 from tinymce import models as tinymce_models
+#from td2 import settings
+
 
 # Create your models here.
 class Story(models.Model):
@@ -25,7 +28,7 @@ class Story(models.Model):
         (PUBLIC, 'PUBLIC - Admit the great unwashed'),
     )
     author = models.ForeignKey(
-      get_user_model(),
+      settings.AUTH_USER_MODEL,
       on_delete=models.SET_NULL,
       null=True,
       related_name = 'stories'
@@ -77,9 +80,4 @@ class Story(models.Model):
 
     def get_absolute_url(self):
         """Returns a permalink for the story"""
-        #print(self.author.slug)
-        #print(self.slug)
-        #print(reverse('view story by slug', kwargs = { 'author_slug': self.author.slug,
-        #                                                'story_slug' : self.slug,
-        #                                                })
-        return reverse('view story by slug', kwargs = { 'author_slug': self__author.slug, 'story_slug' : self__slug, })
+        return reverse('view story by slug', kwargs = { 'author_slug': self.author.slug , 'story_slug' : self.slug, })

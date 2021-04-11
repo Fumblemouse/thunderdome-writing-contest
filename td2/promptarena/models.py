@@ -6,18 +6,17 @@ MODELS
     Stories: Written using prompts to enter contests
     Entry: Bridge between story and contest
     Crit: Criticism of particular entry
-    JudgeList: List of judges for a given contest (can be none or many)
+    ContestJudges: List of judges for a given contest (can be none or many)
 """
 from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
-from django.contrib.auth import get_user_model
+from django.conf import settings
 
-from autoslug import AutoSlugField
-#from tinymce.models import HTMLField
 from tinymce import models as tinymce_models
 from baseapp.models import Story
 from baseapp.utils import sattolo_cycle
+from autoslug import AutoSlugField
 
 # Create your models here.
 
@@ -41,7 +40,7 @@ class Contest(models.Model):
         (EXTERNAL_JUDGE_CONTEST, 'External Judge Contest')
     ]
     creator = models.ForeignKey(
-        get_user_model(),
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         related_name = 'contests'
@@ -49,8 +48,8 @@ class Contest(models.Model):
     title = models.CharField(max_length=200, unique= True, blank=True)
     content =  tinymce_models.HTMLField()
     judge = models.ManyToManyField(
-        get_user_model(),
-        through="Contest_Judges",
+        settings.AUTH_USER_MODEL,
+        through="ContestJudges",
         blank= True
         )
     start_date = models.DateTimeField('Start Date')
@@ -320,13 +319,14 @@ class Brawl(Contest):
 
 
 
-class Contest_Judges (models.Model):
+class ContestJudges (models.Model):
+    """Joining table for contests and judges"""
     contest = models.ForeignKey(Contest,
         on_delete=models.CASCADE,
         related_name = 'judges'
         )
     judge = models.ForeignKey(
-        get_user_model(),
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         related_name = 'judges')
@@ -381,7 +381,7 @@ class Crit(models.Model):
         null=True,
         related_name = 'crits')
     reviewer = models.ForeignKey(
-        get_user_model(),
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         related_name = 'crits')
@@ -398,4 +398,3 @@ class Crit(models.Model):
         if self.reviewer and self.entry:
             return str(self.entry.contest.title) + " : " + str(self.reviewer.username) + " reviews " + str(self.entry.story.author.username) # pylint: disable=E1101
         return "ALERT - somehow this crit did not get set a title"
-

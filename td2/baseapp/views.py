@@ -120,6 +120,6 @@ def view_story_by_slug(request, author_slug="", story_slug = ""):
         messages.error(request, "This story has been locked by the author.")
         return redirect('view stories')
     context['crit_context'] = Crit.objects.filter (
-        story = context['story_context']
+        entry__story = context['story_context']
     )
     return render(request, 'baseapp/view-story.html', context)
