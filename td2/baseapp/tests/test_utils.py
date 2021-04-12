@@ -63,6 +63,17 @@ class BaseAppTestCase(TestCase):
             status = 'OPEN'
             )
 
+    def set_up_multiple_contests(self, mode, total):
+        """Re-usable routine to set up contest object"""
+        for num in range(total):
+            self.contests.append ( mode(
+                title = "Contest" + str(num),
+                start_date = timezone.now(),
+                expiry_date = timezone.now() + timezone.timedelta(7),
+                status = 'OPEN'
+                ) 
+            )  
+
     def set_up_contest_components(self):
         """reusable routine to set up contest associated objects
         sets up:
@@ -86,6 +97,28 @@ class BaseAppTestCase(TestCase):
             self.entries.append(Entry(contest = self.contest, story=story))
             self.entries[-1].save()
 
+    def set_up_multiple_contest_components(self):
+        """reusable routine to set up contest associated objects
+        sets up:
+            5 users
+            5 stories
+            5 entries
+        """
+        self.users = []
+        self.stories = []
+        self.entries = []
+        for user_num in range(5):
+            self.users.append(self.User.objects.create_user(username='djangotestuser{}'.format(user_num), password='{}2345abcde'.format(user_num)))
+            #users[-1] = last in list
+            self.users[-1].save()
+
+        for user in self.users:
+            self.stories.append(Story(author = user, access=Story.PRIVATE))
+            self.stories[-1].save()
+        for contest in self.contests:
+            for story in self.stories:
+                self.entries.append(Entry(contest = self.contest, story=story))
+                self.entries[-1].save()
 
     def score_contest(self):
         """reuable routine to assign scores to contest entries"""

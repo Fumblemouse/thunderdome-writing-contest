@@ -11,10 +11,10 @@ class CustomUserCreationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(CustomUserCreationForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            if "Boolean" not in str(field):
-                field.widget.attrs['class'] = 'form-control'
-            else:
-                field.widget.attrs['class'] = 'form-check-input'
+            #if "Boolean" not in str(field):
+            field.widget.attrs['class'] = 'form-control'
+            #else:
+            #    field.widget.attrs['class'] = 'form-check-input'
     class Meta:
         model = CustomUser
         fields = 'username', 'password'
@@ -45,6 +45,7 @@ class ProfileUpdateForm(BaseForm):
 """
 
 class UserLoginForm(AuthenticationForm):
+    """Custom user login form"""
     def __init__(self, *args, **kwargs):
         super(UserLoginForm, self).__init__(*args, **kwargs)
 
@@ -59,10 +60,7 @@ class UserLoginForm(AuthenticationForm):
     ))
 
 class UserPasswordChangeForm(PasswordChangeForm):
-    def __init__(self, *args, **kwargs):
-        super(UserPasswordChangeForm, self).__init__(*args, **kwargs)
-
-    #class Meta:
+    """Custom User Password Change Form"""
     old_password = forms.CharField(
         widget=forms.PasswordInput(
         attrs={
@@ -91,4 +89,3 @@ class UserPasswordChangeForm(PasswordChangeForm):
             },
         )
     )
-

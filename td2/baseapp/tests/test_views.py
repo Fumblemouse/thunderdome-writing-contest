@@ -1,6 +1,7 @@
 """Test framework for users and profiles"""
 from django.urls import reverse
 
+
 from baseapp.tests.test_utils import BaseAppTestCase
 from baseapp.models import Story
 from promptarena.models import InternalJudgeContest
@@ -24,6 +25,19 @@ class BaseAppViewTest(BaseAppTestCase):
         """test create story view exists"""
         self.login_testuser('djangotestuser')
         response = self.client.get(reverse('create story'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'baseapp/create-story.html')
+
+    def test_create_story_view_invalid_form_exists(self):
+        """test create story view exists"""
+        self.login_testuser('djangotestuser')
+        #Invalid form bacuse no content
+        response = self.client.post(reverse('create story'), {
+            "title":"My Story",
+            "content":"",
+            "author" : self.user,
+            "access" : Story.PRIVATE,
+            }) 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'baseapp/create-story.html')
 
@@ -95,8 +109,11 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
         super(BaseAppRestrictedViewByAuthorTest, cls).setUpTestData()
         cls.author = cls.User.objects.create_user(username='djangotestauthor', password='12345abcde')
         cls.reader = cls.User.objects.create_user(username='djangotestreader', password='12345abcde')
+        cls.staff = cls.User.objects.create_user(username='djangoteststaff', password='12345abcde')
+        cls.staff.is_staff = True
         cls.author.save()
         cls.reader.save()
+        cls.staff.save()
 
     #test view story by ID
 
@@ -201,6 +218,41 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'baseapp/view-story.html')
 
+    #test staff access
+    def test_view_story_by_staff(self):
+        """test staff are able to see everything"""
+        self.login_testuser('djangotestauthor')
+        self.set_up_story_private(author = self.author)
+        self.login_testuser('djangotestreader')
+        response = self.client.get(self.story.get_absolute_url())
+        self.assertEqual(response.status_code, 302)
+        self.login_testuser('djangoteststaff')
+        response = self.client.get(self.story.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'baseapp/view-story.html')
+
+    def test_view_stories_by_staff(self):
+        """test staff are able to see everything"""
+        self.login_testuser('djangotestauthor')
+        self.set_up_story_private(author = self.author)
+
+        self.login_testuser('djangotestreader')
+        response = self.client.get(reverse('view stories by author', kwargs={'author_slug':self.author.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.login_testuser('djangoteststaff')
+        response = self.client.get(reverse('view stories by author', kwargs={'author_slug':self.author.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'baseapp/view-stories.html')
+
+        response = self.client.get(reverse('view stories'))
+        self.assertEqual(response.status_code, 200)
+        self.login_testuser('djangoteststaff')
+        response = self.client.get(reverse('view stories'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'baseapp/view-stories.html')
+
+
+
     #test edit story access
 
     def test_edit_story_user_author(self):
@@ -221,6 +273,44 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
         self.login_testuser('djangotestreader')
         response = self.client.get(reverse('edit story', kwargs = {"story_id": self.story.pk}))
         self.assertRedirects(response, reverse('view stories'))
+
+    def test_edit_story_user_author_contest_closed(self):
+        """test redirect  edit story if:
+         story currently in contest
+         user not author"""
+        self.set_up_contest(InternalJudgeContest)
+        self.contest.status = InternalJudgeContest.CLOSED
+        #self.contest.expiry_date = timezone.now()
+        self.contest.save()
+        self.set_up_contest_components()
+        print(self.contest.status)
+        self.login_testuser('djangotestuser1')
+        story = Story.objects.get(author__username = 'djangotestuser1')
+        response = self.client.get(reverse('edit story', kwargs = {"story_id": story.pk}))
+        self.assertRedirects(response, '/' + str(story.pk) +'/view-story')
+
+
+    def test_view_story_private_profile(self):
+        """tests story is invisible if:
+        user profile is private"""
+        self.set_up_story_private()
+        self.user.private_profile = True
+        self.user.save()
+        self.login_testuser('djangotestreader')
+        response = self.client.get(self.story.get_absolute_url())
+        self.assertRedirects(response, reverse('view stories'))
+        self.story.access=Story.LOGGED_IN
+        self.story.save()
+        response = self.client.get(self.story.get_absolute_url())
+        self.assertRedirects(response, reverse('view stories'))
+        self.story.access=Story.PUBLIC
+        self.story.save()
+        response = self.client.get(self.story.get_absolute_url())
+        self.assertRedirects(response, reverse('view stories'))
+
+class InvalidFormsBaseAppFunctionsTest(BaseAppTestCase):
+    """Tests a lot of form submission in promptarena views"""
+
 
 class TestUtilsBaseAppFunctionsTest(BaseAppTestCase):
     """Tests a lot of form submission in promptarena views"""

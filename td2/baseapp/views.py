@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from promptarena.models import Entry, Crit
+from promptarena.models import Entry, Crit, Contest
 from baseapp.utils import check_story_permissions
 from .forms import StoryForm
 from .models import Story
@@ -50,7 +50,7 @@ def edit_story(request, story_id=""):
         return redirect('view stories')
     entries = Entry.objects.filter(story = story_id)
     for entry in entries:
-        if entry.contest.status != 'UNOPENED' or 'CLOSED':
+        if entry.contest.status != Contest.UNOPENED or Contest.CLOSED:
             messages.error(request, "Your story is already in a contest.  It cannot be edited at this time.")
             return redirect('view story by id', story_id = story.pk)
     # create a form instance and populate it with data from the request or the :
@@ -68,12 +68,12 @@ def edit_story(request, story_id=""):
 
 def view_stories(request):
     """User retrieves a list of available stories"""
-    if request.user.is_authenticated:
+    if request.user.is_staff:
+        stories_context = Story.objects.all()
+    elif request.user.is_authenticated:
         stories_context = Story.objects.filter(
             access__gte = Story.LOGGED_IN,
-        )
-    elif request.user.is_staff:
-        stories_context = Story.objects.all()
+        )    
     else:
         stories_context = Story.objects.filter(
             access__gte = Story.PUBLIC,
