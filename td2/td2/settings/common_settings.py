@@ -120,6 +120,10 @@ AUTH_USER_MODEL = 'profiles.CustomUser' # new
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
+# Django3.2 allows you to set different ID fields - this sets default.
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+
 STATIC_URL = '/static/'
 
 
