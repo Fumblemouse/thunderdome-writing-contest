@@ -22,10 +22,10 @@ class InternalJudgeContestModelTest(BaseAppTestCase):
         self.contest.save()
         self.assertTrue(self.contest.slug == "my-changed-title")
     #
-    def test_contest_open_function(self):
+    def test_contest_set_status_function(self):
         """test open function which changes contest status"""
-        self.contest.set_open()
-        self.assertTrue(self.contest.status == "OPEN")
+        self.contest.set_status(self.contest.OPEN)
+        self.assertTrue(self.contest.status == self.contest.OPEN)
 
     ###Close tests
     def test_ij_contest_close_function(self):
@@ -108,6 +108,8 @@ class EntryModelTest(BaseAppTestCase):
     def test_entry_string_representation(self):
         """test str representation"""
         self.assertEqual(str(self.entry), str(self.entry.story.author) + " : " + self.entry.title)
+
+
     def test_entry_verbose_name_plural(self):
         """test verbose name plural"""
         self.assertEqual(str(Entry._meta.verbose_name_plural), "entries")
@@ -124,3 +126,5 @@ class CritModelTest(BaseAppTestCase):
     def test_entry_string_representation(self):
         """test str"""
         self.assertEqual(str(self.crit), str(self.crit.entry.contest.title) + " : " + str(self.crit.reviewer.username) + " reviews " + str(self.crit.entry.story.author) )
+        self.crit =  Crit(entry = self.entries[0])
+        self.assertEqual(str(self.crit), "ALERT - somehow this crit did not get set a title")

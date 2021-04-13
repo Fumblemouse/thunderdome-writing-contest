@@ -37,7 +37,7 @@ class BaseAppViewTest(BaseAppTestCase):
             "content":"",
             "author" : self.user,
             "access" : Story.PRIVATE,
-            }) 
+            })
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'baseapp/create-story.html')
 
@@ -277,13 +277,34 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
     def test_edit_story_user_author_contest_closed(self):
         """test redirect  edit story if:
          story currently in contest
-         user not author"""
+         """
         self.set_up_contest(InternalJudgeContest)
-        self.contest.status = InternalJudgeContest.CLOSED
+
         #self.contest.expiry_date = timezone.now()
         self.contest.save()
         self.set_up_contest_components()
+        self.contest.close()
         print(self.contest.status)
+        self.login_testuser('djangotestuser1')
+        story = Story.objects.get(author__username = 'djangotestuser1')
+        response = self.client.get(reverse('edit story', kwargs = {"story_id": story.pk}))
+        self.assertRedirects(response, '/' + str(story.pk) +'/view-story')
+
+    def test_edit_story_user_author_contest_closed_multiple_entries(self):
+        """test redirect  edit story if:
+         story currently in contest
+         story entered in mulitple contests
+         """
+        self.set_up_multiple_contests(InternalJudgeContest, total = 5)
+        for contest in self.contests:
+            contest.save()
+
+        self.set_up_multiple_contest_components()
+        for index, contest in enumerate(self.contests):
+            if index % 2 == 0:
+                contest.close()
+                contest.judge()
+            #print(contest.status)
         self.login_testuser('djangotestuser1')
         story = Story.objects.get(author__username = 'djangotestuser1')
         response = self.client.get(reverse('edit story', kwargs = {"story_id": story.pk}))

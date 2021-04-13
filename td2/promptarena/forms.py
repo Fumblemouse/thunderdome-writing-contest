@@ -14,14 +14,14 @@ from baseapp.models import Story
 from .models import Contest, Entry, Crit
 
 class CreateContestForm(BaseForm):
-    """User creates Prompt details"""
+    """User creates contest details"""
 
     class Meta:
         model = Contest
         fields = ('title', 'content', 'max_wordcount', 'start_date','expiry_date' )
 
-class CopyContestForm(BaseForm):
-    """User creates Prompt details"""
+class EditContestForm(BaseForm):
+    """User creates contest details"""
 
     class Meta:
         model = Contest
@@ -88,17 +88,17 @@ class EnterCritForm(BaseForm):
     def __init__(self, *args, **kwargs):
         """Init For: defines wordcount initially"""
         self.wordcount = 0
+        self.wordcount_min = 10
         super(EnterCritForm, self).__init__(*args, **kwargs)
 
     def clean(self):
       # check if wordcount is excessive
-        crit_wordcount_min = 10
         cleaned_data = super().clean()
         words_to_count = strip_tags(cleaned_data.get('content'))
         crit_wordcount = len(re.findall(r'\S+', words_to_count))
         self.wordcount = crit_wordcount
-        if self.wordcount < crit_wordcount_min:
-            raise forms.ValidationError("Entrants deserve at least " + str(crit_wordcount_min = 10) + " words for their efforts!" )
+        if self.wordcount < self.wordcount_min:
+            raise forms.ValidationError("Entrants deserve at least " + str(self.wordcount_min) + " words for their efforts!" )
         if cleaned_data.get('score') == 0 and cleaned_data.get('final'):
             raise forms.ValidationError("You can't submit a final judgement without a score." )
         return self.cleaned_data  # never forget this! ;o)

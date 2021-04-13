@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.test import TestCase
 
 from baseapp.models import Story
-from promptarena.models import Crit, Entry
+from promptarena.models import Crit, Entry, Contest
 
  # pylint: disable=attribute-defined-outside-init
  # disabled because Django test classes set up variables/attributes in bespoke methods!
@@ -60,19 +60,21 @@ class BaseAppTestCase(TestCase):
         self.contest = mode(title = "My Contest title",
             start_date = timezone.now(),
             expiry_date = timezone.now() + timezone.timedelta(7),
-            status = 'OPEN'
+            status = Contest.OPEN,
+            max_wordcount=1000
             )
 
     def set_up_multiple_contests(self, mode, total):
         """Re-usable routine to set up contest object"""
+        self.contests = []
         for num in range(total):
             self.contests.append ( mode(
                 title = "Contest" + str(num),
                 start_date = timezone.now(),
                 expiry_date = timezone.now() + timezone.timedelta(7),
                 status = 'OPEN'
-                ) 
-            )  
+                )
+            )
 
     def set_up_contest_components(self):
         """reusable routine to set up contest associated objects
@@ -115,9 +117,10 @@ class BaseAppTestCase(TestCase):
         for user in self.users:
             self.stories.append(Story(author = user, access=Story.PRIVATE))
             self.stories[-1].save()
+
         for contest in self.contests:
             for story in self.stories:
-                self.entries.append(Entry(contest = self.contest, story=story))
+                self.entries.append(Entry(contest = contest, story=story))
                 self.entries[-1].save()
 
     def score_contest(self):

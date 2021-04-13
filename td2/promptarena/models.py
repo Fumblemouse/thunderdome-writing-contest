@@ -63,9 +63,7 @@ class Contest(models.Model):
     modified_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        if self.title:
-            return self.title
-        return "ALERT - somehow this contest did not get set a title"
+        return self.title
 
     #def save(self, *args, **kwargs):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
@@ -82,20 +80,9 @@ class Contest(models.Model):
         '''returns true if expiry date is passed'''
         return self.expiry_date > timezone.now() > self.start_date
 
-    def set_open(self):
-        """Sets status to open"""
-        self.status = 'OPEN'
-        self.save()
-
-    def set_judgement(self):
-        """Sets status to open"""
-        self.status = 'JUDGEMENT'
-        self.save()
-
-    def set_closed(self):
-        """Sets status to open"""
-        self.status = 'CLOSED'
-        self.save()
+    def set_status(self, status):
+        self.status = status
+        self.save
 
     def get_final_crits(self):
         """returns finished crits for a given contest"""
@@ -354,9 +341,7 @@ class Entry(models.Model):
         verbose_name_plural = "entries"
 
     def __str__(self):
-        if self.story and self.contest:
-            return str(self.story.author) + " : " + self.title
-        return "ALERT - somehow this entry did not get set a title"
+        return str(self.story.author) + " : " + self.title
 
 class Crit(models.Model):
     """Reviews of stories"""

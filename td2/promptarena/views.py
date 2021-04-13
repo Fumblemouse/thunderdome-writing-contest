@@ -58,7 +58,7 @@ def edit_contest(request, contest_id = ""):
     if request.user != contest.creator:
         messages.error(request, "Only the creator can edit their own contests.")
         return redirect('view contests')
-    if contest.is_active:
+    if contest.is_active():
         messages.error(request, "Your contest is already live.  It cannot be edited at this time.")
         return redirect('view contest details', contest_id = contest.pk)
 
@@ -70,6 +70,7 @@ def edit_contest(request, contest_id = ""):
         contest_form_uncommitted.creator = request.user
         contest_form_uncommitted.save()
         messages.success(request, 'Your contest was updated successfully! Hopefully you haven\'t confused everybody.')
+        print('success')
         return redirect('view contests')
 
     return render(request, "promptarena/create-contest.html", {'form': contest_form})
@@ -276,6 +277,7 @@ def judgemode(request, crit_id = 0):
                 crit_form_uncommitted.reviewer = request.user
                 crit_form_uncommitted.save()
                 messages.success(request, 'You have successfully critted a contest entry')
+                return redirect('judgemode')
 
     crit_list = Crit.objects.filter(
         reviewer = request.user,

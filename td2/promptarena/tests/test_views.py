@@ -1,8 +1,10 @@
 """Test framework for users and profiles"""
 from django.urls import reverse
+from django.utils import timezone
 # Create your tests here.
 
-from promptarena.models import InternalJudgeContest, Crit
+from promptarena.models import InternalJudgeContest, Crit, Contest
+from promptarena.forms import  EnterCritForm
 from baseapp.tests.test_utils import BaseAppTestCase
 # Create your tests here.
 
@@ -119,3 +121,121 @@ class PromptArenaLoginAccessTest(BaseAppTestCase):
         self.contest.close()
         response = self.client.get(reverse('judgemode', kwargs = {'crit_id': 1}))
         self.assertRedirects(response, '/accounts/login/?next=/1/judgemode')
+
+class PromptArenaViewsWithData(BaseAppTestCase):
+    """Test what happens when things get real - with real data"""
+    def setUp(self):
+        self.login_testuser('djangotestuser')
+
+    def test_create_contest(self):
+        """Post creater cotnest form and see if it goes through"""
+        response = self.client.post(reverse('create contest'), {
+            'title' : 'My Contest title',
+            'content' : 'My Contest content',
+            'start_date' :timezone.now(),
+            'expiry_date' : timezone.now() + timezone.timedelta(7),
+            'max_wordcount' : 1000,
+        })
+        self.assertRedirects(response, '/view-contests')
+
+    def test_edit_contest_not_creator(self):
+        """Access edit contest form if you are not creator of contest"""
+        self.set_up_contest(InternalJudgeContest)
+        self.contest.save()
+        self.login_testuser('djangotestuser')
+        response = self.client.post(reverse('edit contest', kwargs = {'contest_id' : self.contest.pk}), {
+            'title' : 'My Contest title',
+            'content' : 'My Contest content',
+            'start_date' :timezone.now(),
+            'expiry_date' : timezone.now() + timezone.timedelta(7),
+            'max_wordcount' : 1000,
+        })
+        self.assertRedirects(response, '/view-contests')
+
+
+    def test_edit_contest_live_creator_access(self):
+        """access edit contest form if you are creator"""
+        self.client.post(reverse('create contest'), {
+            'title' : 'My Contest title',
+            'content' : 'My Contest content',
+            'start_date' :timezone.now(),
+            'expiry_date' : timezone.now() + timezone.timedelta(7),
+            'max_wordcount' : 1000,
+        })
+
+        self.contest = Contest.objects.get(creator__username = 'djangotestuser')
+
+        response = self.client.post(reverse('edit contest', kwargs = {'contest_id' : self.contest.pk}), {
+            'title' : 'My Contest title',
+            'content' : 'My Contest content',
+            'start_date' :timezone.now(),
+            'expiry_date' : timezone.now() + timezone.timedelta(7),
+            'max_wordcount' : 1000,
+        })
+        self.assertRedirects(response, "/" + str(self.contest.pk) + '/view-contest-details')
+
+
+    def test_edit_contest_unopened_creator_access(self):
+        """access edit contest form if you are creator"""
+        self.login_testuser('djangotestuser')
+        self.client.post(reverse('create contest'), {
+            'title' : 'My Contest title',
+            'content' : 'My Contest content',
+            'start_date' :timezone.now()  + timezone.timedelta(1),
+            'expiry_date' : timezone.now() + timezone.timedelta(7),
+            'max_wordcount' : 1000,
+        })
+
+        self.contest = Contest.objects.get(creator__username = 'djangotestuser')
+
+        response = self.client.post(reverse('edit contest', kwargs = {'contest_id' : self.contest.pk}), {
+            'title' : 'My Contest title',
+            'content' : 'My Contest content revised',
+            'start_date' :timezone.now() + timezone.timedelta(1),
+            'expiry_date' : timezone.now() + timezone.timedelta(7),
+            'max_wordcount' : 1000,
+        })
+        self.assertRedirects(response, '/view-contests')
+
+    def test_enter_contest_new_story(self):
+        """Post a new story to a contest"""
+        self.set_up_contest(InternalJudgeContest)
+        self.contest.save()
+        response = self.client.post(reverse('enter contest', kwargs = {'contest_id' : self.contest.pk}), {
+            'title' : 'My Story title',
+            'content' : 'My Story content',
+        })
+        self.assertRedirects(response, '/view-contests')
+
+    def test_enter_contest_old_story(self):
+        """Post an old story to a contest"""
+        self.set_up_story_private()
+        self.set_up_contest(InternalJudgeContest)
+        self.contest.save()
+        response = self.client.post(reverse('enter contest old story', kwargs = {'contest_id' : self.contest.pk}), {
+            'story' : self.story.pk
+        })
+        self.assertRedirects(response, '/view-contests')
+
+    def test_enter_crit(self):
+        """WEnter a crit in a contest"""
+        self.set_up_contest(InternalJudgeContest)
+        self.contest.save()
+        self.set_up_contest_components()
+        self.contest.close()
+        self.content=""
+        self.crits = list(Crit.objects.filter(reviewer__username = 'djangotestuser1'))
+        self.dummy_form = EnterCritForm()
+
+        for i in range(self.dummy_form.wordcount_min):
+            self.content += " word"
+        self.login_testuser('djangotestuser1')
+        response = self.client.post(reverse('judgemode', kwargs = {'crit_id': self.crits[0].pk}) , {
+            'content': self.content,
+            'score' : Crit.HI_SCORE,
+            'final' : False,
+            })
+        self.assertRedirects(response, '/judgemode')
+
+
+
