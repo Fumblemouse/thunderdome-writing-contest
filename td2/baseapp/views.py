@@ -49,9 +49,7 @@ def edit_story(request, story_id=""):
         messages.error(request, "Only the author can edit their own stories.")
         return redirect('view stories')
     entries = Entry.objects.filter(story = story_id)
-    print (len(entries))
     for entry in entries:
-        #print (entry.contest.status, " : ", Contest.UNOPENED, " : ", Contest.CLOSED)
         if entry.contest.status not in [Contest.UNOPENED, Contest.CLOSED]:
             messages.error(request, "Your story is already in a contest.  It cannot be edited at this time.")
             return redirect('view story by id', story_id = story.pk)

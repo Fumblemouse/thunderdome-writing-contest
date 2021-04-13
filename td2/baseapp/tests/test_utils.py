@@ -72,7 +72,7 @@ class BaseAppTestCase(TestCase):
                 title = "Contest" + str(num),
                 start_date = timezone.now(),
                 expiry_date = timezone.now() + timezone.timedelta(7),
-                status = 'OPEN'
+                status = Contest.OPEN
                 )
             )
 

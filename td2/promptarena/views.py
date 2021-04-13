@@ -70,7 +70,6 @@ def edit_contest(request, contest_id = ""):
         contest_form_uncommitted.creator = request.user
         contest_form_uncommitted.save()
         messages.success(request, 'Your contest was updated successfully! Hopefully you haven\'t confused everybody.')
-        print('success')
         return redirect('view contests')
 
     return render(request, "promptarena/create-contest.html", {'form': contest_form})
@@ -113,7 +112,7 @@ def enter_contest_new_story(request, contest_id,):
             'story_form' : story_form,
             }
         )
-    if contest_context and contest_context.status != 'OPEN':
+    if contest_context and contest_context.status != Contest.OPEN:
         messages.error(request, 'This contest is not currently open for new entries.')
         return render(request, 'promptarena/view-contests.html', {})
 
@@ -152,7 +151,7 @@ def enter_contest_old_story(request, contest_id,):
             'entry_form': entry_form,
             }
         )
-    if contest_context.status != 'OPEN':
+    if contest_context.status != Contest.OPEN:
         messages.error(request, 'This contest is not currently open for new entries.')
         return render(request, 'promptarena/view-contests.html', {})
 
@@ -180,7 +179,7 @@ def open_contest(request, contest_id):
     context = {
         'contest_context' : contest_context,
     }
-    if contest_context.status == 'OPEN':
+    if contest_context.status == Contest.OPEN:
         messages.error(request, "It's already open")
         return render(request, 'promptarena/view-contest-details.html', context)
     contest_context.open()
@@ -209,7 +208,7 @@ def judge_contest(request, contest_id = 0):
     context = {
         'contest_context' : contest_context,
     }
-    if contest_context.status != 'JUDGEMENT':
+    if contest_context.status != Contest.JUDGEMENT:
         messages.error(request, 'You cannot judge a contest that is not ready for judgement')
         return render(request, 'promptarena/view-contest-details.html', context)
     contest_context.judge()
@@ -232,11 +231,11 @@ def view_contests(request):
     current_contest_list = Contest.objects.filter (
         expiry_date__gte = timezone.now()
     ).exclude(
-        status = 'CLOSED'
+        status = Contest.CLOSED
     )
 
     old_contest_list = Contest.objects.filter (
-         status = 'CLOSED'
+         status = Contest.CLOSED
     )
 
     context = {
@@ -281,7 +280,7 @@ def judgemode(request, crit_id = 0):
 
     crit_list = Crit.objects.filter(
         reviewer = request.user,
-        entry__contest__status = 'JUDGEMENT'
+        entry__contest__status = Contest.JUDGEMENT
         ).order_by('final')
     context = {
         'crit_list': crit_list

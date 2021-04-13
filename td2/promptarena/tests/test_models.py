@@ -1,5 +1,5 @@
 """Test models for Stories"""
-from promptarena.models import InternalJudgeContest, Entry, Crit
+from promptarena.models import InternalJudgeContest, Entry, Crit, Contest
 from baseapp.tests.test_utils import BaseAppTestCase
 
 
@@ -33,7 +33,7 @@ class InternalJudgeContestModelTest(BaseAppTestCase):
 
         self.set_up_contest_components()
         self.contest.close()
-        self.assertEqual(self.contest.status,'JUDGEMENT')
+        self.assertEqual(self.contest.status,Contest.JUDGEMENT)
     def test_contest_close_crit_creation(self):
         """Tests empty crits get created when contest is closed"""
         self.set_up_contest_components()
@@ -47,7 +47,7 @@ class InternalJudgeContestModelTest(BaseAppTestCase):
         self.contest.close()
         self.score_contest()
         self.contest.judge()
-        self.assertEqual(self.contest.status, 'CLOSED')
+        self.assertEqual(self.contest.status, Contest.CLOSED)
     def test_contest_judge_entrant_num(self):
         """test function reaches end and sets contest entrant_num"""
         self.set_up_contest_components()

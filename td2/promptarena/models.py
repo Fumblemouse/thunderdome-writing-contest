@@ -18,6 +18,7 @@ from baseapp.models import Story
 from baseapp.utils import sattolo_cycle
 from autoslug import AutoSlugField
 
+
 # Create your models here.
 
 class Contest(models.Model):
@@ -55,7 +56,7 @@ class Contest(models.Model):
     start_date = models.DateTimeField('Start Date')
     expiry_date = models.DateTimeField('Submit by Date')
     mode = models.CharField(choices=CONTEST_TYPES, default='INTERNAL JUDGE CONTEST', max_length=22)
-    status= models.CharField(choices=CONTEST_STATES, default='UNOPENED', max_length=9)
+    status= models.CharField(choices=CONTEST_STATES, default=UNOPENED, max_length=9)
     max_wordcount = models.PositiveIntegerField(default=1000)
     entrant_num = models.PositiveSmallIntegerField(default = 0)
     slug = AutoSlugField(max_length=200, unique=True)
@@ -72,8 +73,8 @@ class Contest(models.Model):
         slugified = slugify(self.title)
         if not self.id or slug != slugified:
             self.slug = slugified
-        if self.is_active() and self.status != 'JUDGEMENT' and self.status != 'CLOSED':
-            self.status = 'OPEN'
+        if self.is_active() and self.status != Contest.JUDGEMENT and self.status != Contest.CLOSED:
+            self.status = Contest.OPEN
         return super(Contest, self).save()
 
     def is_active(self):
@@ -138,7 +139,7 @@ class InternalJudgeContest(Contest):
 
             for entry in judge[1]:
                 Crit.objects.create(entry = entry, reviewer= reviewer )
-        self.status = 'JUDGEMENT'
+        self.status = Contest.JUDGEMENT
         self.save()
 
     def assign_entries(self, shuffled_entries, judges_with_entries):
@@ -202,7 +203,7 @@ class InternalJudgeContest(Contest):
                 #print('loss: ', entry.position)
 
         self.entrant_num = len(results)
-        self.status = 'CLOSED'
+        self.status = Contest.CLOSED
         self.save()
 
 class ExternalJudgeContest(Contest):
@@ -231,7 +232,7 @@ class ExternalJudgeContest(Contest):
             shuffled_entries = sattolo_cycle(list(entries).copy())
             for entry in shuffled_entries:
                 Crit.objects.create(entry = Entry.objects.get(pk = entry.id), reviewer = judge )
-        self.status = 'JUDGEMENT'
+        self.status = Contest.JUDGEMENT
         self.save()
 
 
@@ -254,7 +255,7 @@ class ExternalJudgeContest(Contest):
             entry.score = sum(result[1])
             entry.save()
         self.entrant_num = len(results)
-        self.status = 'CLOSED'
+        self.status = Contest.CLOSED
         self.save()
 
 class Brawl(Contest):
@@ -277,7 +278,7 @@ class Brawl(Contest):
         shuffled_entries = sattolo_cycle(entries.copy())
         for entry in shuffled_entries:
             Crit.objects.create(entry = Entry.objects.get(pk = entry.id), reviewer = self.creator )
-        self.status = 'JUDGEMENT'
+        self.status = Contest.JUDGEMENT
         self.save()
 
 
@@ -300,7 +301,7 @@ class Brawl(Contest):
             entry.score = sum(result[1])
             entry.save()
         self.entrant_num = len(results)
-        self.status = 'CLOSED'
+        self.status = Contest.CLOSED
         self.save()
 
 

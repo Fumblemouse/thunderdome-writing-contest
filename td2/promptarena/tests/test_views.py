@@ -197,6 +197,28 @@ class PromptArenaViewsWithData(BaseAppTestCase):
         })
         self.assertRedirects(response, '/view-contests')
 
+    def test_edit_contest_invalid_form(self):
+        """Test how form proceeds if invalid"""
+        self.client.post(reverse('create contest'), {
+            'title' : 'My Contest title',
+            'content' : 'My Contest content',
+            'start_date' :timezone.now()  + timezone.timedelta(1),
+            'expiry_date' : timezone.now() + timezone.timedelta(7),
+            'max_wordcount' : 1000,
+        })
+
+        self.contest = Contest.objects.get(creator__username = 'djangotestuser')
+
+        response = self.client.post(reverse('edit contest', kwargs = {'contest_id' : self.contest.pk}), {
+            'title' : 'My big fat failed form',
+            'content' : 'My Contest content revised',
+            'start_date' :timezone.now() + timezone.timedelta(1),
+            'expiry_date' : timezone.now() + timezone.timedelta(7),
+        #removing commented line  fails valdiations
+        #    'max_wordcount' : 1000,
+        })
+        self.assertTemplateUsed(response, 'promptarena/create-contest.html')
+
     def test_enter_contest_new_story(self):
         """Post a new story to a contest"""
         self.set_up_contest(InternalJudgeContest)

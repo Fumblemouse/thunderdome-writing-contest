@@ -284,7 +284,6 @@ class BaseAppRestrictedViewByAuthorTest(BaseAppTestCase):
         self.contest.save()
         self.set_up_contest_components()
         self.contest.close()
-        print(self.contest.status)
         self.login_testuser('djangotestuser1')
         story = Story.objects.get(author__username = 'djangotestuser1')
         response = self.client.get(reverse('edit story', kwargs = {"story_id": story.pk}))
