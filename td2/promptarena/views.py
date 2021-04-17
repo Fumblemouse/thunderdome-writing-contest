@@ -22,7 +22,9 @@ from .forms import (
     #CopyContestForm,
     EnterContestNewStoryForm,
     EnterContestOldStoryForm,
-    EnterCritForm,)
+    EnterCritForm,
+    AddJudgeForm,
+    )
 from .models import  Contest, Crit, Entry
 
 
@@ -74,6 +76,28 @@ def edit_contest(request, contest_id = ""):
 
     return render(request, "promptarena/create-contest.html", {'form': contest_form})
 
+@login_required
+def add_judge(request, contest_id = ""):
+    """Adding a judge to a contest"""
+    contest_context = get_object_or_404(Contest, pk = contest_id)
+    if request.user != contest_context.creator:
+        messages.error(request, "Only the creator can add judges to the contest.")
+        return redirect('view contests')
+    if contest_context.status == Contest.CLOSED:
+        messages.error(request, "Contest is already closed. That ship has sailed, buddy.")
+        return redirect('view contest details', contest_id = contest_context.pk)
+    judge_form = AddJudgeForm(request.POST or None,
+        contest_id = contest_id,)
+    if judge_form.is_valid():
+        judge_form_uncommitted = judge_form.save(commit = False)
+        judge_form_uncommitted.contest = contest_context
+        judge_form_uncommitted.save()
+        messages.success(request, 'You have added a judge!')
+
+    return render(request, "promptarena/add-judge.html", {'form': judge_form})
+
+
+
 
 @login_required
 def enter_contest_new_story(request, contest_id,):
@@ -81,6 +105,15 @@ def enter_contest_new_story(request, contest_id,):
     contest_context = get_object_or_404(Contest, pk=contest_id)
     story_form = ContestStoryForm(request.POST or None)
     if request.method == "POST":
+        if contest_context.status != Contest.OPEN:
+            messages.error(request, 'This contest is not currently open for new entries.')
+            #return with fields filled so work isn't lost
+            return render(request, 'promptarena/enter-contest-new-story.html', {
+                    'contest_context' : contest_context,
+                    #'entry_form': entry_form,
+                    'story_form' : story_form,
+                    }
+            )
         if story_form.is_valid():
             story_wordcount = HTML_wordcount(story_form.instance.content)
             entry_form = EnterContestNewStoryForm(
@@ -104,18 +137,16 @@ def enter_contest_new_story(request, contest_id,):
                 story_form_uncommitted.save()
                 entry_form_uncommitted.save()
 
-                messages.success(request, 'Your entry was submitted successfully! Hopefully it doesn\'t suck.')
+                messages.success(request, 'Your entry was added to your stories list and submitted successfully! Hopefully it doesn\'t suck.')
                 return redirect('view contests')
+
+        #return with fields filled so work isn't lost
         return render(request, 'promptarena/enter-contest-new-story.html', {
             'contest_context' : contest_context,
-            'entry_form': entry_form,
+        #    'entry_form': entry_form,
             'story_form' : story_form,
             }
         )
-    if contest_context and contest_context.status != Contest.OPEN:
-        messages.error(request, 'This contest is not currently open for new entries.')
-        return render(request, 'promptarena/view-contests.html', {})
-
 
     return render(request, 'promptarena/enter-contest-new-story.html', {
         'contest_context' : contest_context,
@@ -128,7 +159,11 @@ def enter_contest_new_story(request, contest_id,):
 def enter_contest_old_story(request, contest_id,):
     """User enters new story from a list of their own non-public stories"""
     contest_context = get_object_or_404(Contest, pk=contest_id)
+
     if request.method == "POST":
+        if contest_context.status != Contest.OPEN:
+            messages.error(request, 'This contest is not currently open for new entries.')
+            return redirect('view contests')
         chosen_story = get_object_or_404(Story, pk=request.POST.get('story'))
         entry_form = EnterContestOldStoryForm(request.POST,
             contest_expiry_date =  contest_context.expiry_date,
@@ -151,9 +186,6 @@ def enter_contest_old_story(request, contest_id,):
             'entry_form': entry_form,
             }
         )
-    if contest_context.status != Contest.OPEN:
-        messages.error(request, 'This contest is not currently open for new entries.')
-        return render(request, 'promptarena/view-contests.html', {})
 
     story_context = Story.objects.filter(
         author = request.user,
@@ -277,6 +309,8 @@ def judgemode(request, crit_id = 0):
                 crit_form_uncommitted.save()
                 messages.success(request, 'You have successfully critted a contest entry')
                 return redirect('judgemode')
+
+
 
     crit_list = Crit.objects.filter(
         reviewer = request.user,

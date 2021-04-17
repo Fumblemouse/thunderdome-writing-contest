@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils import timezone
 # Create your tests here.
 
-from promptarena.models import InternalJudgeContest, Crit, Contest
+from promptarena.models import InternalJudgeContest, ExternalJudgeContest,Crit, Contest
 from promptarena.forms import  EnterCritForm
 from baseapp.tests.test_utils import BaseAppTestCase
 # Create your tests here.
@@ -81,6 +81,16 @@ class PromptArenaViewTest(BaseAppTestCase):
             self.assertEqual(response.status_code, 200)
             self.assertTemplateUsed(response, 'promptarena/judgemode.html')
 
+    def test_add_judge_view_exists(self):
+        """Test add a judge view exists"""
+        self.login_testuser('djangotestuser')
+        self.set_up_contest(ExternalJudgeContest)
+        self.contest.save()
+        response = self.client.get(reverse('add judge', kwargs = { 'contest_id' : self.contest.pk}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'promptarena/add-judge.html')
+
+
 class PromptArenaLoginAccessTest(BaseAppTestCase):
     """Test login required working for where it is needed in promprtarena app"""
 
@@ -122,13 +132,20 @@ class PromptArenaLoginAccessTest(BaseAppTestCase):
         response = self.client.get(reverse('judgemode', kwargs = {'crit_id': 1}))
         self.assertRedirects(response, '/accounts/login/?next=/1/judgemode')
 
+    def test_add_judge_restricted(self):
+        """test login required to access add judge view"""
+        self.set_up_contest(InternalJudgeContest)
+        self.contest.save()
+        response = self.client.get(reverse('add judge', kwargs = {'contest_id': self.contest.pk}))
+        self.assertRedirects(response, '/accounts/login/?next=/1/add-judge')
+
 class PromptArenaViewsWithData(BaseAppTestCase):
     """Test what happens when things get real - with real data"""
     def setUp(self):
         self.login_testuser('djangotestuser')
 
     def test_create_contest(self):
-        """Post creater cotnest form and see if it goes through"""
+        """Post creater contest form and see if it goes through"""
         response = self.client.post(reverse('create contest'), {
             'title' : 'My Contest title',
             'content' : 'My Contest content',
@@ -140,9 +157,11 @@ class PromptArenaViewsWithData(BaseAppTestCase):
 
     def test_edit_contest_not_creator(self):
         """Access edit contest form if you are not creator of contest"""
+        self.notcreator = self.User.objects.create_user(username='notcreator', password='12345abcde')
+        self.notcreator.save()
         self.set_up_contest(InternalJudgeContest)
         self.contest.save()
-        self.login_testuser('djangotestuser')
+        self.login_testuser('notcreator')
         response = self.client.post(reverse('edit contest', kwargs = {'contest_id' : self.contest.pk}), {
             'title' : 'My Contest title',
             'content' : 'My Contest content',
@@ -229,6 +248,39 @@ class PromptArenaViewsWithData(BaseAppTestCase):
         })
         self.assertRedirects(response, '/view-contests')
 
+    def test_enter_contest_new_story_invalid_story(self):
+        """Post a new story to a contest"""
+        self.set_up_contest(InternalJudgeContest)
+        self.contest.save()
+        response = self.client.post(reverse('enter contest', kwargs = {'contest_id' : self.contest.pk}), {
+            'content' : 'My Story content',
+        })
+        self.assertTemplateUsed(response, 'promptarena/enter-contest-new-story.html')
+
+    def test_enter_contest_new_story_invalid_entry(self):
+        """Post a new story to a contest"""
+        self.set_up_contest(InternalJudgeContest)
+        self.contest.save()
+        story_content = ""
+        for i in range(1010):
+            story_content += " word"
+        response = self.client.post(reverse('enter contest', kwargs = {'contest_id' : self.contest.pk}), {
+            'title' : "My story title",
+            'content' : story_content,
+        })
+        self.assertTemplateUsed(response, 'promptarena/enter-contest-new-story.html')
+
+    def test_enter_contest_new_story_not_open(self):
+        """Post a new story to a contest"""
+        self.set_up_contest(InternalJudgeContest)
+        self.contest.status = Contest.JUDGEMENT
+        self.contest.save()
+        response = self.client.post(reverse('enter contest', kwargs = {'contest_id' : self.contest.pk}), {
+            'title' : 'My Story title',
+            'content' : 'My Story content  ',
+        })
+        self.assertTemplateUsed(response, 'promptarena/enter-contest-new-story.html')
+
     def test_enter_contest_old_story(self):
         """Post an old story to a contest"""
         self.set_up_story_private()
@@ -238,6 +290,79 @@ class PromptArenaViewsWithData(BaseAppTestCase):
             'story' : self.story.pk
         })
         self.assertRedirects(response, '/view-contests')
+
+
+    def test_enter_contest_old_story_invalid_entry(self):
+        """Post a new story to a contest"""
+        self.set_up_story_private_with_wordcount(wordcount = 1001)
+        self.set_up_contest(InternalJudgeContest)
+        self.contest.save()
+        response = self.client.post(reverse('enter contest old story', kwargs = {'contest_id' : self.contest.pk}), {
+            'story' : self.story.pk
+        })
+        self.assertTemplateUsed(response, 'promptarena/enter-contest-old-story.html')
+
+    def test_enter_contest_old_story_not_open(self):
+        """Post an old story to a contest"""
+        self.set_up_story_private()
+        self.set_up_contest(InternalJudgeContest)
+        self.contest.status = Contest.JUDGEMENT
+        self.contest.save()
+        response = self.client.post(reverse('enter contest old story', kwargs = {'contest_id' : self.contest.pk}), {
+            'story' : self.story.pk
+        })
+        self.assertRedirects(response, '/view-contests')
+
+    def test_add_judge_add_judge_by_creator(self):
+        """Add a single judge to a contest (default functionality)"""
+        self.set_up_contest(ExternalJudgeContest)
+        self.contest.save()
+        response = self.client.post(reverse('add judge', kwargs = {'contest_id' : self.contest.pk}), {
+            'judge' : self.user.pk
+        })
+
+        self.assertTemplateUsed(response, 'promptarena/add-judge.html')
+
+    def test_add_judge_add_judge_by_notcreator(self):
+        """Add a judge when you are not the contest creator"""
+        self.set_up_contest(ExternalJudgeContest)
+        self.notcreator = self.User.objects.create_user(username='notcreator', password='12345abcde')
+        self.notcreator.save()
+        self.contest.save()
+        self.login_testuser('notcreator')
+        response = self.client.post(reverse('add judge', kwargs = {'contest_id' : self.contest.pk}), {
+            'judge' : self.user.pk
+        })
+
+        self.assertRedirects(response, '/view-contests')
+
+    def test_add_judge_add_same_judge(self):
+        """Add a single judge TWICE to a contest
+        NB - we do this via view rather than form """
+        self.set_up_contest(ExternalJudgeContest)
+        self.notcreator = self.User.objects.create_user(username='notcreator', password='12345abcde')
+        self.notcreator.save()
+        self.contest.save()
+        response = self.client.post(reverse('add judge', kwargs = {'contest_id' : self.contest.pk}), {
+            'judge' : self.notcreator.pk
+        })
+        response = self.client.post(reverse('add judge', kwargs = {'contest_id' : self.contest.pk}), {
+            'judge' : self.notcreator.pk
+        })
+        self.assertTemplateUsed(response, 'promptarena/add-judge.html')
+        self.assertContains(response, "This judge is already judging this contest", html=True)
+
+
+    def test_add_judge_contest_closed(self):
+        """Post an old story to a contest"""
+        self.set_up_contest(ExternalJudgeContest)
+        self.contest.status = Contest.CLOSED
+        self.contest.save()
+        response = self.client.post(reverse('add judge', kwargs = {'contest_id' : self.contest.pk}), {
+            'judge' : self.user.pk
+        })
+        self.assertRedirects(response, '/1/view-contest-details')
+
 
     def test_enter_crit(self):
         """WEnter a crit in a contest"""
@@ -259,5 +384,57 @@ class PromptArenaViewsWithData(BaseAppTestCase):
             })
         self.assertRedirects(response, '/judgemode')
 
+    def test_enter_crit_invalid(self):
+        """Enter a crit in a contest with too few words"""
+        self.set_up_contest(InternalJudgeContest)
+        self.contest.save()
+        self.set_up_contest_components()
+        self.contest.close()
+        self.content=""
+        self.crits = list(Crit.objects.filter(reviewer__username = 'djangotestuser1'))
+        self.dummy_form = EnterCritForm()
+
+        for i in range(self.dummy_form.wordcount_min-1):
+            self.content += " word" + str(i)
+        self.login_testuser('djangotestuser1')
+        response = self.client.post(reverse('judgemode', kwargs = {'crit_id': self.crits[0].pk}) , {
+            'content': self.content,
+            'score' : Crit.HI_SCORE,
+            'final' : False,
+            })
+        self.assertTemplateUsed(response, 'promptarena/judgemode.html')
+
+    def test_enter_crit_with_repeat_score(self):
+        """WEnter a crit in a contest"""
+        self.set_up_contest(InternalJudgeContest)
+        self.contest.save()
+        self.set_up_contest_components()
+        self.contest.close()
+        self.content=""
+        self.crits = list(Crit.objects.filter(reviewer__username = 'djangotestuser1'))
+        self.dummy_form = EnterCritForm()
+
+        for i in range(self.dummy_form.wordcount_min):
+            self.content += " word" + str(i)
+        self.login_testuser('djangotestuser1')
+        self.client.post(reverse('judgemode', kwargs = {'crit_id': self.crits[0].pk}) , {
+            'content': self.content,
+            'score' : Crit.HI_SCORE,
+            'final' : False,
+            })
+        response = self.client.post(reverse('judgemode', kwargs = {'crit_id': self.crits[1].pk}) , {
+            'content': self.content,
+            'score' : Crit.HI_SCORE,
+            'final' : False,
+            })
+        self.assertTemplateUsed(response, 'promptarena/judgemode.html')
+        error_messages = []
+        messages = list(response.context['messages'])
+        for message in messages:
+            if 'error' in message.tags:
+                error_messages.append(message)
+
+        self.assertEqual(len(error_messages), 1)
+        self.assertIn('You have already used that rank in this contest', str(error_messages[0]))
 
 

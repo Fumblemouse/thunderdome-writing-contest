@@ -6,6 +6,7 @@ urlpatterns = [
     #create things
     path('create-contest', views.create_contest, name='create contest'),
     path('<int:contest_id>/edit-contest', views.edit_contest, name='edit contest'),
+    path('<int:contest_id>/add-judge', views.add_judge, name='add judge'),
     #view things
     path('<int:contest_id>/view-contest-details', views.view_contest_details, name='view contest details'),
     path('view-contests', views.view_contests, name='view contests'),

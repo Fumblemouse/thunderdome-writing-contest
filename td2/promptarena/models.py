@@ -48,7 +48,7 @@ class Contest(models.Model):
     )
     title = models.CharField(max_length=200, unique= True, blank=True)
     content =  tinymce_models.HTMLField()
-    judge = models.ManyToManyField(
+    judges = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         through="ContestJudges",
         blank= True
@@ -311,13 +311,13 @@ class ContestJudges (models.Model):
     """Joining table for contests and judges"""
     contest = models.ForeignKey(Contest,
         on_delete=models.CASCADE,
-        related_name = 'judges'
+        related_name = 'contestjudges'
         )
     judge = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
-        related_name = 'judges')
+        related_name = 'contestjudges')
 
 
 class Entry(models.Model):

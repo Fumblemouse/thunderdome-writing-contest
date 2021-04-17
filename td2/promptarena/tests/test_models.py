@@ -73,7 +73,7 @@ class InternalJudgeContestModelTest(BaseAppTestCase):
         loss = 0
         honourable_mention = 0
         dishonourable_mention = 0
-        self.set_up_contest_components()
+        self.set_up_contest_components(num_entrants = 10)
         self.contest.close()
         self.score_contest()
         self.contest.judge()

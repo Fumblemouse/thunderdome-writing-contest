@@ -39,6 +39,15 @@ class BaseAppTestCase(TestCase):
         self.story = Story(title="My Story", content="This is a story all about how...", author = author, access = Story.PRIVATE)
         self.story.save()
 
+    def set_up_story_private_with_wordcount(self,  wordcount = 1001):
+        """creates private privacy story with a speciifc wordcount"""
+        content = ""
+        author = self.user
+        for i in range(wordcount):
+            content +=  " word" + str(i)
+        self.story = Story(title="My Story", content=content, author = author, access = Story.PRIVATE)
+        self.story.save()
+
 
     def set_up_story_logged_in(self, author = ""):
         """creates logged-in privacy story"""
@@ -55,13 +64,16 @@ class BaseAppTestCase(TestCase):
         self.story.save()
 
 
-    def set_up_contest(self, mode):
+    def set_up_contest(self, mode, creator = ""):
         """Re-usable routine to set up contest object"""
+        if creator == "":
+            creator = self.user
         self.contest = mode(title = "My Contest title",
             start_date = timezone.now(),
             expiry_date = timezone.now() + timezone.timedelta(7),
             status = Contest.OPEN,
-            max_wordcount=1000
+            max_wordcount=1000,
+            creator=creator
             )
 
     def set_up_multiple_contests(self, mode, total):
@@ -76,7 +88,7 @@ class BaseAppTestCase(TestCase):
                 )
             )
 
-    def set_up_contest_components(self):
+    def set_up_contest_components(self, num_entrants = 5):
         """reusable routine to set up contest associated objects
         sets up:
             5 users
@@ -86,7 +98,7 @@ class BaseAppTestCase(TestCase):
         self.users = []
         self.stories = []
         self.entries = []
-        for user_num in range(5):
+        for user_num in range(num_entrants):
             self.users.append(self.User.objects.create_user(username='djangotestuser{}'.format(user_num), password='{}2345abcde'.format(user_num)))
             #users[-1] = last in list
             self.users[-1].save()
@@ -132,3 +144,14 @@ class BaseAppTestCase(TestCase):
                 shuffle(scores)
                 crit.score = scores.pop()
                 crit.save()
+
+    def get_messages(self, response, message_type = ""):
+        type_messages = []
+        messages = list(response.context['messages'])
+        for message in messages:
+            if message_type:
+                if message_type in message.tags:
+                    type_messages.append(message)
+            else:
+                type_messages.append(message)
+        return type_messages

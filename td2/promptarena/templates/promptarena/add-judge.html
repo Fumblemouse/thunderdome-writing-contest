@@ -1,0 +1,24 @@
+{% extends "baseapp/base.html" %}
+{% block title %}ThunderDome: Add Judge {% endblock %}
+{% block headtag %}
+    {% load static %}
+    {{ prompt_form.media }}
+
+{% endblock %}
+{% block header %}
+    Add Judge to Contest
+{% endblock %}
+
+{% block content %}
+
+<form method = "post">
+
+        {% csrf_token %}
+
+        {% include 'baseapp/base-form.html' %}
+
+    <input type="submit" value="Submit" class='btn btn-primary'>
+
+</form>
+
+{% endblock %}

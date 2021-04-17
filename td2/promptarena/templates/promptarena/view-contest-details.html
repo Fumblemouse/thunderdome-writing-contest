@@ -12,6 +12,9 @@
 {% block content %}
 
 {% if contest_context %}
+    {% if user == contest_context.creator %}
+        <p><a href="{% url 'add judge' contest_context.id %}" class="btn btn-primary">Add a Judge</a></p>
+    {% endif %}
         <p>{{ contest_context.content | safe }}</p>
         {% if user.is_authenticated and contest_contex.status == 'OPEN' %}
             <p><a href="{% url 'enter contest' contest_context.id %}" class="btn btn-primary">Enter</a></p>
