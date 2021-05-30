@@ -82,8 +82,9 @@ class Contest(models.Model):
         return self.expiry_date > timezone.now() > self.start_date
 
     def set_status(self, status):
+        """set status by programatically"""
         self.status = status
-        self.save
+        self.save()
 
     def get_final_crits(self):
         """returns finished crits for a given contest"""
@@ -222,7 +223,7 @@ class ExternalJudgeContest(Contest):
         """assign stories to judges"""
         #get list of entries to this contest
         entries = Entry.objects.filter(contest = self)
-        judges = self.judges.all()
+        judges = list(self.judges.all())
         judges.append(self.creator)
 
         #setup container for creating crit requirements, fill it with [entrant [list,of,stories]]

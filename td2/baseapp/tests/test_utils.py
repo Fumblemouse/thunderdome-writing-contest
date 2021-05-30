@@ -6,6 +6,7 @@ from django.test import TestCase
 
 from baseapp.models import Story
 from promptarena.models import Crit, Entry, Contest
+from universal.models import MiniDome
 
  # pylint: disable=attribute-defined-outside-init
  # disabled because Django test classes set up variables/attributes in bespoke methods!
@@ -19,13 +20,6 @@ class BaseAppTestCase(TestCase):
         cls.user = cls.User.objects.create_user(username='djangotestuser', password='12345abcde')
         cls.user.timezone = "Africa/Abidjan"
         cls.user.save()
-
-
-    #def get_testuser(self):
-        """create default user"""
-        #User = get_user_model()
-        #self.user = User.objects.create_user(username='djangotestuser', password='12345abcde')
-        #return self.user
 
     def login_testuser(self, username):
         """re-usable code to login class user"""
@@ -63,6 +57,19 @@ class BaseAppTestCase(TestCase):
         self.story = Story(title="My Story", content="This is a story all about how...", author = author, access = Story.PUBLIC)
         self.story.save()
 
+    def set_up_multiple_stories_public(self, num_stories = 10):
+        """creates range of public stories and authors"""
+        for story_num in range(num_stories):
+            self.users.append(self.User.objects.create_user(username='djangotestuser{}'.format(story_num), password='{}2345abcde'.format(story_num)))
+            #users[-1] = last in list
+            self.users[-1].save()
+            self.stories.append = Story(title="My Story"+str(story_num), content="This is a story all about how...", author = self.users[-1], access = Story.PUBLIC)
+            self.stories[-1].save()
+
+    def set_up_minidome(self):
+        """creates a minidomw contest"""
+        self.minidome = MiniDome(winner = self.stories[0], loser = self.stories[1])
+        self.minidome.save()
 
     def set_up_contest(self, mode, creator = ""):
         """Re-usable routine to set up contest object"""
@@ -146,6 +153,7 @@ class BaseAppTestCase(TestCase):
                 crit.save()
 
     def get_messages(self, response, message_type = ""):
+        """todo - figure out of this is needed"""
         type_messages = []
         messages = list(response.context['messages'])
         for message in messages:

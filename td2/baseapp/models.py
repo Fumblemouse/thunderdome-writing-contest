@@ -5,6 +5,8 @@ from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.html import strip_tags
 from django.conf import settings
+from django.dispatch import receiver
+from django.core.signals import   post_save
 
 from autoslug import AutoSlugField
 from tinymce import models as tinymce_models
@@ -81,3 +83,35 @@ class Story(models.Model):
     def get_absolute_url(self):
         """Returns a permalink for the story"""
         return reverse('view story by slug', kwargs = { 'author_slug': self.author.slug , 'story_slug' : self.slug, })
+
+@receiver(post_save, sender=Story)
+def ensure_story_stats_exist(sender, **kwargs):
+    if kwargs.get('created', False):
+        StoryStats.objects.get_or_create(story=kwargs.get('instance'))
+
+
+
+class StoryStats(models.Model):
+    story = models.OneToOneField(
+        Story,
+        on_delete=models.CASCADE,
+        related_name = 'stats',
+        primary_key=True
+    )
+    minidome_public_wins = models.PositiveSmallIntegerField( default = 0)
+    minidome_public_losses = models.PositiveSmallIntegerField( default = 0)
+    minidome_logged_in_wins = models.PositiveSmallIntegerField( default = 0)
+    minidome_logged_in_losses = models.PositiveSmallIntegerField( default = 0)
+    minidome_total_wins = models.PositiveSmallIntegerField( default = 0)
+    minidome_total_losses = models.PositiveSmallIntegerField( default = 0)
+    minidome_total_public_tests = models.PositiveSmallIntegerField( default = 0)
+    minidome_total_logged_in_tests = models.PositiveSmallIntegerField( default = 0)
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        """increment totals"""
+        self.minidome_total_wins = self.minidome_public_wins + self.minidome_logged_in_wins
+        self.minidone_total_losses = self.minidome_public_losses + self.minidome_logged_in_losses
+        self.minidome_total_public_tests = self.minidome_public_wins + self.minidome_public_losses
+        self.minidome_total_logged_in_tests = self.minidome_logged_in_wins + self.minidome_logged_in_losses
+        super(StoryStats, self).save()
+

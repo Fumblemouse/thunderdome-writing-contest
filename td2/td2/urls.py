@@ -24,5 +24,6 @@ urlpatterns = [
     path('', include('baseapp.urls')),
     path('', include('profiles.urls')),
     path('', include('promptarena.urls')),
+    path('', include('universal.urls')),
     path('tinymce/', include('tinymce.urls')),
 ]

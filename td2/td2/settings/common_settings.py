@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     'baseapp',
     'promptarena',
+    'universal',
     'tinymce',
 ]
 

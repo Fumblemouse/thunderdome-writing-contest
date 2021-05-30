@@ -43,7 +43,7 @@ class EditContestForm(BaseForm):
 
 
 class AddJudgeForm(BaseForm):
-    """User creates New Story to enter contest"""
+    """User adds a judge to a contest"""
     class Meta:
         model = ContestJudges
         fields = ('judge',)
@@ -52,6 +52,7 @@ class AddJudgeForm(BaseForm):
         """Set up the contest from the additional kwargs"""
         #note we are passing an int id as contest_id from the keyword arguments
         self.contest = get_object_or_404(Contest, pk = kwargs.pop('contest_id'))
+        self.cleaned_data = None #define here for pylint tidyness
         super(AddJudgeForm, self).__init__(*args, **kwargs)
 
     def clean(self):
