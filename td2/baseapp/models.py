@@ -6,7 +6,7 @@ from django.utils.text import slugify
 from django.utils.html import strip_tags
 from django.conf import settings
 from django.dispatch import receiver
-from django.core.signals import   post_save
+from django.db.models.signals import post_save
 
 from autoslug import AutoSlugField
 from tinymce import models as tinymce_models
@@ -107,11 +107,18 @@ class StoryStats(models.Model):
     minidome_total_losses = models.PositiveSmallIntegerField( default = 0)
     minidome_total_public_tests = models.PositiveSmallIntegerField( default = 0)
     minidome_total_logged_in_tests = models.PositiveSmallIntegerField( default = 0)
+    
+    class Meta:
+        verbose_name_plural = "Story Stats"
 
+    def __str__(self):
+        '''sits up and says hello'''
+        return "stats for " + self.story.title
+    
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         """increment totals"""
         self.minidome_total_wins = self.minidome_public_wins + self.minidome_logged_in_wins
-        self.minidone_total_losses = self.minidome_public_losses + self.minidome_logged_in_losses
+        self.minidome_total_losses = self.minidome_public_losses + self.minidome_logged_in_losses
         self.minidome_total_public_tests = self.minidome_public_wins + self.minidome_public_losses
         self.minidome_total_logged_in_tests = self.minidome_logged_in_wins + self.minidome_logged_in_losses
         super(StoryStats, self).save()

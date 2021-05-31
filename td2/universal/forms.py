@@ -2,15 +2,16 @@
 from django.db.models import Q
 
 from baseapp.forms import BaseForm
-from .models import MiniDome
+
 from baseapp.models import Story
+from .models import MiniDome
 
 class MiniDomePublicForm(BaseForm):
     """USer enters Story and Title"""
 
     class Meta:
         model = MiniDome
-        fields = ('winner')
+        fields = ('winner',)
 
     def __init__(self, stories, *args, **kwargs):
         super(MiniDomePublicForm, self).__init__(*args, **kwargs)

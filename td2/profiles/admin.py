@@ -13,7 +13,7 @@ class CustomUserAdmin(UserAdmin):
     new_admin_order =  (
         'ThunderDome',
         {
-            'fields': ('bio', 'public_profile', 'highest_access', 'timezone', 'slug' , 'wins', 'hms', 'dms', 'losses')
+            'fields': ('bio', 'private_profile', 'highest_access', 'timezone', 'slug' , 'wins', 'hms', 'dms', 'losses')
         }
     )
 

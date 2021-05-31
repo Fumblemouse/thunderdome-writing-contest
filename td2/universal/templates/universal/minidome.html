@@ -12,13 +12,13 @@
     <button class="nav-link active" id="instruction-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="Instructions" aria-selected="true">Instructions</button>
   </li>
   <li class="nav-item" role="presentation">
-    <button class="nav-link" id="story1-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="Story 1" aria-selected="false">Story 1</button>
+    <button class="nav-link" id="story1-tab" data-bs-toggle="tab" data-bs-target="#story1" type="button" role="tab" aria-controls="Story 1" aria-selected="false">Story 1</button>
   </li>
   <li class="nav-item" role="presentation">
-    <button class="nav-link" id="story2-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab" aria-controls="Story 2" aria-selected="false">Story 2</button>
+    <button class="nav-link" id="story2-tab" data-bs-toggle="tab" data-bs-target="#story2" type="button" role="tab" aria-controls="Story 2" aria-selected="false">Story 2</button>
   </li>
   <li class="nav-item" role="presentation">
-    <button class="nav-link" id="fight-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="FIGHT" aria-selected="false">FIGHT!</button>
+    <button class="nav-link" id="fight-tab" data-bs-toggle="tab" data-bs-target="#fight" type="button" role="tab" aria-controls="FIGHT" aria-selected="false">FIGHT!</button>
   </li>
 </ul>
 
@@ -33,7 +33,7 @@
           <li>If you are logged in you can leave a comment about your decision.</li>
       </ol>
   </div>
-  <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="story1-tab">
+  <div class="tab-pane" id="story1" role="tabpanel" aria-labelledby="story1-tab">
     {% if story1_context %}
         <div>{{ story1_context.title | safe }}</div>
         <div>{{ story1_context.content | safe }}</div>
@@ -46,7 +46,7 @@
     {% endif %}
     <img src = "{% static 'baseapp/img/flourish.png' %}" alt="Ending typographical flourish" class="rounded mx-auto d-block" />
   </div>
-  <div class="tab-pane" id="messages" role="tabpanel" aria-labelledby="story2-tab">
+  <div class="tab-pane" id="story2" role="tabpanel" aria-labelledby="story2-tab">
     {% if story2_context %}
         <h2>{{ story2_context.title | safe }}</h2>
         <div>{{ story2_context.content | safe }}</div>
@@ -60,7 +60,7 @@
 
 
   </div>
-  <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="fights-tab">
+  <div class="tab-pane" id="fight" role="tabpanel" aria-labelledby="fights-tab">
       <form method = "post">
         {% csrf_token %}
         {% include 'baseapp/base-form.html' %}
@@ -71,7 +71,6 @@
 
   </div>
 </div>
-
 
 
 
