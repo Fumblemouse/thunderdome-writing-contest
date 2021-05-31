@@ -6,5 +6,73 @@
 
 {% endblock header %}
 {% block content %}
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="instruction-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="Instructions" aria-selected="true">Instructions</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="story1-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="Story 1" aria-selected="false">Story 1</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="story2-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab" aria-controls="Story 2" aria-selected="false">Story 2</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="fight-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="FIGHT" aria-selected="false">FIGHT!</button>
+  </li>
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+  <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="instruction-tab">
+      <ol>
+          <li>Read instructions (so far so good). Two stories should be avaialable.</li>
+          <li>Read Story 1</li>
+          <li>Read Story 2</li>
+          <li>Go to the fight tab and pick a winner</li>
+          <li>If you are logged in you can leave a comment about your decision.</li>
+      </ol>
+  </div>
+  <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="story1-tab">
+    {% if story1_context %}
+        <div>{{ story1_context.title | safe }}</div>
+        <div>{{ story1_context.content | safe }}</div>
+
+    {% else %}
+        <div class="warning">
+            Something went horribly wrong - nothing to be found
+        </div>
+
+    {% endif %}
+    <img src = "{% static 'baseapp/img/flourish.png' %}" alt="Ending typographical flourish" class="rounded mx-auto d-block" />
+  </div>
+  <div class="tab-pane" id="messages" role="tabpanel" aria-labelledby="story2-tab">
+    {% if story2_context %}
+        <h2>{{ story2_context.title | safe }}</h2>
+        <div>{{ story2_context.content | safe }}</div>
+
+    {% else %}
+        <div class="warning">
+            Something went horribly wrong - nothing to be found
+        </div>
+
+    {% endif %}
+
+
+  </div>
+  <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="fights-tab">
+      <form method = "post">
+        {% csrf_token %}
+        {% include 'baseapp/base-form.html' %}
+        <input type="submit" value="Submit" class='btn btn-primary'>
+
+    </form>
+
+
+  </div>
+</div>
+
+
+
 
 {% endblock content %}
