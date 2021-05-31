@@ -86,6 +86,7 @@ class Story(models.Model):
 
 @receiver(post_save, sender=Story)
 def ensure_story_stats_exist(sender, **kwargs):
+    """Create storyStat on creation of story if one doesn't exist"""
     if kwargs.get('created', False):
         StoryStats.objects.get_or_create(story=kwargs.get('instance'))
 
