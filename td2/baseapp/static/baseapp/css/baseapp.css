@@ -4,30 +4,30 @@ body {
 }
 
 body > .container {
-    margin-top: .5em;
+    margin-top: .5rem;
          line-height: 150%;
 }
 
   h1,h2,h3,h4,h5,h6 {
     font-family: "Marko One", serif;
     color:#222;
-    margin:2.5rem 0 1rem 0 !important;
-    text-align:center;
+    padding:2.5rem 0 1rem !important;
+    xtext-align:center;
 
   }
 
   nav.list-group {
-   margin: 0 0 1em 0;
+   margin: 0 0 1rem 0;
 
   }
 
   form {
-    margin-bottom:1em;
+    padding: 1rem 0 1rem 0;
     z-index:200;
   }
 
   form div {
-    margin-bottom:1em;
+    margin-bottom:1rem;
   }
 
   form input.btn-primary {
@@ -57,12 +57,30 @@ blockquote {
     margin:auto !important;
 
 }
+
+
+
 .blockquote-footer {
     margin-top:0 !important;
 }
 
 .form-control {
     border-color: #777 !important;
+}
+
+.byline {
+    font-style:italic;
+    padding: 1rem 0 1rem 0;
+    xtext-align:center;
+
+}
+
+.story {
+    padding: 1em 0 1rem 0;
+}
+.story p {
+    padding-bottom: 1rem;
+
 }
 
   #logo-cell {
@@ -72,7 +90,7 @@ blockquote {
   #page-content {
     max-width:100%;
     min-height:85vh;
-    padding: 2em .7em 1em .7em;
+    padding: 2rem .7rem 1rem .7rem;
     background-color: white;
     box-shadow: 5px 5px 5px grey;
 
@@ -83,7 +101,7 @@ blockquote {
   #main-header {
       position:relative;
       padding: 0;
-      text-align:center;
+      xtext-align:center;
   }
   #skiptocontent {
     min-width: 15ch;
@@ -92,16 +110,28 @@ blockquote {
   #skiptocontent a {
     color:#000 !important;
   }
+#main-content h1, #main-content h2, #main-content h3 {
+    padding-left: 15%;
+}
 
+
+/*
   #things-to-not-do-nav {
 
     padding-top:5em;
   }
+  */
+
+
+
+
+
+
 
 @media (max-width: 768px) {
     #main-header {
 
-        padding-top: .5em;
+        padding-top: .5rem;
     }
     #page-content {
         box-shadow: none;
@@ -113,14 +143,39 @@ blockquote {
         padding:0;
     }
     nav.list-group {
-        margin: 0 0 1em 0;
+        margin: 0 0 .2rem 0;
 
+    }
+
+    #hamburger-nav.js  {
+      width: 100%; max-height:0;
+      transition: max-height .5s ease-out;
+      overflow:hidden;
+    }
+
+    #hamburger-button.js {
+      display: block; /* show the button JS is available */
+    }
+
+    #hamburger-nav.is-active {
+        width: 100%; max-height:600px;
+        transition: max-height .5s ease-out;
+    }
+    #hamburger-nav.is-not-active {
+        width: 100%; max-height:0;
+        transition: max-height .5s ease-out;
     }
 
 
 }
 
+#hamburger-nav {
 
 
+}
+
+#hamburger-button {
+  display: none; /* hamburger button is hidden by default */
+}
 
 

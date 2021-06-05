@@ -15,7 +15,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="{% static 'baseapp/img/favicon/favicon-32x32.png' %}">
         <link rel="icon" type="image/png" sizes="16x16" href="{% static 'baseapp/img/favicon/favicon-16x16.png' %}">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marko One">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
         <link rel="stylesheet"  href="{% static 'baseapp/css/baseapp.css' %}">
         {% block headtag %}{% endblock %}
     </head>
@@ -46,7 +46,10 @@
             <div id="page-content" class="row">
 
                 <!-- <div class="row"> -->
-                    <div class="col-md-2">
+                    <button id="hamburger-button" class="btn btn-primary" aria-hidden="true">
+                        Menu
+                    </button>
+                    <div class="col-md-2" id="hamburger-nav">
 
                         {% block sidebar %}
                             <nav aria-labelledby="things-to-see-nav" class="list-group">
@@ -67,6 +70,13 @@
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'login' %}" >Login</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'sign up' %}">Sign Up</a>
                                 {% endif %}
+                            {% if user.is_authenticated %}
+                                <nav aria-labelledby="things-to-not-do-nav" class="list-group" id="things-not-to-do">
+                                    <h2 id="things-to-not-do-nav" class = 'h5'>Things to not do</h2>
+                                    <a  class="nav-link list-group-item list-group-item-action list-group-item-danger"href="{% url 'logout' %}" class="btn btn-danger" >Exit pursued by a bear</a>
+                                </nav>
+                            {% endif %}
+
                             </nav>
                             {% endblock %}
 
@@ -99,15 +109,6 @@
 
                         {% endblock aside %}
 
-                        {% if user.is_authenticated %}
-                            <nav aria-labelledby="things-to-not-do-nav" class="list-group" id="things-not-to-do">
-                                <h2 id="things-to-not-do-nav" class = 'h5'>Things to not do</h2>
-                                <a  class="nav-link list-group-item list-group-item-action list-group-item-danger"href="{% url 'logout' %}" class="btn btn-danger" >Exit pursued by a bear</a>
-                            </nav>
-
-                        {% endif %}
-
-
 
 
                     </nav>
@@ -123,5 +124,6 @@
 
             </div>
         </div>
+        <script src="{% static 'baseapp/js/hamburger.js' %}"></script>
     </body>
 </html>

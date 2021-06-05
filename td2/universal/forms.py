@@ -15,7 +15,10 @@ class MiniDomePublicForm(BaseForm):
 
     def __init__(self, stories, *args, **kwargs):
         super(MiniDomePublicForm, self).__init__(*args, **kwargs)
-        self.fields['winner'].queryset = Story.objects.filter(Q(pk=stories[0]) | Q(pk=stories[1]))
+        #check to make sure form hasn't been posted
+        self.stories = stories
+        if not self.is_bound:
+            self.fields['winner'].queryset = Story.objects.filter(Q(pk=self.stories[0]) | Q(pk=self.stories[1]))
 
 class MiniDomeLoggedInForm(BaseForm):
     """USer enters Story and Title"""
@@ -26,4 +29,7 @@ class MiniDomeLoggedInForm(BaseForm):
 
     def __init__(self, stories, *args, **kwargs):
         super(MiniDomeLoggedInForm, self).__init__(*args, **kwargs)
-        self.fields['winner'].queryset = Story.objects.filter(Q(pk=stories[0]) | Q(pk=stories[1]))
+        #check to make sure form hasn't been posted
+        self.stories = stories
+        if not self.is_bound:
+            self.fields['winner'].queryset = Story.objects.filter(Q(pk=self.stories[0]) | Q(pk=self.stories[1]))

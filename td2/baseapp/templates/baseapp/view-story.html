@@ -11,9 +11,11 @@
 {% endblock %}
 
 {% block content %}
+    <div class="byline">by {{story_context.author }}</div>
     {% if story_context %}
-        <div>{{ story_context.content | safe }}</div>
-
+        <div class="story">
+            {{ story_context.content | safe }}
+        </div>
     {% else %}
         <div class="warning">
             Something went horribly wrong - nothing to be found
@@ -21,6 +23,7 @@
 
     {% endif %}
     <img src = "{% static 'baseapp/img/flourish.png' %}" alt="Ending typographical flourish" class="rounded mx-auto d-block" />
+
     {% if story_context.author.bio %}
         <div id="bio">
             <p>About the author:</p>
@@ -40,11 +43,11 @@
 {% endblock %}
 {% block aside %}
         {% if request.user == story_context.author %}
-            <nav aria-labelledby="edit-link" class="list-group">
-                <h2 id="end-links" class="h5">Edit Links</h2>
-                <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'edit story' story_context.id %}">Edit</a> 
+            <nav aria-labelledby="edit-story" class="list-group">
+                <h2 id="edit-story" class="h5">Edit Story</h2>
+                <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'edit story' story_context.id %}">Editing Mode</a>
             </nav>
         {% endif %}
 
         <p>All stories are copyright the author</p>
-{% endblock %}        
+{% endblock %}

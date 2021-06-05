@@ -9,10 +9,10 @@ class BaseForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(BaseForm, self).__init__(*args, **kwargs)
         for fieldname, field in self.fields.items():
-            #if "Boolean" not in str(field):
-            field.widget.attrs['class'] = 'form-control'
-            #else:
-            #    field.widget.attrs['class'] = 'form-check-input'
+            if "Boolean" not in str(field):
+                field.widget.attrs['class'] = 'form-control'
+            else:
+                field.widget.attrs['class'] = 'form-check-input'
 
 class StoryForm(BaseForm):
     """USer enters Story and Title"""

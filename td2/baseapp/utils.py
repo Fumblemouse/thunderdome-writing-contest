@@ -2,6 +2,7 @@
 import re
 from random import randrange
 from django.utils.html import strip_tags
+from datetime import datetime
 
 def sattolo_cycle(items):
     """assign list to random new position (that isn't the old position"""
@@ -31,3 +32,22 @@ def check_story_permissions(request, story=0):
     else:
         result = False
     return result
+
+
+def set_expirable_var(session, var_name, value, expire_at):
+    session[var_name] = {'value': value, 'expire_at': expire_at.timestamp()}
+
+def get_expirable_var(session, var_name, default=None):
+    var = default
+    if var_name in session:
+        my_variable_dict = session.get(var_name, {})
+        if my_variable_dict.get('expire_at', 0) > datetime.now().timestamp():
+            var = my_variable_dict.get('value')
+        else:
+            del session[var_name]
+    return var
+
+def get_expirable_var_time_to_del(session, var_name):
+    if var_name in session:
+        my_variable_dict = session.get(var_name, {})
+        return my_variable_dict.get('expire_at', 0) - datetime.now().timestamp()

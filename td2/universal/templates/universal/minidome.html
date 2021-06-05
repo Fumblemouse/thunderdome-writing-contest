@@ -1,5 +1,7 @@
 {% extends "baseapp/base.html" %}
 {% block title %}ThunderDome: MiniDome{% endblock %}
+{% block headtag %}<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>{% endblock %}
+
 {% load static %}
 {% block header %}
     Welcome to the MiniDome
@@ -7,71 +9,70 @@
 {% endblock header %}
 {% block content %}
 <!-- Nav tabs -->
-<ul class="nav nav-tabs" id="myTab" role="tablist">
-  <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="instruction-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="Instructions" aria-selected="true">Instructions</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="story1-tab" data-bs-toggle="tab" data-bs-target="#story1" type="button" role="tab" aria-controls="Story 1" aria-selected="false">Story 1</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="story2-tab" data-bs-toggle="tab" data-bs-target="#story2" type="button" role="tab" aria-controls="Story 2" aria-selected="false">Story 2</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="fight-tab" data-bs-toggle="tab" data-bs-target="#fight" type="button" role="tab" aria-controls="FIGHT" aria-selected="false">FIGHT!</button>
-  </li>
-</ul>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="instruction-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="instructions" aria-selected="true">Instructions</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="story1-tab" data-bs-toggle="tab" data-bs-target="#story1" type="button" role="tab" aria-controls="story1" aria-selected="false">Story 1</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="story2-tab" data-bs-toggle="tab" data-bs-target="#story2" type="button" role="tab" aria-controls="story2" aria-selected="false">Story 2</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="fight-tab" data-bs-toggle="tab" data-bs-target="#fight" type="button" role="tab" aria-controls="fight" aria-selected="false">FIGHT!</button>
+        </li>
+    </ul>
 
 <!-- Tab panes -->
-<div class="tab-content">
-  <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="instruction-tab">
-      <ol>
-          <li>Read instructions (so far so good). Two stories should be avaialable.</li>
-          <li>Read Story 1</li>
-          <li>Read Story 2</li>
-          <li>Go to the fight tab and pick a winner</li>
-          <li>If you are logged in you can leave a comment about your decision.</li>
-      </ol>
-  </div>
-  <div class="tab-pane" id="story1" role="tabpanel" aria-labelledby="story1-tab">
-    {% if story1_context %}
-        <div>{{ story1_context.title | safe }}</div>
-        <div>{{ story1_context.content | safe }}</div>
-
-    {% else %}
-        <div class="warning">
-            Something went horribly wrong - nothing to be found
+    <div class="tab-content">
+        <div class="tab-pane active" id="instructions" role="tabpanel" aria-labelledby="instruction-tab">
+            <ol>
+                <li>Read instructions (so far so good). Two stories should be avaialable.</li>
+                <li>Read Story 1</li>
+                <li>Read Story 2</li>
+                <li>Go to the fight tab and pick a winner</li>
+                <li>If you are logged in you can leave a comment about your decision.</li>
+            </ol>
         </div>
+        <div class="tab-pane" id="story1" role="tabpanel" aria-labelledby="story1-tab">
+            <div class="story">
+                {% if story1_context %}
+                    <h2>{{ story1_context.title | safe }}</h2>
+                    <div>{{ story1_context.content | safe }}</div>
 
-    {% endif %}
-    <img src = "{% static 'baseapp/img/flourish.png' %}" alt="Ending typographical flourish" class="rounded mx-auto d-block" />
-  </div>
-  <div class="tab-pane" id="story2" role="tabpanel" aria-labelledby="story2-tab">
-    {% if story2_context %}
-        <h2>{{ story2_context.title | safe }}</h2>
-        <div>{{ story2_context.content | safe }}</div>
+                {% else %}
+                    <div class="warning">
+                        Something went horribly wrong - nothing to be found
+                    </div>
 
-    {% else %}
-        <div class="warning">
-            Something went horribly wrong - nothing to be found
+                {% endif %}
+                <img src = "{% static 'baseapp/img/flourish.png' %}" alt="Ending typographical flourish" class="rounded mx-auto d-block" />
+            </div>
         </div>
+        <div class="tab-pane" id="story2" role="tabpanel" aria-labelledby="story2-tab">
+            <div class="story">
+                {% if story2_context %}
+                    <h2>{{ story2_context.title | safe }}</h2>
+                    <div>
+                        {{ story2_context.content | safe }}
+                    </div>
 
-    {% endif %}
-
-
-  </div>
-  <div class="tab-pane" id="fight" role="tabpanel" aria-labelledby="fights-tab">
-      <form method = "post">
-        {% csrf_token %}
-        {% include 'baseapp/base-form.html' %}
-        <input type="submit" value="Submit" class='btn btn-primary'>
-
-    </form>
-
-
-  </div>
-</div>
-
-
+                {% else %}
+                    <div class="warning">
+                    Something went horribly wrong - nothing to be found
+                    </div>
+                {% endif %}
+                <img src = "{% static 'baseapp/img/flourish.png' %}" alt="Ending typographical flourish" class="rounded mx-auto d-block" />
+            </div>
+        </div>
+        <div class="tab-pane" id="fight" role="tabpanel" aria-labelledby="fight-tab">
+            <form method = "post">
+                {% csrf_token %}
+                {% include 'baseapp/base-form.html' %}
+                <input type="submit" value="Submit" class='btn btn-primary'>
+            </form>
+        </div>
+    </div>
 
 {% endblock content %}
