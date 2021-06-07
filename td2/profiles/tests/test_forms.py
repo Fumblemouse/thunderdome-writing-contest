@@ -52,10 +52,10 @@ class UserLoginFormTest(TestCase):
     def test_user_login_field_class(self):
         """Test classes are added to form types for bootstrap"""
         for fieldname, field in self.form.fields.items():
-            #if "Boolean" not in str(field):
-            self.assertTrue('form-control' in field.widget.attrs['class'])
-            #else:
-            #    self.assertTrue('form-check-input' in field.widget.attrs['class'])
+            if "Boolean" not in str(field):
+                self.assertTrue('form-control' in field.widget.attrs['class'])
+            else:
+                self.assertTrue('form-check-input' in field.widget.attrs['class'])
 
 class UserChangePasswordFormTest(TestCase):
     """Test User Passord Change Form"""

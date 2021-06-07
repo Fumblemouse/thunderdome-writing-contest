@@ -4,10 +4,11 @@ Views for public (non-logged-in functionality)
 
 from random import sample
 
+from datetime import datetime, timedelta
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.db.models import Min
-from datetime import datetime, timedelta
+
 
 from baseapp.utils import set_expirable_var, get_expirable_var, get_expirable_var_time_to_del
 

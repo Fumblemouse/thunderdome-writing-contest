@@ -59,16 +59,23 @@ class BaseAppTestCase(TestCase):
 
     def set_up_multiple_stories_public(self, num_stories = 10):
         """creates range of public stories and authors"""
+        self.users = []
+        self.stories = []
         for story_num in range(num_stories):
             self.users.append(self.User.objects.create_user(username='djangotestuser{}'.format(story_num), password='{}2345abcde'.format(story_num)))
             #users[-1] = last in list
             self.users[-1].save()
-            self.stories.append = Story(title="My Story"+str(story_num), content="This is a story all about how...", author = self.users[-1], access = Story.PUBLIC)
+            self.stories.append(Story(title="My Story"+str(story_num), content="This is a story all about how...", author = self.users[-1], access = Story.PUBLIC))
             self.stories[-1].save()
 
-    def set_up_minidome(self):
-        """creates a minidomw contest"""
-        self.minidome = MiniDome(winner = self.stories[0], loser = self.stories[1])
+    def set_up_minidome_public(self):
+        """creates a minidome public contest"""
+        self.minidome = MiniDome(winner = self.stories[0], loser = self.stories[1], minidome_type = MiniDome.PUBLIC)
+        self.minidome.save()
+    
+    def set_up_minidome_logged_in(self):
+        """creates a minidome logged in contest"""
+        self.minidome = MiniDome(winner = self.stories[0], loser = self.stories[1], minidome_type = MiniDome.LOGGED_IN)
         self.minidome.save()
 
     def set_up_contest(self, mode, creator = ""):

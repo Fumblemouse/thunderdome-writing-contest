@@ -9,9 +9,9 @@
 {% endblock header %}
 {% block content %}
 <!-- Nav tabs -->
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-    <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="instruction-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="instructions" aria-selected="true">Instructions</button>
+    <ul class="nav nav-pills" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="instructions-tab" data-bs-toggle="tab" data-bs-target="#instructions" type="button" role="tab" aria-controls="instructions" aria-selected="true">Instructions</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="story1-tab" data-bs-toggle="tab" data-bs-target="#story1" type="button" role="tab" aria-controls="story1" aria-selected="false">Story 1</button>
@@ -26,7 +26,7 @@
 
 <!-- Tab panes -->
     <div class="tab-content">
-        <div class="tab-pane active" id="instructions" role="tabpanel" aria-labelledby="instruction-tab">
+        <div class="tab-pane active" id="instructions" role="tabpanel" aria-labelledby="instructions-tab">
             <ol>
                 <li>Read instructions (so far so good). Two stories should be avaialable.</li>
                 <li>Read Story 1</li>

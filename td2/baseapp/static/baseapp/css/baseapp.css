@@ -11,8 +11,7 @@ body > .container {
   h1,h2,h3,h4,h5,h6 {
     font-family: "Marko One", serif;
     color:#222;
-    padding:2.5rem 0 1rem !important;
-    xtext-align:center;
+    padding:2.5rem 0 1rem;
 
   }
 
@@ -71,7 +70,6 @@ blockquote {
 .byline {
     font-style:italic;
     padding: 1rem 0 1rem 0;
-    xtext-align:center;
 
 }
 
@@ -101,7 +99,6 @@ blockquote {
   #main-header {
       position:relative;
       padding: 0;
-      xtext-align:center;
   }
   #skiptocontent {
     min-width: 15ch;
@@ -111,7 +108,11 @@ blockquote {
     color:#000 !important;
   }
 #main-content h1, #main-content h2, #main-content h3 {
-    padding-left: 15%;
+    padding-left: 3vw;
+}
+
+#hamburger-button {
+  display: none; /* hamburger button is hidden by default */
 }
 
 
@@ -123,9 +124,18 @@ blockquote {
   */
 
 
+  @media (max-width: 1201px) {
 
+    #main-content h1, #main-content h2, #main-content h3 {
+      padding-left: 1vw;
+  }
+  nav.list-group {
+    margin: 0 0 1rem 0;
+    text-align: center;
+ 
+   }
 
-
+  }
 
 
 @media (max-width: 768px) {
@@ -144,8 +154,11 @@ blockquote {
     }
     nav.list-group {
         margin: 0 0 .2rem 0;
+        text-align: center;
 
     }
+
+/* js class is added by hamburger.js so we know javascript is active for these classes */
 
     #hamburger-nav.js  {
       width: 100%; max-height:0;
@@ -154,28 +167,18 @@ blockquote {
     }
 
     #hamburger-button.js {
-      display: block; /* show the button JS is available */
+      display: block; 
     }
 
-    #hamburger-nav.is-active {
+    #hamburger-nav.is-active.js {
         width: 100%; max-height:600px;
         transition: max-height .5s ease-out;
     }
-    #hamburger-nav.is-not-active {
+    #hamburger-nav.is-not-active.js {
         width: 100%; max-height:0;
         transition: max-height .5s ease-out;
     }
 
 
 }
-
-#hamburger-nav {
-
-
-}
-
-#hamburger-button {
-  display: none; /* hamburger button is hidden by default */
-}
-
 

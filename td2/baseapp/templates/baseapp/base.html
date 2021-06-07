@@ -62,11 +62,11 @@
                                 {% if user.is_authenticated %}
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create story' %}">Create Story</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create contest' %}">Create Contest</a>
-                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'minidome' %}" >Judge a MiniDome</a>
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'minidome' %}" >Judge a Mini-Dome</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'judgemode' %}">Judge a Contest</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'profile' %}">Your Profile</a>
                                 {% else %}
-                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'minidome' %}" >Judge a MiniDome</a>
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'minidome' %}" >Judge a Mini-Dome</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'login' %}" >Login</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'sign up' %}">Sign Up</a>
                                 {% endif %}

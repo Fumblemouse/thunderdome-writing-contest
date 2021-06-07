@@ -52,16 +52,13 @@ class MiniDome(models.Model):
         """Save the minidome record"""
         super(MiniDome, self).save()
         #update StoryStats appropriately (this is the only place it happens so we won't use a signal)
-        winner = StoryStats.objects.get(pk = self.winner)
-        loser = StoryStats.objects.get(pk = self.loser)
+        #winner = self.winner
+        #loser = self.loser
         if self.minidome_type == MiniDome.LOGGED_IN:
-            winner.minidome_logged_in_wins += 1
-            loser.minidome_logged_in_losses += 1
+            self.winner.stats.minidome_logged_in_wins += 1
+            self.loser.stats.minidome_logged_in_losses += 1
         if self.minidome_type == MiniDome.PUBLIC:
-            winner.minidome_public_wins += 1
-            loser.minidome_public_losses += 1
-        winner.save()
-        loser.save()
-
-
-
+            self.winner.stats.minidome_public_wins += 1
+            self.loser.stats.minidome_public_losses += 1
+        self.winner.save()
+        self.loser.save()
