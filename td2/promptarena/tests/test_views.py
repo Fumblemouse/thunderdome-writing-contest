@@ -1,4 +1,4 @@
-"""Test framework for users and profiles"""
+"""Test framework for views in promptarena"""
 from django.urls import reverse
 from django.utils import timezone
 # Create your tests here.

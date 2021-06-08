@@ -31,7 +31,7 @@ class MiniDome(models.Model):
         on_delete=models.CASCADE,
         related_name = 'loser',
     )
-    content =  tinymce_models.HTMLField()
+    content =  tinymce_models.HTMLField(blank = True)
     battle_date = models.DateTimeField(auto_now_add=True,)
     minidome_type = models.PositiveSmallIntegerField(
         verbose_name='MiniDome Type',
@@ -60,5 +60,5 @@ class MiniDome(models.Model):
         if self.minidome_type == MiniDome.PUBLIC:
             self.winner.stats.minidome_public_wins += 1
             self.loser.stats.minidome_public_losses += 1
-        self.winner.save()
-        self.loser.save()
+        self.winner.stats.save()
+        self.loser.stats.save()

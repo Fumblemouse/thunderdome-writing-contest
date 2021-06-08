@@ -37,7 +37,6 @@ class Story(models.Model):
     )
     title = models.CharField(max_length=255)
     content =  tinymce_models.HTMLField()
-    ACCESS_CHOICES = ACCESS_CHOICES
     access = models.PositiveSmallIntegerField(
         verbose_name='Who can see your story?',
         help_text = 'Caution: Making your story non-private will exclude it from entering contests',
@@ -107,14 +106,14 @@ class StoryStats(models.Model):
     minidome_total_losses = models.PositiveSmallIntegerField( default = 0)
     minidome_total_public_tests = models.PositiveSmallIntegerField( default = 0)
     minidome_total_logged_in_tests = models.PositiveSmallIntegerField( default = 0)
-    
+
     class Meta:
         verbose_name_plural = "Story Stats"
 
     def __str__(self):
         '''sits up and says hello'''
         return "stats for " + self.story.title
-    
+
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         """increment totals"""
         self.minidome_total_wins = self.minidome_public_wins + self.minidome_logged_in_wins
