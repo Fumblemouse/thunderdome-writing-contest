@@ -6,7 +6,7 @@ from django.urls import reverse
 #from promptarena.models import InternalJudgeContest, ExternalJudgeContest,Crit, Contest
 #from promptarena.forms import  EnterCritForm
 from baseapp.models import Story
-from baseapp.utils import set_expirable_var, get_expirable_var
+from baseapp.utils import get_expirable_var
 from baseapp.tests.test_utils import BaseAppTestCase
 # Create your tests here.
 
@@ -17,12 +17,7 @@ class MiniDomeViewTest(BaseAppTestCase):
 
         response = self.client.get(reverse('minidome'), follow = True)
         self.assertRedirects(response, '/')
-        error_messages = []
-        messages = list(response.context['messages'])
-        for message in messages:
-            if 'error' in message.tags:
-                error_messages.append(message)
-
+        error_messages = self.get_messages(response, 'error')
         self.assertEqual(len(error_messages), 1)
         self.assertIn('Not enough', str(error_messages[0]))
 
@@ -30,11 +25,7 @@ class MiniDomeViewTest(BaseAppTestCase):
 
         response = self.client.get(reverse('minidome'), follow = True)
         self.assertRedirects(response, '/')
-        error_messages = []
-        messages = list(response.context['messages'])
-        for message in messages:
-            if 'error' in message.tags:
-                error_messages.append(message)
+        error_messages = self.get_messages(response, 'error')
 
         self.assertEqual(len(error_messages), 1)
         self.assertIn('Not enough', str(error_messages[0]))
@@ -43,12 +34,7 @@ class MiniDomeViewTest(BaseAppTestCase):
         self.login_testuser()
         response = self.client.get(reverse('minidome'), follow = True)
         self.assertRedirects(response, '/')
-        error_messages = []
-        messages = list(response.context['messages'])
-        for message in messages:
-            if 'error' in message.tags:
-                error_messages.append(message)
-
+        error_messages = self.get_messages(response, 'error')
         self.assertEqual(len(error_messages), 1)
         self.assertIn('Not enough', str(error_messages[0]))
 
@@ -56,11 +42,7 @@ class MiniDomeViewTest(BaseAppTestCase):
 
         response = self.client.get(reverse('minidome'), follow = True)
         self.assertRedirects(response, '/')
-        error_messages = []
-        messages = list(response.context['messages'])
-        for message in messages:
-            if 'error' in message.tags:
-                error_messages.append(message)
+        error_messages = self.get_messages(response, 'error')
 
         self.assertEqual(len(error_messages), 1)
         self.assertIn('Not enough', str(error_messages[0]))
