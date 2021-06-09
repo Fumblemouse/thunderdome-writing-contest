@@ -10,11 +10,15 @@ from baseapp.utils import get_expirable_var
 from baseapp.tests.test_utils import BaseAppTestCase
 # Create your tests here.
 
+# pylint: disable=attribute-defined-outside-init
+# disabled because Django test classes set up variables/attributes in bespoke methods!
+
+
 class MiniDomeViewTest(BaseAppTestCase):
     """Test view is available"""
 
     def test_minidome_not_accessible_public(self):
-
+        """test access fails if not enough stories"""
         response = self.client.get(reverse('minidome'), follow = True)
         self.assertRedirects(response, '/')
         error_messages = self.get_messages(response, 'error')
@@ -31,6 +35,7 @@ class MiniDomeViewTest(BaseAppTestCase):
         self.assertIn('Not enough', str(error_messages[0]))
 
     def test_minidome_not_accessible_logged_in(self):
+        """Test access no granted if not enough stories"""
         self.login_testuser()
         response = self.client.get(reverse('minidome'), follow = True)
         self.assertRedirects(response, '/')
@@ -141,7 +146,6 @@ class MiniDomeTest(BaseAppTestCase):
 
     def test_minidome_bad_form(self):
         """Checks to see if invalid form handled"""
-        """ test judment creates scoress"""
         self.response = self.client.get(reverse('minidome'))
         self.request = self.response.wsgi_request
         self.story_ids = get_expirable_var(self.request.session, 'minidome_stories', None)
@@ -189,6 +193,3 @@ class MiniDomeTest(BaseAppTestCase):
         self.assertTrue(story_instance0.stats.minidome_logged_in_wins > 0)
         self.assertTrue(story_instance1.stats.minidome_logged_in_losses > 0)
         self.assertRedirects(response, '/')
-
-
-

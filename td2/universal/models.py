@@ -7,7 +7,7 @@ minidome: public fight between two stories
 from django.db import models
 from tinymce import models as tinymce_models
 
-from baseapp.models import Story, StoryStats
+from baseapp.models import Story
 
 
 
@@ -54,6 +54,7 @@ class MiniDome(models.Model):
         #update StoryStats appropriately (this is the only place it happens so we won't use a signal)
         #winner = self.winner
         #loser = self.loser
+        # pylint: disable=no-member
         if self.minidome_type == MiniDome.LOGGED_IN:
             self.winner.stats.minidome_logged_in_wins += 1
             self.loser.stats.minidome_logged_in_losses += 1

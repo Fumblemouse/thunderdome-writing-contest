@@ -8,8 +8,8 @@ from baseapp.models import Story
 from promptarena.models import Crit, Entry, Contest
 from universal.models import MiniDome
 
- # pylint: disable=attribute-defined-outside-init
- # disabled because Django test classes set up variables/attributes in bespoke methods!
+# pylint: disable=attribute-defined-outside-init
+# disabled because Django test classes set up variables/attributes in bespoke methods!
 
 class BaseAppTestCase(TestCase):
     """Handy TestClass Extension that can also perform functions to create useful entities"""

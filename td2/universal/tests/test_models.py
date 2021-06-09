@@ -53,4 +53,3 @@ class PublicJudgeBattleTest(BaseAppTestCase):
         self.assertEqual(self.stories[4].stats.minidome_logged_in_wins, 0)
         self.assertEqual(self.stories[4].stats.minidome_logged_in_losses, 2)
         self.assertEqual(self.stories[1].stats.minidome_total_logged_in_tests, 2)
-

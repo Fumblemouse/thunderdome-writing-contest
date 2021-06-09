@@ -92,6 +92,7 @@ def ensure_story_stats_exist(sender, **kwargs):
 
 
 class StoryStats(models.Model):
+    """Story wins and losses and other assorted totals"""
     story = models.OneToOneField(
         Story,
         on_delete=models.CASCADE,
@@ -121,4 +122,3 @@ class StoryStats(models.Model):
         self.minidome_total_public_tests = self.minidome_public_wins + self.minidome_public_losses
         self.minidome_total_logged_in_tests = self.minidome_logged_in_wins + self.minidome_logged_in_losses
         super(StoryStats, self).save()
-
