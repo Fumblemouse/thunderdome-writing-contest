@@ -35,10 +35,12 @@ class Contest(models.Model):
     ]
     INTERNAL_JUDGE_CONTEST = "INTERNAL JUDGE CONTEST"
     EXTERNAL_JUDGE_CONTEST = "EXTERNAL JUDGE CONTEST"
+    BRAWL = "Brawl"
 
     CONTEST_TYPES = [
         (INTERNAL_JUDGE_CONTEST, 'Internal Judge Contest'),
-        (EXTERNAL_JUDGE_CONTEST, 'External Judge Contest')
+        (EXTERNAL_JUDGE_CONTEST, 'External Judge Contest'),
+        (BRAWL, 'Brawl')
     ]
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -78,11 +80,11 @@ class Contest(models.Model):
         return super(Contest, self).save()
 
     def is_active(self):
-        '''returns true if expiry date is passed'''
+        '''returns true if datenow between start and finish'''
         return self.expiry_date > timezone.now() > self.start_date
 
     def set_status(self, status):
-        """set status by programatically"""
+        """set status programatically"""
         self.status = status
         self.save()
 
@@ -112,11 +114,6 @@ class InternalJudgeContest(Contest):
         """assign stories to judges"""
         #get list of entries to this contest
         entries = Entry.objects.filter(contest = self)
-        #get list of entrants and stories from entries
-        #stories = entries.values_list('story', flat=True)
-        #stories = list(stories)
-        #entrants = entries.values_list('story__author', flat=True)
-        #entrants = list(entrants)
 
         #setup container for creating crit requirements, fill it with [entrant [list,of,stories]]
         judges_with_entries = list()
@@ -261,11 +258,9 @@ class ExternalJudgeContest(Contest):
 
 class Brawl(Contest):
     """
-    Child class of Contest where judging is done by other contestants
+    Child class of Contest where judging is done by one judge
     defines:
         close()
-        judge()
-        assign_stories()
         judge()
     """
     class Meta:
@@ -276,8 +271,7 @@ class Brawl(Contest):
         #get list of entries to this contest
         entries = Entry.objects.filter(contest = self)
         #setup container for creating crit requirements, fill it with [entrant [list,of,stories]]
-        shuffled_entries = sattolo_cycle(entries.copy())
-        for entry in shuffled_entries:
+        for entry in entries:
             Crit.objects.create(entry = Entry.objects.get(pk = entry.id), reviewer = self.creator )
         self.status = Contest.JUDGEMENT
         self.save()
@@ -286,6 +280,7 @@ class Brawl(Contest):
     def judge(self):
         """Count, Sort the results and close the contest"""
         crits = Crit.objects.filter(entry__contest__pk = self.pk)
+        
         results = {}
         results_order = {}
         #create a dictionary with entry as key and an array of scores from judges
@@ -301,6 +296,15 @@ class Brawl(Contest):
             entry.position = count + 1
             entry.score = sum(result[1])
             entry.save()
+
+        #add to the win and lose totals of the respective users.
+        #it's a brawl so we only care about top and bottom
+        winner = Entry.objects.get(pk = results_order[0][0].pk)
+        winner.story.author.brawl_wins += 1
+        winner.story.author.save()
+        loser = Entry.objects.get(pk = results_order[-1][0].pk)
+        loser.story.author.brawl_losses += 1
+        loser.story.author.save()
         self.entrant_num = len(results)
         self.status = Contest.CLOSED
         self.save()

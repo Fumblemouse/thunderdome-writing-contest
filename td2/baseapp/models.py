@@ -92,7 +92,11 @@ def ensure_story_stats_exist(sender, **kwargs):
 
 
 class StoryStats(models.Model):
-    """Story wins and losses and other assorted totals"""
+    """Story wins and losses and other assorted totals
+    We keep these in baseapps as they have a one-to-one rel with story
+    They are in a separate table in case that speeds up stats calculations later in the piece
+    or if a different stats system needs to be implemented later    
+    """
     story = models.OneToOneField(
         Story,
         on_delete=models.CASCADE,
@@ -103,10 +107,6 @@ class StoryStats(models.Model):
     minidome_public_losses = models.PositiveSmallIntegerField( default = 0)
     minidome_logged_in_wins = models.PositiveSmallIntegerField( default = 0)
     minidome_logged_in_losses = models.PositiveSmallIntegerField( default = 0)
-    minidome_total_wins = models.PositiveSmallIntegerField( default = 0)
-    minidome_total_losses = models.PositiveSmallIntegerField( default = 0)
-    minidome_total_public_tests = models.PositiveSmallIntegerField( default = 0)
-    minidome_total_logged_in_tests = models.PositiveSmallIntegerField( default = 0)
 
     class Meta:
         verbose_name_plural = "Story Stats"
@@ -115,10 +115,18 @@ class StoryStats(models.Model):
         '''sits up and says hello'''
         return "stats for " + self.story.title
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        """increment totals"""
-        self.minidome_total_wins = self.minidome_public_wins + self.minidome_logged_in_wins
-        self.minidome_total_losses = self.minidome_public_losses + self.minidome_logged_in_losses
-        self.minidome_total_public_tests = self.minidome_public_wins + self.minidome_public_losses
-        self.minidome_total_logged_in_tests = self.minidome_logged_in_wins + self.minidome_logged_in_losses
-        super(StoryStats, self).save()
+    def get_minidome_total_wins(self):
+        """Returns total minidome wins of any sort"""
+        return self.minidome_logged_in_wins + self.minidome_public_wins
+
+    def get_minidome_total_losses(self):
+        """returns total minidome losses of any sort"""
+        return self.minidome_logged_in_losses + self.minidome_public_losses
+
+    def get_minidome_total_logged_in_tests(self):
+        """Returns total minidome tetss of logged_in sort"""
+        return self.minidome_logged_in_losses + self.minidome_logged_in_wins
+
+    def get_minidome_total_public_tests(self):
+        """returns total minidome tests of public sort"""
+        return self.minidome_public_losses + self.minidome_public_wins

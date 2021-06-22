@@ -1,10 +1,81 @@
 """Test models for Stories"""
-from promptarena.models import InternalJudgeContest, Entry, Crit, Contest
+from promptarena.models import InternalJudgeContest, Brawl, Entry, Crit, Contest
 from baseapp.tests.test_utils import BaseAppTestCase
 
 
-class InternalJudgeContestModelTest(BaseAppTestCase):
+class BrawlContestModelTest(BaseAppTestCase):
     """Test A Contest"""
+    def setUp(self):
+        """set up contest"""
+        self.set_up_contest(Brawl)
+        self.contest.save()
+
+    def test_brawl_contest_close_function(self):
+        """tests close function which changes status"""
+
+        self.set_up_contest_components(num_entrants=2)
+        self.contest.close()
+        self.assertEqual(self.contest.status,Contest.JUDGEMENT)
+
+    def test_brawl_close_crit_creation(self):
+        """Tests empty crits get created when contest is closed"""
+        self.set_up_contest_components(num_entrants = 2)
+        self.contest.close()
+        self.assertEqual(Crit.objects.filter(entry__contest = self.contest).count(), 2)
+    
+    ###Judge tests
+    def test_brawl_judge_function(self):
+        """Tests function reaches end and sets contest.status"""
+        self.set_up_contest_components(num_entrants = 2)
+        self.contest.close()
+        self.score_brawl()
+        self.contest.judge()
+        self.assertEqual(self.contest.status, Contest.CLOSED)
+    
+    def test_brawl_judge_entrant_num(self):
+        """test function reaches end and sets contest entrant_num"""
+        self.set_up_contest_components(num_entrants = 2)
+        self.contest.close()
+        self.score_brawl()
+        self.contest.judge()
+        self.assertTrue(self.contest.entrant_num > 0)
+    
+    def test_brawl_judge_entry_updates(self):
+        """test function reaches end and handles entries and scores for entries"""
+        self.set_up_contest_components(num_entrants = 2)
+        self.contest.close()
+        self.score_brawl()
+        self.contest.judge()
+        for entry in self.entries:
+            entry.refresh_from_db()
+            self.assertTrue(entry.position > 0)
+            self.assertTrue(entry.score > 0)
+
+    def test_brawl_profile_updates(self):
+        """test function reaches end and checks profiles updated with stats """
+        brawl_win = 0
+        brawl_loss = 0
+        self.set_up_contest_components(num_entrants = 2)
+        self.contest.close()
+        self.score_brawl()
+
+        self.contest.judge()
+        for entry in self.entries:
+            entry.refresh_from_db()
+            if entry.story.author.brawl_wins == 1:
+                brawl_win += 1
+            if entry.story.author.brawl_losses == 1:
+                brawl_loss += 1
+
+        self.assertTrue(brawl_win)
+        self.assertTrue(brawl_loss)
+
+
+class InternalJudgeContestModelTest(BaseAppTestCase):
+    """Test A Contest
+    Because this was the first type written we use it to test a lot of
+    contest based stuff too
+    """
     def setUp(self):
         """set up contest"""
         self.set_up_contest(InternalJudgeContest)
@@ -30,10 +101,10 @@ class InternalJudgeContestModelTest(BaseAppTestCase):
     ###Close tests
     def test_ij_contest_close_function(self):
         """tests close function which changes status"""
-
         self.set_up_contest_components()
         self.contest.close()
         self.assertEqual(self.contest.status,Contest.JUDGEMENT)
+
     def test_contest_close_crit_creation(self):
         """Tests empty crits get created when contest is closed"""
         self.set_up_contest_components()
@@ -48,6 +119,7 @@ class InternalJudgeContestModelTest(BaseAppTestCase):
         self.score_contest()
         self.contest.judge()
         self.assertEqual(self.contest.status, Contest.CLOSED)
+
     def test_contest_judge_entrant_num(self):
         """test function reaches end and sets contest entrant_num"""
         self.set_up_contest_components()
@@ -55,6 +127,7 @@ class InternalJudgeContestModelTest(BaseAppTestCase):
         self.score_contest()
         self.contest.judge()
         self.assertTrue(self.contest.entrant_num > 0)
+
     def test_contest_judge_entry_updates(self):
         """test function reaches end and handles entries and scores for entries"""
         self.set_up_contest_components()
@@ -65,7 +138,6 @@ class InternalJudgeContestModelTest(BaseAppTestCase):
             entry.refresh_from_db()
             self.assertTrue(entry.position > 0)
             self.assertTrue(entry.score > 0)
-
 
     def test_contest_profile_updates(self):
         """test function reaches end and checks profiles updated with stats """

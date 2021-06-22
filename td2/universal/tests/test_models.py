@@ -28,13 +28,13 @@ class PublicJudgeBattleTest(BaseAppTestCase):
         self.assertEqual(self.stories[0].stats.minidome_public_losses, 0)
         self.assertEqual(self.stories[3].stats.minidome_public_wins, 0)
         self.assertEqual(self.stories[3].stats.minidome_public_losses, 1)
-        self.assertEqual(self.stories[3].stats.minidome_total_public_tests, 1)
+        self.assertEqual(self.stories[3].stats.get_minidome_total_public_tests(), 1)
         self.set_up_minidome_public()
         self.assertEqual(self.stories[0].stats.minidome_public_wins, 2)
         self.assertEqual(self.stories[0].stats.minidome_public_losses, 0)
         self.assertEqual(self.stories[3].stats.minidome_public_wins, 0)
         self.assertEqual(self.stories[3].stats.minidome_public_losses, 2)
-        self.assertEqual(self.stories[3].stats.minidome_total_public_tests, 2)
+        self.assertEqual(self.stories[3].stats.get_minidome_total_public_tests(), 2)
 
 
     def test_minidome_logged_in_stats(self):
@@ -46,10 +46,10 @@ class PublicJudgeBattleTest(BaseAppTestCase):
         self.assertEqual(self.stories[1].stats.minidome_logged_in_losses, 0)
         self.assertEqual(self.stories[4].stats.minidome_logged_in_wins, 0)
         self.assertEqual(self.stories[4].stats.minidome_logged_in_losses, 1)
-        self.assertEqual(self.stories[1].stats.minidome_total_logged_in_tests, 1)
+        self.assertEqual(self.stories[1].stats.get_minidome_total_logged_in_tests(), 1)
         self.set_up_minidome_logged_in()
         self.assertEqual(self.stories[1].stats.minidome_logged_in_wins, 2)
         self.assertEqual(self.stories[1].stats.minidome_logged_in_losses, 0)
         self.assertEqual(self.stories[4].stats.minidome_logged_in_wins, 0)
         self.assertEqual(self.stories[4].stats.minidome_logged_in_losses, 2)
-        self.assertEqual(self.stories[1].stats.minidome_total_logged_in_tests, 2)
+        self.assertEqual(self.stories[1].stats.get_minidome_total_logged_in_tests(), 2)

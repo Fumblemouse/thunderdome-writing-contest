@@ -39,6 +39,8 @@ class CustomUser(AbstractUser):
     losses = models.PositiveSmallIntegerField( default = 0)
     hms = models.PositiveSmallIntegerField( default = 0)
     dms = models.PositiveSmallIntegerField( default = 0)
+    brawl_wins = models.PositiveSmallIntegerField( default = 0)
+    brawl_losses = models.PositiveSmallIntegerField( default = 0)
 
     def __str__(self):
         return self.username

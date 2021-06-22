@@ -19,6 +19,10 @@ def home(request):
     """Homepage"""
     return render(request, 'baseapp/home.html', {})
 
+def wtf(request):
+    """Instructions"""
+    return render(request, 'baseapp/wtf.html', {})
+
 @login_required
 def create_story(request):
     """create a magical story of myth and wonder"""
@@ -28,7 +32,7 @@ def create_story(request):
         form = StoryForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
-            # process the data in form.cleaned_data as required
+            # add the author then save the story
             form.instance.author = request.user
             saved_form = form.save()
             messages.success(request, 'Your story was submitted successfully! Hopefully it doesn\'t suck.')

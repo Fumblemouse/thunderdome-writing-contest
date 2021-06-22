@@ -7,7 +7,7 @@ from random import sample
 from datetime import datetime, timedelta
 from django.shortcuts import redirect, render
 from django.contrib import messages
-from django.db.models import Min
+from django.db.models import Min, F, Sum
 
 
 from baseapp.utils import set_expirable_var, get_expirable_var, get_expirable_var_time_to_del
@@ -79,19 +79,26 @@ def minidome(request):
     else :
         #decide stories in match
         if logged_in:
-            #Find lowest number of logged in matches
-            min_tests = StoryStats.objects.all().aggregate(Min('minidome_total_logged_in_tests'))
-            min_tests_value = min_tests['minidome_total_logged_in_tests__min']
-            if min_tests_value == None:
+            min_tests = StoryStats.objects.all().aggregate(min_tests=Min(F('minidome_logged_in_wins') + F('minidome_logged_in_losses')))
+            min_tests_value = min_tests['min_tests']
+            if min_tests_value is None:
                 messages.error(request, 'Not enough stories')
                 return redirect('home')
 
-            #Create list of stories that exceed lowestnumber of matches
-            stories1 = list(Story.objects.filter(access__gte=1).filter(stats__minidome_total_logged_in_tests__gt=min_tests_value).exclude(author = request.user))
+            #Create list of stories that exceed lowest 
+            #number of matches
+            stories1 = list(Story.objects.filter(access__gte=1).\
+                exclude(author = request.user).\
+                annotate(total_logged_in_tests=F('stats__minidome_logged_in_wins') + F('stats__minidome_logged_in_losses')).\
+                filter(total_logged_in_tests__gt=min_tests_value))
 
             #redo it if there are none (no matches so far or everyone is equal for some reason)
             if len(stories1) == 0 :
-                stories1 = list(Story.objects.filter(access__gte=1).filter(stats__minidome_total_logged_in_tests__gte=min_tests_value).exclude(author = request.user))
+                stories1 = list(Story.objects.filter(access__gte=1).\
+                    exclude(author = request.user).\
+                    annotate(total_logged_in_tests=F('stats__minidome_logged_in_wins') + F('stats__minidome_logged_in_losses')).\
+                    filter(total_logged_in_tests__gte=min_tests_value))
+
                 if len(stories1) <= 1 : #because that's itself
                     messages.error(request, 'Not enough stories')
                     return redirect('home')
@@ -105,25 +112,34 @@ def minidome(request):
                 #Get number of matches of story and then choose from list of stories that have same or less.
                 story1 = sample(stories1, 1)[0]
                 story1_stats = StoryStats.objects.get(pk = story1.pk)
-
-                stories2 = list(Story.objects.filter(access__gte=1).filter(stats__minidome_total_logged_in_tests__lt = story1_stats.minidome_total_logged_in_tests).exclude(author = request.user))
+                story1_total_logged_in_tests = story1_stats.get_minidome_total_logged_in_tests()
+                stories2 = list(Story.objects.filter(access__gte=1).\
+                    exclude(author = request.user).\
+                    annotate(total_logged_in_tests=F('stats__minidome_logged_in_wins') + F('stats__minidome_logged_in_losses')).\
+                    filter(total_logged_in_tests__lt=story1_total_logged_in_tests ))
+ 
                 story2 = sample(stories2, 1)[0]
 
             form = MiniDomeLoggedInForm( [story1.pk, story2.pk] )
 
         else: #Public match
             #find lowest number of public matches
-            min_tests = StoryStats.objects.all().aggregate(Min('minidome_total_public_tests'))
-            min_tests_value = min_tests['minidome_total_public_tests__min']
-            if min_tests_value == None:
+            min_tests = StoryStats.objects.all().aggregate(min_tests=Min(F('minidome_public_wins') + F('minidome_public_losses')))
+            min_tests_value = min_tests['min_tests']
+            if min_tests_value is None:
                 messages.error(request, 'Not enough stories')
                 return redirect('home')
             #Create list of stories that exceed or equal lowestnumber of matches
-            stories1 = list(Story.objects.filter(access__gte=2).filter(stats__minidome_total_public_tests__gt=min_tests['minidome_total_public_tests__min']))
-
+            stories1 = list(Story.objects.filter(access__gte=2).\
+                annotate(total_logged_in_tests=F('stats__minidome_public_wins') + F('stats__minidome_public_losses')).\
+                filter(total_logged_in_tests__gt=min_tests_value))
              #redo it if there are none (no matches so far or everyone is equal for some reason)
             if len(stories1) == 0 :
-                stories1 = list(Story.objects.filter(access__gte=2).filter(stats__minidome_total_public_tests__gte=min_tests['minidome_total_public_tests__min']))
+                stories1 = list(Story.objects.filter(access__gte=2).\
+                annotate(total_logged_in_tests=Sum(F('stats__minidome_public_wins') + F('stats__minidome_public_losses'))).\
+                filter(total_logged_in_tests__gte=min_tests_value))    
+                
+                
                 if len(stories1) <= 1 : #because that's itself
                     messages.error(request, 'Not enough stories')
                     return redirect('home')
@@ -134,8 +150,13 @@ def minidome(request):
                 #Get number of matches of story and then choose from list of stories that have same or less.
                 story1 = sample(stories1, 1)[0]
                 story1_stats = StoryStats.objects.get(pk = story1)
+                story1_total_public_tests = story1_stats.get_minidome_total_public_tests()
 
-                stories2 = list(Story.objects.filter(access__gte=2).filter(stats__minidome_total_public_tests__lt = story1_stats.minidome_total_public_tests))
+                #stories2 = list(Story.objects.filter(access__gte=2).filter(stats__minidome_total_public_tests__lt = story1_stats.minidome_total_public_tests))
+                stories2 = list(Story.objects.filter(access__gte=2).\
+                annotate(total_logged_in_tests=Sum(F('stats__minidome_public_wins') + F('stats__minidome_public_losses'))).\
+                filter(total_logged_in_tests__lt=story1_total_public_tests))
+                
                 story2 = sample(stories2, 1)[0]
 
             form = MiniDomePublicForm( [story1.pk, story2.pk] )

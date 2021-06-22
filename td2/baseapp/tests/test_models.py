@@ -53,10 +53,10 @@ class StoryStatsModelTest(TestCase):
             minidome_logged_in_losses = 4,
         )
         self.stats.save()
-        self.assertEqual(self.stats.minidome_total_logged_in_tests, 7)
-        self.assertEqual(self.stats.minidome_total_public_tests, 3)
-        self.assertEqual(self.stats.minidome_total_wins, 4)
-        self.assertEqual(self.stats.minidome_total_losses, 6)
+        self.assertEqual(self.stats.get_minidome_total_logged_in_tests(), 7)
+        self.assertEqual(self.stats.get_minidome_total_public_tests(), 3)
+        self.assertEqual(self.stats.get_minidome_total_wins(), 4)
+        self.assertEqual(self.stats.get_minidome_total_losses(), 6)
 
     def test_storystats_string_representation(self):
         """Test storystats returns title as string"""

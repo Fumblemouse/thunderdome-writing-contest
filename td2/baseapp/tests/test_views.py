@@ -21,6 +21,12 @@ class BaseAppViewTest(BaseAppTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'baseapp/home.html')
 
+    def test_home_wtf_exists(self):
+        """test home view exists"""
+        response = self.client.get(reverse('wtf'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'baseapp/wtf.html')
+
     def test_create_story_view_exists(self):
         """test create story view exists"""
         self.login_testuser('djangotestuser')
