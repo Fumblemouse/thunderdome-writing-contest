@@ -172,6 +172,15 @@ class BaseAppTestCase(TestCase):
                 shuffle(scores)
                 crit.score = scores.pop()
                 crit.save()
+    
+    def score_brawl(self):
+        """reuable routine to assign scores to contest entries"""
+        scores = [3,5,7,11,13]
+        self.crits = Crit.objects.filter(entry__contest = self.contest, reviewer = self.contest.creator)
+        for crit in self.crits:
+            shuffle(scores)
+            crit.score = scores.pop()
+            crit.save()
 
     def get_messages(self, response, message_type = ""):
         """todo - figure out of this is needed"""
