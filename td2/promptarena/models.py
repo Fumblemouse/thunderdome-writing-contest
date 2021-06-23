@@ -23,21 +23,21 @@ from autoslug import AutoSlugField
 
 class Contest(models.Model):
     """Contest- Competition Base Class"""
-    UNOPENED = 'UNOPENED'
-    OPEN='OPEN'
-    JUDGEMENT = 'JUDGEMENT'
-    CLOSED = 'CLOSED'
-    CONTEST_STATES = [
+    UNOPENED = 0
+    OPEN = 1
+    JUDGEMENT = 2
+    CLOSED = 3
+    STATES = [
         (UNOPENED, 'Unopened'),
         (OPEN, 'Open'),
         (JUDGEMENT, 'Judgement'),
         (CLOSED, 'Closed')
     ]
-    INTERNAL_JUDGE_CONTEST = "INTERNAL JUDGE CONTEST"
-    EXTERNAL_JUDGE_CONTEST = "EXTERNAL JUDGE CONTEST"
-    BRAWL = "Brawl"
+    INTERNAL_JUDGE_CONTEST = "IC"
+    EXTERNAL_JUDGE_CONTEST = "EC"
+    BRAWL = "BC"
 
-    CONTEST_TYPES = [
+    CATEGORIES = [
         (INTERNAL_JUDGE_CONTEST, 'Internal Judge Contest'),
         (EXTERNAL_JUDGE_CONTEST, 'External Judge Contest'),
         (BRAWL, 'Brawl')
@@ -57,8 +57,8 @@ class Contest(models.Model):
         )
     start_date = models.DateTimeField('Start Date')
     expiry_date = models.DateTimeField('Submit by Date')
-    mode = models.CharField(choices=CONTEST_TYPES, default='INTERNAL JUDGE CONTEST', max_length=22)
-    status= models.CharField(choices=CONTEST_STATES, default=UNOPENED, max_length=9)
+    mode = models.CharField(choices=CATEGORIES, default=INTERNAL_JUDGE_CONTEST, max_length=2)
+    status= models.PositiveSmallIntegerField(choices=STATES, default=UNOPENED)
     max_wordcount = models.PositiveIntegerField(default=1000)
     entrant_num = models.PositiveSmallIntegerField(default = 0)
     slug = AutoSlugField(max_length=200, unique=True)
@@ -280,7 +280,7 @@ class Brawl(Contest):
     def judge(self):
         """Count, Sort the results and close the contest"""
         crits = Crit.objects.filter(entry__contest__pk = self.pk)
-        
+
         results = {}
         results_order = {}
         #create a dictionary with entry as key and an array of scores from judges

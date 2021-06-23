@@ -5,9 +5,11 @@ minidome: public fight between two stories
 
 """
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from tinymce import models as tinymce_models
 
 from baseapp.models import Story
+from promptarena.models import Contest
 
 
 
@@ -52,8 +54,6 @@ class MiniDome(models.Model):
         """Save the minidome record"""
         super(MiniDome, self).save()
         #update StoryStats appropriately (this is the only place it happens so we won't use a signal)
-        #winner = self.winner
-        #loser = self.loser
         # pylint: disable=no-member
         if self.minidome_type == MiniDome.LOGGED_IN:
             self.winner.stats.minidome_logged_in_wins += 1
@@ -63,3 +63,34 @@ class MiniDome(models.Model):
             self.loser.stats.minidome_public_losses += 1
         self.winner.stats.save()
         self.loser.stats.save()
+
+class Notification(models.Model):
+    class Category (models.TextChoices):
+        CONTEST_ANNOUNCE_INTERNAL_JUDGE = 'CAIJ', _('Internal Judge Contest Annouce')
+        CONTEST_ANNOUNCE_EXTERNAL_JUDGE = 'EJCA', _('External Judge Contest Announce')
+        CONTEST_CLOSE = 'CC', _('Contest Close')
+        CONTEST_RESULTS = 'CR', _('Contest Results')
+        BRAWL_ASK = 'BA', _('Brawl Challenge')
+        BRAWL_ACCEPTANCE = 'BA', _('Brawl Acceptance')
+        BRAWL_CLOSE = 'B', _('Brawl Close')
+        BRAWL_RESULT = 'BR', _('Brawl Result')
+        SYSTEM = "S", _('System')
+
+    category = models.CharField(
+        max_length= 4,
+        choices=Category.choices,
+        default = Category.SYSTEM
+    )
+
+    contest = models.ForeignKey(
+        Contest,
+        on_delete=models.CASCADE,
+        related_name = 'contest',
+        blank = True
+    )
+
+    content =  tinymce_models.HTMLField(blank = True)
+    created = models.DateTimeField(auto_now_add=True,)
+
+
+

@@ -57,7 +57,7 @@
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'view stories' %}">Stories</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'view contests' %}">Contests</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'wtf' %}">WTF?</a>
-                                    
+
                             </nav>
                             <nav aria-labelledby="things-to-do-nav" class="list-group">
                                 <h2 id="things-to-do-nav" class = 'h5'>Things to do</h2>
@@ -93,8 +93,8 @@
                                     <span aria-hidden="true">&times;</span>
                                 </button -->
 
-                            {{ message }}
-                            </div>
+                                    {{ message }}
+                                </div>
                             {% endfor %}
                             <h1 id="main-header">{% block header %}Home{% endblock %}</h1>
                             {% block content %}

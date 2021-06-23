@@ -18,6 +18,15 @@
 <h2>WTF?</h2>
 <p>This is site is currently under development.  This means it is <em>NOT SAFE</em> for people or their furpals/lizardkin/insectbros
   and probably wont work <em>AT ALL!</em>. Please, <em>do not</em> use for real things. </p>
+
+{% for notification in notifications %}
+    <p class="notification-category">{{ notification.category }}</p>
+    {% if notification.contest %}
+    <h3>{{ notification.contest.title }}</h3>
+        <p class="notification-content">{{ notification.contest.content }}</p>
+    {% endif %}
+{% endfor %}
+
 <p>It is being developed for the following purposes:</p>
 <ul>
     <li>To teach me django, python, bootstrap etc</li>

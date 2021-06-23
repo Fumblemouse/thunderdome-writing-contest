@@ -20,8 +20,13 @@ class CustomUser(AbstractUser):
     bio = tinymce_models.HTMLField(blank=True, )
     private_profile = models.BooleanField(
         default=False,
-        help_text='Check this to keep your work private from anyone except your fellow contestants.',
+        help_text='Check this if your anxiety gets too much for you.',
         verbose_name='Private profile',
+    )
+    brawler = models.BooleanField(
+        default=True,
+        help_text='Uncheck this if you don\'t want to be challenged to brawls',
+        verbose_name='Brawler',
     )
     highest_access = models.PositiveSmallIntegerField(
         verbose_name='Restrict Story Sharing to:',

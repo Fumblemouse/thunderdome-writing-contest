@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from promptarena.models import Entry, Crit, Contest
+from universal.models import Notification
 from baseapp.utils import check_story_permissions
 from .forms import StoryForm
 from .models import Story
@@ -17,7 +18,8 @@ logger = logging.getLogger(__name__)
 # Create your views here.
 def home(request):
     """Homepage"""
-    return render(request, 'baseapp/home.html', {})
+    notifications = Notification.objects.all()
+    return render(request, 'baseapp/home.html', {'notifications':notifications})
 
 def wtf(request):
     """Instructions"""
