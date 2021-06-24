@@ -79,7 +79,6 @@ blockquote {
 .story p {
     padding-bottom: 1rem;
 
-}
 
   #logo-cell {
       background-color:white;
@@ -132,7 +131,7 @@ blockquote {
   nav.list-group {
     margin: 0 0 1rem 0;
     text-align: center;
- 
+
    }
 
   }
@@ -167,7 +166,7 @@ blockquote {
     }
 
     #hamburger-button.js {
-      display: block; 
+      display: block;
     }
 
     #hamburger-nav.is-active.js {

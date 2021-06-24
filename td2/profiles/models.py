@@ -1,5 +1,6 @@
 """Models from profiles app"""
 from django.db import models
+from django.urls import reverse
 from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser
 from autoslug import AutoSlugField
@@ -56,3 +57,7 @@ class CustomUser(AbstractUser):
         if not self.pk or slug != slugified:
             self.slug = slugified
         return super(CustomUser, self).save()
+
+    def get_absolute_url(self):
+        """Returns a permalink for the user"""
+        return reverse('view stories by author', kwargs = { 'author_slug': self.slug, })

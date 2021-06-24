@@ -10,8 +10,8 @@ from django.db.models.signals import post_save
 
 from autoslug import AutoSlugField
 from tinymce import models as tinymce_models
-#from td2 import settings
 
+from universal.models import Notice
 
 # Create your models here.
 class Story(models.Model):
@@ -47,8 +47,7 @@ class Story(models.Model):
     has_been_public = models.BooleanField(default=False)
     creation_date = models.DateTimeField(auto_now_add=True,)
     modified_date = models.DateTimeField(auto_now=True)
-    #tags = models.JSONField(blank=True, null=True)
-    #public_scores = models.JSONField(blank=True, null=True)
+
 
     class Meta:
         verbose_name_plural = "stories"
@@ -68,7 +67,13 @@ class Story(models.Model):
         slugified = slugify(self.title)
         if slug != slugified:
             self.slug = slugified
-        #set flag if saved for public view
+
+        #Create notification of new available sotry
+        if self.access > 0 and not self.has_been_public:
+            notice = Notice.objects.create(category = Notice.Category.STORY_ANNOUNCE)
+            notice.save(story=self)
+
+        #set flag if saved for public view so it can't be used in contests
         if self.access > 0:
             self.has_been_public = True
 
@@ -77,7 +82,7 @@ class Story(models.Model):
         words_to_count = strip_tags(content)
         wordcount = len(re.findall(r'\w+', words_to_count))
         self.wordcount = wordcount
-        return super(Story, self).save()
+        super(Story, self).save()
 
     def get_absolute_url(self):
         """Returns a permalink for the story"""
@@ -95,7 +100,7 @@ class StoryStats(models.Model):
     """Story wins and losses and other assorted totals
     We keep these in baseapps as they have a one-to-one rel with story
     They are in a separate table in case that speeds up stats calculations later in the piece
-    or if a different stats system needs to be implemented later    
+    or if a different stats system needs to be implemented later
     """
     story = models.OneToOneField(
         Story,

@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="byline">by {{story_context.author }}</div>
+    <p class="byline">by {{story_context.author }}</p>
     {% if story_context %}
         <div class="story">
             {{ story_context.content | safe }}

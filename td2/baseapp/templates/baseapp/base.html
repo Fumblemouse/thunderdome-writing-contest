@@ -54,33 +54,33 @@
                         {% block sidebar %}
                             <nav aria-labelledby="things-to-see-nav" class="list-group">
                                 <h2 id="things-to-see-nav" class="h5">Things to see</h2>
-                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'view stories' %}">Stories</a>
-                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'view contests' %}">Contests</a>
-                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'wtf' %}">WTF?</a>
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'view stories' %}">Stories</a>
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'view contests' %}">Contests</a>
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'wtf' %}">WTF?</a>
 
                             </nav>
                             <nav aria-labelledby="things-to-do-nav" class="list-group">
                                 <h2 id="things-to-do-nav" class = 'h5'>Things to do</h2>
                                 {% if user.is_authenticated %}
-                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create story' %}">Create Story</a>
-                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'create contest' %}">Create Contest</a>
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'create story' %}">Create Story</a>
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'create contest' %}">Create Contest</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'minidome' %}" >Judge a Mini-Dome</a>
-                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'judgemode' %}">Judge a Contest</a>
-                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'profile' %}">Your Profile</a>
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'judgemode' %}">Judge a Contest</a>
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'profile' %}">Your Profile</a>
                                 {% else %}
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'minidome' %}" >Judge a Mini-Dome</a>
                                     <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'login' %}" >Login</a>
-                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary"  href="{% url 'sign up' %}">Sign Up</a>
+                                    <a class="nav-link list-group-item list-group-item-action list-group-item-primary" href="{% url 'sign up' %}">Sign Up</a>
                                 {% endif %}
                             {% if user.is_authenticated %}
                                 <nav aria-labelledby="things-to-not-do-nav" class="list-group" id="things-not-to-do">
                                     <h2 id="things-to-not-do-nav" class = 'h5'>Things to not do</h2>
-                                    <a  class="nav-link list-group-item list-group-item-action list-group-item-danger"href="{% url 'logout' %}" class="btn btn-danger" >Exit pursued by a bear</a>
+                                    <a  class="nav-link list-group-item list-group-item-action list-group-item-danger" href="{% url 'logout' %}" class="btn btn-danger" >Exit pursued by a bear</a>
                                 </nav>
                             {% endif %}
 
                             </nav>
-                            {% endblock %}
+                        {% endblock %}
 
 
 
