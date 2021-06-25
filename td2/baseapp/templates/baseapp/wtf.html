@@ -1,21 +1,13 @@
 {% extends "baseapp/base.html" %}
 {% block title %}ThunderDome: Home page{% endblock %}
 {% load static %}
+{% block headtag %}<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>{% endblock %}
 {% block header %}
-    Welcome to the ThunderDome
-
+    Whiskey Tango Foxtrot?
 {% endblock header %}
 {% block content %}
-<blockquote></blockquote>
-<figure>
-  <blockquote>
-    This is Thunderdome, and death is listening, and will take the first man that screams
-  </blockquote>
-  <figcaption class="blockquote-footer text-end">
-    Aunty Entity in <cite title="Beyond THunderdome">Beyond Thunderdome</cite>
-  </figcaption>
-</figure>
-<h2>WTF?</h2>
+
+
 <p>This is site is currently under development.  This means it is <em>NOT SAFE</em> for people or their furpals/lizardkin/insectbros
   and probably wont work <em>AT ALL!</em>. Please, <em>do not</em> use for real things. </p>
 <p>It is being developed for the following purposes:</p>
@@ -28,25 +20,90 @@
     <li>To make me incredibly rich by stealing other people's ideas and monetising them (stretch goal).</li>
 </ul>
 <h2>How does it work?</h2>
-<p>You can just <a href="{% url 'create story' %}">create a story </a>. Stories are private by default,  but you can make it public by checking the 'Show publically?' box when you create it.</p>
 
-<p>NB: Contest Entries <em>must have always been private</em> in order to be entered</p>
+<!-- Nav tabs -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link active" id="stories-tab" data-bs-toggle="tab" href="#stories" data-bs-target="#stories" type="button" role="tab" aria-controls="stories" aria-selected="true">Stories</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="minidome-tab" data-bs-toggle="tab" href="#minidome" data-bs-target="#minidome" type="button" role="tab" aria-controls="minidome" aria-selected="false">MiniDome</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="contests-tab" data-bs-toggle="tab" href="#contests" data-bs-target="#contests" type="button" role="tab" aria-controls="contests" aria-selected="false">Contests</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="legal-tab" data-bs-toggle="tab" href="#legal" data-bs-target="#legal" type="button" role="tab" aria-controls="legal" aria-selected="false">Legal Stuff</a>
+        </li>
+    </ul>
 
-<p>NBB: To hide all your stories, you can set your 'Highest Access' field in your <a href="{% url 'change settings' %}"> Profile Settings</a> to Private. Turning it on again will go back to the indivudual story settings</p>
+<!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane active" id="stories" role="tabpanel" aria-labelledby="stories-tab">
+            <h2>Stories</h2>
+            <p>The basis of everything on this site is stories, and encouraging people to write them.
+            <ul>
+                <li>Members can write as many stories as they like, and save them.</li>
+                <li>Stories can be set to be private, viewable only to members, or publicly viewable</li>
+                <li>Any story that has only ever been private can be entered in a contest</li>
+                <li>Any story that is viewable to others may be randomly selected for a minidome battle</li>
+            </ul>
 
-<p>You can also enter contests. Currently you have to do this via the Enter Contest button on the <a href="{% url 'view contests' %}"> Current Contests </a> page using an existing private story or a new one entirely.
-<h3>Contest Process</h3>
-<ol>
-<li>Someone creates a contest</li>
-<li>While that contest is open, users can enter stories into it</li>
-<li>Currently there is no scheduling (because this site is on a free hosting account), so the contest can be closed by a button on the
-<a href="{% url 'view contests' %}"> Current Contests </a> page. Do this once there are more than three entrants because...</li>
-<li>All entrants are then assigned three stories to critique. Users can see stories they are in line to judge in <a href="{% url 'judgemode' %}"> Judgemode </a> </li>
-<li>User/Judges critiques aren't final until they have submitted with the 'Final' checkbox checked,
-  so they can take notes as they read each story</li>
-<li>Once all the critiques are in (current state viewable in <a href="{% url 'view contests' %}"> Current Contests </a>
-  another button on that page closes the competition and shows the result. Or it closes automagically and results become available from the contests page if my most recent code change works.
-</li>
-</ol>
+            </p>
+        </div>
+        <div class="tab-pane active" id="minidome" role="tabpanel" aria-labelledby="minidom-tab">
+            <h2>MiniDome</h2>
+            <p>The Minidome is a  battle between two stories for supremacy. It also ensures stories from past contests don't languish in the archives forever.</p>
+            <p>The Minidome randomly selects one story from all stories available in the archive to the judge, and then places it against one other semi-random story that has had fewer matchups.</p>
+            <p>Non-logged in judges will only ever get publicly viewable stories, logged in judges will get a selection from all non-private stories </p>
+            <p>The Judge reads both stories, and selects a winner.</p>
+            <p>Logged in Judges can also leave a comment on their decision.</p>
+            <p>Stats for public-judged matches and member-judged matches are stored separately</p>
+
+        </div>
+        <div class="tab-pane active" id="contests" role="tabpanel" aria-labelledby="contest-tab">
+            <h2>Contests</h2>
+            <p>ThunderDome is at heart a series of contests between stories, all written to meet the requirements of a single writing prompt, and then judged.</p>
+            <p>Judges are expected to provide useful criticisms for each story along with their judgement.</p>
+            <p>There are three types of contest:</p>
+            <ol>
+                <li>Judge Tables</li>
+                <li>Rumbles</li>
+                <li>Brawls</li>
+            </ol>
+            <h3>Judge Tables</h3>
+                <p>This is the OG style Thunderdome. One previous winner provides a writing prompt, chooses two other judges to help him decide the winner,
+                and then passes judgement on the stories that are submitted</p>
+            <h3>Rumbles</h3>
+                <p>This is an experimental style of contest, where each entrant judges and critiques three other stories, placing them in one of 5 ranked slots</p>
+                <p>From these scores, via a top-secret algorithm, a winner is divined</p>
+                <p>It probably don't work, but it seemed an interesting idea to try to prevent cabals in an online setting</p>
+            <h3>Brawls</h3>
+                <p>If a user's profile is set to accept challenges, one user may challenge another to a brawl. If accepted, this challenge then gets broadcast, and a judge can self-volunteer to provide a prompt
+                and decide the winner when the stories are submitted.</p>
+        </div>
+        <div class="tab-pane active" id="legal" role="tabpanel" aria-labelledby="legal-tab">
+            <h2>Legal Stuff</h2>
+            <h3>Copyright</h3>
+            <p>All works on this site are copyright their respective authors. The site claims no right to them save the right to display the stories worldwide
+            (because it's the internet) in the manner set out by the author via the story privacy settings.</p>
+            <p>Any works found not to be under the copyright of the member who entered them will be removed.</p>
+            <h3>Morality</h3>
+            <p>The management is a fervent admirer of Luxury Space Gay Communism, and as such, much is tolerable. However, the following types of story will be removed:</p>
+            <ul>
+                <li>Fan Fiction: Nothing against it, but may we direct your attention to <a href="https://archiveofourown.org">Archive of Our Own</a> as more suited for that kind of thing? I can't be arsed dealing with any
+                legal quagmires that may arise, so take it elsewhere</li>
+                <li>Erotica: <a href="literotic.com">Lit Rot </a>has that covered</li>
+                <li>Excessively Graphic Nastiness: If you have to ask if this covers your story, it covers your story.</li>
+            </ul>
+            <h3>Money</h3>
+            <p>If this site ever makes any money at all, 10% of it is mine. Consider it an agent's fee. That 10% will go first toward site hosting, and then to my retirement fund.</p>
+            <p>Any additional monies will go towards prizes for site contests</p>
+            <p>If I ever add ads to this site, advertisement revenue will go 90% to the story author, and 10% to me, assuming I can figure out how that works</p>
+            <p>No story will ever have ads on it without the author signing on to this arrangement (and in order to provide a means for this payment to be made)</p>
+        </div>
+    </div>
+
+
 <img src="{% static 'baseapp/img/flourish.png' %}" alt="lovely flourish" class="rounded mx-auto d-block" height="225" width="300"  />
 {% endblock %}

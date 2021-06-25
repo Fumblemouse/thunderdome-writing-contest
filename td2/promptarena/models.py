@@ -29,7 +29,7 @@ class Contest(models.Model):
     CLOSED = 3
     STATES = [
         (UNOPENED, 'Unopened'),
-        (OPEN, 'Open'),
+        (OPEN, 'Open for sign-ups'),
         (JUDGEMENT, 'Judgement'),
         (CLOSED, 'Closed')
     ]
@@ -38,8 +38,8 @@ class Contest(models.Model):
     BRAWL = "BC"
 
     CATEGORIES = [
-        (INTERNAL_JUDGE_CONTEST, 'Internal Judge Contest'),
-        (EXTERNAL_JUDGE_CONTEST, 'External Judge Contest'),
+        (INTERNAL_JUDGE_CONTEST, 'Rumble'),
+        (EXTERNAL_JUDGE_CONTEST, 'Judges'),
         (BRAWL, 'Brawl')
     ]
     creator = models.ForeignKey(

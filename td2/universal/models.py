@@ -97,7 +97,6 @@ class Notice(models.Model):
 
 
     privacy = models.PositiveSmallIntegerField(
-        max_length= 4,
         choices=PRIVACY_CHOICES,
         default = LOGGED_IN
     )

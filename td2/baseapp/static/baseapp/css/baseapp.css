@@ -1,63 +1,79 @@
+/* HTML TAGS */
+
 body {
     background: url('/static/baseapp/img/paper.jpg');
-
 }
 
 body > .container {
     margin-top: .5rem;
-         line-height: 150%;
+    line-height: 150%;
+    font-family: "Open Sans", serif;
 }
 
-  h1,h2,h3,h4,h5,h6 {
-    font-family: "Marko One", serif;
+h1,h2,h3,h4,h5,h6 {
+    font-family: "Vesper Libre", serif;
     color:#222;
     padding:2.5rem 0 1rem;
+}
 
-  }
+nav.list-group {
+    margin: 0 0 1rem 0;
+}
 
-  nav.list-group {
-   margin: 0 0 1rem 0;
-
-  }
-
-  form {
+form {
     padding: 1rem 0 1rem 0;
     z-index:200;
-  }
+}
 
-  form div {
+form div {
     margin-bottom:1rem;
-  }
+}
 
-  form input.btn-primary {
+form input.btn-primary {
     margin-left:80%;
-  }
+}
 
-  table {
+table {
     width:100%;
     margin-bottom:3rem !important;
-  }
+}
 
-  label, input {
-      display: block;
-  }
+label, input {
+    display: block;
+}
 
 
-    p, ol, ul  {
+p, ol, ul  {
 
     max-width:65ch;
     margin:auto;
     color:#222;
-
-  }
+    padding-bottom:1rem;
+}
 
 blockquote {
-    max-width:55ch;
+    max-width:45ch;
     margin:auto !important;
+    font-family: "Vollkorn", serif;
+    font-style: italic;
 
 }
 
+/* CLASSES */
 
+.ThunderDome {
+    font-family: "Metal Mania", serif;
+
+}
+
+h1 .ThunderDome {
+    font-size: 4rem;
+}
+
+h2.ThunderDome {
+    font-size: 1.5rem;
+    font-family: "Vesper Libre", serif;
+}
 
 .blockquote-footer {
     margin-top:0 !important;
@@ -78,63 +94,81 @@ blockquote {
 }
 .story p {
     padding-bottom: 1rem;
+}
+
+/* IDs */
 
 
-  #logo-cell {
-      background-color:white;
-      min-width: 300px;
-  }
-  #page-content {
+
+#logo-cell {
+    background-color:white;
+    min-width: 200px;
+    padding:0.6rem 0 0;
+
+}
+
+#logo-cell a {
+    font-family: "Metal Mania", serif;
+    color:#222;
+    font-size: 2.5rem;
+    text-align:center;
+
+}
+
+#logo-image {
+    margin: 0 1em .6rem -1rem;
+    font-size:0px;
+}
+
+#page-content {
     max-width:100%;
     min-height:85vh;
     padding: 2rem .7rem 1rem .7rem;
     background-color: white;
     box-shadow: 5px 5px 5px grey;
-
-  }
-
+}
 
 
-  #main-header {
+
+#main-header {
       position:relative;
       padding: 0;
-  }
-  #skiptocontent {
+}
+
+#skiptocontent {
     min-width: 15ch;
     float:left;
-  }
-  #skiptocontent a {
+}
+
+#skiptocontent a {
     color:#000 !important;
-  }
+}
 #main-content h1, #main-content h2, #main-content h3 {
-    padding-left: 3vw;
+    padding: 2rem 0 0 3vw;
 }
 
 #hamburger-button {
-  display: none; /* hamburger button is hidden by default */
+     display: none; /* hamburger button is hidden by default */
+}
+
+#gtm-iframe {
+    display:none;
+    visibility:hidden"
 }
 
 
-/*
-  #things-to-not-do-nav {
 
-    padding-top:5em;
-  }
-  */
-
-
-  @media (max-width: 1201px) {
+@media (max-width: 1201px) {
 
     #main-content h1, #main-content h2, #main-content h3 {
-      padding-left: 1vw;
-  }
-  nav.list-group {
-    margin: 0 0 1rem 0;
-    text-align: center;
+        padding-left: 1vw;
+    }
 
+    nav.list-group {
+        margin: 0 0 1rem 0;
+        text-align: center;
    }
-
-  }
+}
 
 
 @media (max-width: 768px) {
@@ -157,7 +191,8 @@ blockquote {
 
     }
 
-/* js class is added by hamburger.js so we know javascript is active for these classes */
+    /* js class is added by hamburger.js so we know javascript is active for these classes
+     only used at small screen sizes */
 
     #hamburger-nav.js  {
       width: 100%; max-height:0;
@@ -170,14 +205,13 @@ blockquote {
     }
 
     #hamburger-nav.is-active.js {
-        width: 100%; max-height:600px;
+        width: 100%; max-height:700px;
         transition: max-height .5s ease-out;
     }
+
     #hamburger-nav.is-not-active.js {
         width: 100%; max-height:0;
         transition: max-height .5s ease-out;
     }
-
-
 }
 
