@@ -72,7 +72,8 @@ class AddJudgeForm(BaseForm):
 
 
 class ContestStoryForm(BaseForm):
-    """User enters Story and Title"""
+    """User enters Story and Title
+    TODO: is this needed still?"""
 
     class Meta:
         model = Story

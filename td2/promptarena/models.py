@@ -12,6 +12,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 from django.conf import settings
+from django.urls import reverse
 
 from tinymce import models as tinymce_models
 from baseapp.models import Story
@@ -56,6 +57,7 @@ class Contest(models.Model):
         blank= True
         )
     start_date = models.DateTimeField('Start Date')
+    sign_up_date = models.DateTimeField('Sign-up Date')
     expiry_date = models.DateTimeField('Submit by Date')
     mode = models.CharField(choices=CATEGORIES, default=INTERNAL_JUDGE_CONTEST, max_length=2)
     status= models.PositiveSmallIntegerField(choices=STATES, default=UNOPENED)
@@ -91,6 +93,10 @@ class Contest(models.Model):
     def get_final_crits(self):
         """returns finished crits for a given contest"""
         return Crit.objects.filter(entry__contest = self, final = True).order_by('reviewer')
+
+    def get_absolute_url(self):
+        """returns permalink for  a given contest"""
+        return reverse('view contest details', kwargs = { 'contest_id': self.pk  })
 
 
 
@@ -340,6 +346,7 @@ class Entry(models.Model):
     position = models.PositiveSmallIntegerField(default=0)
     score = models.PositiveSmallIntegerField(default=0)
     creation_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now=True)
     title = models.CharField(max_length=255)
     content =  tinymce_models.HTMLField()
 

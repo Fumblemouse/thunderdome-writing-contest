@@ -12,6 +12,7 @@ urlpatterns = [
     path('view-contests', views.view_contests, name='view contests'),
     path('<int:contest_id>/view-contest-judgement', views.view_contest_judgement, name='view contest judgement'),
     #enter things
+    path('<int:contest_id>/confirm-enter-contest', views.confirm_enter_contest, name='confirm enter contest'),
     path('<int:contest_id>/enter-contest', views.enter_contest_new_story, name='enter contest'),
     path('<int:contest_id>/enter-contest-old-story', views.enter_contest_old_story, name='enter contest old story'),
     #judge things

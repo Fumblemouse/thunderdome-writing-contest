@@ -119,6 +119,11 @@ class Notice(models.Model):
                 self.content = link + " has just been released for members to read."
             else:
                 return
+        if contest:
+            link = create_html_link(contest.get_absolute_url(), contest.title)
+            self.privacy = self.PUBLIC
+            self.content = link + " is now open for sign-ups."
+
         super(Notice, self).save()
 
 

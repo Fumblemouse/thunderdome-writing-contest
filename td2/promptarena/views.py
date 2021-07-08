@@ -97,6 +97,10 @@ def add_judge(request, contest_id = ""):
     return render(request, "promptarena/add-judge.html", {'form': judge_form})
 
 
+@login_required
+def confirm_enter_contest(request, contest_id,):
+    contest_context = get_object_or_404(Contest, pk=contest_id)
+    if request.method == "POST":
 
 
 @login_required
