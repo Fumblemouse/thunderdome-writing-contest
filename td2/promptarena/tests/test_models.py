@@ -22,7 +22,7 @@ class BrawlContestModelTest(BaseAppTestCase):
         self.set_up_contest_components(num_entrants = 2)
         self.contest.close()
         self.assertEqual(Crit.objects.filter(entry__contest = self.contest).count(), 2)
-    
+
     ###Judge tests
     def test_brawl_judge_function(self):
         """Tests function reaches end and sets contest.status"""
@@ -31,7 +31,7 @@ class BrawlContestModelTest(BaseAppTestCase):
         self.score_brawl()
         self.contest.judge()
         self.assertEqual(self.contest.status, Contest.CLOSED)
-    
+
     def test_brawl_judge_entrant_num(self):
         """test function reaches end and sets contest entrant_num"""
         self.set_up_contest_components(num_entrants = 2)
@@ -39,7 +39,7 @@ class BrawlContestModelTest(BaseAppTestCase):
         self.score_brawl()
         self.contest.judge()
         self.assertTrue(self.contest.entrant_num > 0)
-    
+
     def test_brawl_judge_entry_updates(self):
         """test function reaches end and handles entries and scores for entries"""
         self.set_up_contest_components(num_entrants = 2)
@@ -62,9 +62,9 @@ class BrawlContestModelTest(BaseAppTestCase):
         self.contest.judge()
         for entry in self.entries:
             entry.refresh_from_db()
-            if entry.story.author.brawl_wins == 1:
+            if entry.author.brawl_wins == 1:
                 brawl_win += 1
-            if entry.story.author.brawl_losses == 1:
+            if entry.author.brawl_losses == 1:
                 brawl_loss += 1
 
         self.assertTrue(brawl_win)
@@ -151,13 +151,13 @@ class InternalJudgeContestModelTest(BaseAppTestCase):
         self.contest.judge()
         for entry in self.entries:
             entry.refresh_from_db()
-            if entry.story.author.wins == 1:
+            if entry.author.wins == 1:
                 win += 1
-            if entry.story.author.losses == 1:
+            if entry.author.losses == 1:
                 loss += 1
-            if entry.story.author.hms == 1:
+            if entry.author.hms == 1:
                 honourable_mention += 1
-            if entry.story.author.dms == 1:
+            if entry.author.dms == 1:
                 dishonourable_mention += 1
         self.assertTrue(win)
         self.assertTrue(honourable_mention)
@@ -179,7 +179,7 @@ class EntryModelTest(BaseAppTestCase):
         self.entry.save()
     def test_entry_string_representation(self):
         """test str representation"""
-        self.assertEqual(str(self.entry), str(self.entry.story.author) + " : " + self.entry.title)
+        self.assertEqual(str(self.entry), str(self.story.author) + " : " + self.entry.title)
 
 
     def test_entry_verbose_name_plural(self):
@@ -197,6 +197,6 @@ class CritModelTest(BaseAppTestCase):
         self.crit.save()
     def test_entry_string_representation(self):
         """test str"""
-        self.assertEqual(str(self.crit), str(self.crit.entry.contest.title) + " : " + str(self.crit.reviewer.username) + " reviews " + str(self.crit.entry.story.author) )
+        self.assertEqual(str(self.crit), str(self.crit.entry.contest.title) + " : " + str(self.crit.reviewer.username) + " reviews " + str(self.crit.entry.author) )
         self.crit =  Crit(entry = self.entries[0])
         self.assertEqual(str(self.crit), "ALERT - somehow this crit did not get set a title")

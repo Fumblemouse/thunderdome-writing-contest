@@ -136,7 +136,7 @@ class BaseAppTestCase(TestCase):
             self.stories[-1].save()
 
         for story in self.stories:
-            self.entries.append(Entry(contest = self.contest, story=story))
+            self.entries.append(Entry(contest = self.contest, author = story.author, story=story))
             self.entries[-1].save()
 
     def set_up_multiple_contest_components(self):
@@ -160,7 +160,7 @@ class BaseAppTestCase(TestCase):
 
         for contest in self.contests:
             for story in self.stories:
-                self.entries.append(Entry(contest = contest, story=story))
+                self.entries.append(Entry(contest = contest, author = story.author, story=story))
                 self.entries[-1].save()
 
     def score_contest(self):
@@ -172,7 +172,7 @@ class BaseAppTestCase(TestCase):
                 shuffle(scores)
                 crit.score = scores.pop()
                 crit.save()
-    
+
     def score_brawl(self):
         """reuable routine to assign scores to contest entries"""
         scores = [3,5,7,11,13]

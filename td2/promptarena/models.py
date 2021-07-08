@@ -57,7 +57,6 @@ class Contest(models.Model):
         blank= True
         )
     start_date = models.DateTimeField('Start Date')
-    sign_up_date = models.DateTimeField('Sign-up Date')
     expiry_date = models.DateTimeField('Submit by Date')
     mode = models.CharField(choices=CATEGORIES, default=INTERNAL_JUDGE_CONTEST, max_length=2)
     status= models.PositiveSmallIntegerField(choices=STATES, default=UNOPENED)
@@ -190,20 +189,20 @@ class InternalJudgeContest(Contest):
 
             entry = Entry.objects.get(pk = result[0].pk)
             if entry.position == 1:
-                entry.story.author.wins += 1
-                entry.story.author.save()
+                entry.author.wins += 1
+                entry.author.save()
                 #print('win: ', entry.position)
             elif entry.position == 2:
-                entry.story.author.hms += 1
-                entry.story.author.save()
+                entry.author.hms += 1
+                entry.author.save()
                 #print('hm: ', entry.position)
             elif entry.position == (len(results_order) + additive)-2:
-                entry.story.author.dms += 1
-                entry.story.author.save()
+                entry.author.dms += 1
+                entry.author.save()
                 #print('dm: ', entry.position)
             elif entry.position == (len(results_order) + additive)-1:
-                entry.story.author.losses += 1
-                entry.story.author.save()
+                entry.author.losses += 1
+                entry.author.save()
                 #print('loss: ', entry.position)
 
         self.entrant_num = len(results)
@@ -333,22 +332,30 @@ class ContestJudges (models.Model):
 
 class Entry(models.Model):
     """Links stories and contests"""
-    story = models.ForeignKey(
-        Story,
+    #because story can be blank initially on signup, we use both story and author, even though author is derivable
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name = 'entries')
+        related_name = 'authors')
 
     #NB - this is referring to the baseclass Contest, which means there are joins in any query
     contest = models.ForeignKey(
         Contest,
         on_delete=models.CASCADE,
         related_name = 'entries')
+
+    story = models.ForeignKey(
+        Story,
+        on_delete=models.CASCADE,
+        related_name = 'entries',
+        blank = True)
+
     position = models.PositiveSmallIntegerField(default=0)
     score = models.PositiveSmallIntegerField(default=0)
     creation_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
-    title = models.CharField(max_length=255)
-    content =  tinymce_models.HTMLField()
+    title = models.CharField(max_length=255, blank = True)
+    content =  tinymce_models.HTMLField(blank = True)
 
     class Meta:
         verbose_name_plural = "entries"
@@ -394,5 +401,5 @@ class Crit(models.Model):
 
     def __str__(self):
         if self.reviewer and self.entry:
-            return str(self.entry.contest.title) + " : " + str(self.reviewer.username) + " reviews " + str(self.entry.story.author.username) # pylint: disable=E1101
+            return str(self.entry.contest.title) + " : " + str(self.reviewer.username) + " reviews " + str(self.entry.author.username) # pylint: disable=E1101
         return "ALERT - somehow this crit did not get set a title"

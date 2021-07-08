@@ -99,15 +99,25 @@ def add_judge(request, contest_id = ""):
 
 @login_required
 def confirm_enter_contest(request, contest_id,):
+    """Makes sure user is sure to be in"""
     contest_context = get_object_or_404(Contest, pk=contest_id)
     if request.method == "POST":
+        Entry.objects.create(author = request.user, contest = contest_context)
+        messages.success(request, "You are signed up for the contest: " + contest_context.title)
+        return redirect('enter contest new story', contest_id = contest_context.pk)
+    if Entry.objects.get(author = request.user, contest = contest_context.pk).exists():
+        messages.error(request, "You have already signed up for that contest")
+        return redirect('view contests')
+    return render(request, 'confirm enter contest', {'contest_context' : contest_context})
 
 
 @login_required
 def enter_contest_new_story(request, contest_id,):
     """User enters new story"""
     contest_context = get_object_or_404(Contest, pk=contest_id)
+    entry = get_object_or_404(Entry, author = request.user, contest = contest_context.pk)
     story_form = ContestStoryForm(request.POST or None)
+
     if request.method == "POST":
         if contest_context.status != Contest.OPEN:
             messages.error(request, 'This contest is not currently open for new entries.')
@@ -122,6 +132,7 @@ def enter_contest_new_story(request, contest_id,):
             story_wordcount = HTML_wordcount(story_form.instance.content)
             entry_form = EnterContestNewStoryForm(
                 request.POST,
+                instance = entry,
                 contest_max_wordcount=contest_context.max_wordcount,
                 story_wordcount=story_wordcount,
                 contest_expiry_date=contest_context.expiry_date,
@@ -163,6 +174,7 @@ def enter_contest_new_story(request, contest_id,):
 def enter_contest_old_story(request, contest_id,):
     """User enters new story from a list of their own non-public stories"""
     contest_context = get_object_or_404(Contest, pk=contest_id)
+    entry = get_object_or_404(Entry, author = request.user, contest = contest_context.pk)
 
     if request.method == "POST":
         if contest_context.status != Contest.OPEN:
@@ -170,6 +182,7 @@ def enter_contest_old_story(request, contest_id,):
             return redirect('view contests')
         chosen_story = get_object_or_404(Story, pk=request.POST.get('story'))
         entry_form = EnterContestOldStoryForm(request.POST,
+            instance = entry,
             contest_expiry_date =  contest_context.expiry_date,
             contest_max_wordcount=contest_context.max_wordcount,
             story_wordcount=chosen_story.wordcount,

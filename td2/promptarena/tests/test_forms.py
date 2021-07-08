@@ -8,6 +8,8 @@ from baseapp.utils import HTML_wordcount
 from baseapp.tests.test_utils import BaseAppTestCase
 
 # Create your tests here.
+# pylint: disable=attribute-defined-outside-init
+# disabled because Django test classes set up variables/attributes in bespoke methods!
 
 class ContestStoryFormTest(TestCase):
     """Story in a contest form test"""
@@ -22,7 +24,8 @@ class CreateContestFormtTest(TestCase):
     """Create a contest with a new contest form test"""
     #def setUp(self):
     #    """set up"""
-    #    self.form = CreateContestForm(data={"Title": "Contest Title", "Content": "This is a <b>contest<b>", "max_wordcount": 10, "expiry_date": timezone.now() + timezone.timedelta(7), "start_date": timezone.now()})
+    #    self.form = CreateContestForm(data={"Title": "Contest Title", "Content": "This is a <b>contest<b>",
+    # "max_wordcount": 10, "expiry_date": timezone.now() + timezone.timedelta(7), "start_date": timezone.now()})
 
     def test_create_contest_form_valid(self):
         """validate the form"""
@@ -151,7 +154,8 @@ class EnterCritFormTest(BaseAppTestCase):
         self.dummy_form = EnterCritForm()
         self.score = Crit.HI_SCORE
 
-        for i in range(self.dummy_form.wordcount_min):
+        #use _ for unused loop vars
+        for _ in range(self.dummy_form.wordcount_min):
             self.content += " word"
 
         self.form = EnterCritForm( data = {
@@ -161,6 +165,7 @@ class EnterCritFormTest(BaseAppTestCase):
             })
 
     def test_enter_crit_form_is_valid(self):
+        """Asserts crit form is valid"""
         self.assertTrue(self.form.is_valid())
 
     def test_enter_crit_form_under_wordcount(self):
