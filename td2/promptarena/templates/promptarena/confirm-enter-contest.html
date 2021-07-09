@@ -13,14 +13,15 @@ Confirm Contest Entry
 
 
         <form method = "post">
-            <p>Please click the button below to register your intent to enter. </p>
-            <input type="submit" value="Fortune Favors the bold" class='btn btn-primary'>
+            {% csrf_token %}
+            <p>See that button below. It's the only thing between you and eternal glory. Click it! </p>
+            <p><input type="submit" value="Fortune Favors the Bold" class='btn btn-primary btn-only-form'></p>
             <p>You don't have to provide your story right this minute, but failure to enter a story by {{ contest_context.expiry_date }}
                 will go down on your permanent record.
             </p>
         </form>
         <p><a href="{% url 'view contests' %}">Oh noes! I am a cowardy custard. Take me away to be alone with my shame!</a></p>
-    
+
         <h4>Contest Details</h4>
         <p>{{ contest_context.content | safe }}</p>
         <p>Word limit: {{ contest_context.max_wordcount }}</p>

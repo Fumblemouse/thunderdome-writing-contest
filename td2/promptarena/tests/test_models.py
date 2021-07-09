@@ -175,11 +175,11 @@ class EntryModelTest(BaseAppTestCase):
         self.set_up_contest(InternalJudgeContest)
         self.contest.save()
         self.set_up_contest_components()
-        self.entry = Entry(contest = self.contest, story = self.stories[0])
+        self.entry = Entry(contest = self.contest, story = self.stories[0], author = self.stories[0].author)
         self.entry.save()
     def test_entry_string_representation(self):
         """test str representation"""
-        self.assertEqual(str(self.entry), str(self.story.author) + " : " + self.entry.title)
+        self.assertEqual(str(self.entry), str(self.entry.author) + " : " + self.entry.title)
 
 
     def test_entry_verbose_name_plural(self):

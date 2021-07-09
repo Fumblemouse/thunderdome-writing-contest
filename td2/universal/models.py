@@ -40,7 +40,7 @@ class MiniDome(models.Model):
     content =  tinymce_models.HTMLField(blank = True)
     battle_date = models.DateTimeField(auto_now_add=True,)
     category = models.PositiveSmallIntegerField(
-        verbose_name='MiniDome Type',
+        verbose_name='Category',
         default = PUBLIC,
         choices = CATEGORY_CHOICES)
 

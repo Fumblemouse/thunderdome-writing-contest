@@ -109,7 +109,7 @@ class MiniDomeTest(BaseAppTestCase):
         self.story_ids = get_expirable_var(self.request.session, 'minidome_stories', None)
         response = self.client.post(reverse('minidome'), {
             'winner' : self.story_ids[0],
-            'minidome_type': Story.PUBLIC,
+            'category': Story.PUBLIC,
         })
         story_instance0 = Story.objects.get(pk = self.story_ids[0])
         story_instance1 = Story.objects.get(pk = self.story_ids[1])
@@ -125,7 +125,7 @@ class MiniDomeTest(BaseAppTestCase):
         self.story_ids = get_expirable_var(request.session, 'minidome_stories', None)
         response = self.client.post(reverse('minidome'), {
             'winner' : self.story_ids[0],
-            'minidome_type': Story.LOGGED_IN,
+            'category': Story.LOGGED_IN,
         })
         request = response.wsgi_request
         #follow = True becuase we reddirect but still want to read the messages
@@ -151,7 +151,7 @@ class MiniDomeTest(BaseAppTestCase):
         self.story_ids = get_expirable_var(self.request.session, 'minidome_stories', None)
         self.client.post(reverse('minidome'), {
             'winner' : 'a',
-            'minidome_type': Story.PRIVATE,
+            'category': Story.PRIVATE,
         })
         story_instance0 = Story.objects.get(pk = self.story_ids[0])
         story_instance1 = Story.objects.get(pk = self.story_ids[1])
@@ -168,7 +168,7 @@ class MiniDomeTest(BaseAppTestCase):
         self.story_ids = get_expirable_var(self.request.session, 'minidome_stories', None)
         response = self.client.post(reverse('minidome'), {
             'winner' : self.story_ids[0],
-            'minidome_type': Story.PUBLIC,
+            'category': Story.PUBLIC,
         })
         story_instance0 = Story.objects.get(pk = self.story_ids[0])
         story_instance1 = Story.objects.get(pk = self.story_ids[1])
@@ -186,7 +186,7 @@ class MiniDomeTest(BaseAppTestCase):
         self.story_ids = get_expirable_var(self.request.session, 'minidome_stories', None)
         response = self.client.post(reverse('minidome'), {
             'winner' : self.story_ids[0],
-            'minidome_type': Story.PUBLIC,
+            'category': Story.LOGGED_IN,
         })
         story_instance0 = Story.objects.get(pk = self.story_ids[0])
         story_instance1 = Story.objects.get(pk = self.story_ids[1])

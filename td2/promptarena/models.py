@@ -8,6 +8,8 @@ MODELS
     Crit: Criticism of particular entry
     ContestJudges: List of judges for a given contest (can be none or many)
 """
+from datetime import timedelta
+
 from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
@@ -89,9 +91,16 @@ class Contest(models.Model):
         self.status = status
         self.save()
 
+    def get_sign_up_limit_date(self):
+        return self.expiry_date - timedelta(days=2)
+
     def get_final_crits(self):
         """returns finished crits for a given contest"""
         return Crit.objects.filter(entry__contest = self, final = True).order_by('reviewer')
+
+    def get_entrants(self):
+        """returns list of entrants"""
+        return Entry.objects.filter(contest = self)
 
     def get_absolute_url(self):
         """returns permalink for  a given contest"""
@@ -348,7 +357,7 @@ class Entry(models.Model):
         Story,
         on_delete=models.CASCADE,
         related_name = 'entries',
-        blank = True)
+        null = True)
 
     position = models.PositiveSmallIntegerField(default=0)
     score = models.PositiveSmallIntegerField(default=0)
@@ -361,7 +370,7 @@ class Entry(models.Model):
         verbose_name_plural = "entries"
 
     def __str__(self):
-        return str(self.story.author) + " : " + self.title
+        return str(self.author) + " : " + self.title
 
 class Crit(models.Model):
     """Reviews of stories"""

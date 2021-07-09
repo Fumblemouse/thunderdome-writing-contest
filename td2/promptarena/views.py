@@ -104,11 +104,11 @@ def confirm_enter_contest(request, contest_id,):
     if request.method == "POST":
         Entry.objects.create(author = request.user, contest = contest_context)
         messages.success(request, "You are signed up for the contest: " + contest_context.title)
-        return redirect('enter contest new story', contest_id = contest_context.pk)
-    if Entry.objects.get(author = request.user, contest = contest_context.pk).exists():
-        messages.error(request, "You have already signed up for that contest")
-        return redirect('view contests')
-    return render(request, 'confirm enter contest', {'contest_context' : contest_context})
+        return redirect('enter contest', contest_id = contest_context.pk)
+    if Entry.objects.filter(author = request.user, contest = contest_context.pk).exists():
+        messages.success(request, "Previous sign-up located - hit it with your best shot.")
+        return redirect('enter contest', contest_id = contest_context.pk)
+    return render(request, 'promptarena/confirm-enter-contest.html', {'contest_context' : contest_context})
 
 
 @login_required
@@ -287,9 +287,14 @@ def view_contests(request):
          status = Contest.CLOSED
     )
 
+    current_user_contests_not_entered_yet = Contest.objects.filter(entries__author = request.user, status = Contest.OPEN, entries__content='')
+    current_user_contests_entered = Contest.objects.filter(entries__author = request.user, status = Contest.OPEN).exclude( entries__content='')
+
     context = {
         'current_contest_list': current_contest_list,
         'old_contest_list': old_contest_list,
+        'current_user_contests_not_entered_yet' : current_user_contests_not_entered_yet,
+        'current_user_contests_entered' : current_user_contests_entered,
     }
     return render(request, 'promptarena/view-contests.html', context)
 

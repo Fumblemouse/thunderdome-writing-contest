@@ -26,12 +26,19 @@
                 <a href="{% url 'open contest' contest.id %}" class="btn btn-warning">Open Contest</a>
                 {% endif %}
                 {% if contest.status == contest.OPEN %}
-                    <a href="{% url 'enter contest' contest.id %}" class="btn btn-primary">Sign Up</a>
-                    <a href="{% url 'close contest' contest.id %}" class="btn btn-warning">Close Entries</a></td>
+                    {% if contest in current_user_contests_not_entered_yet %}
+                        <a href="{% url 'enter contest' contest.id %}" class="btn btn-primary">Submit Story</a>
+
+                    {% elif contest in current_user_contests_entered %}
+                        Entered
+                    {% else %}
+                        <a href="{% url 'confirm enter contest' contest.id %}" class="btn btn-primary">Sign up</a></p>
+                    {% endif %}
                 {% endif %}
                 {% if contest.status == contest.JUDGEMENT %}
                     <a href="{% url 'judge contest' contest.id %}" class="btn btn-warning">Close Judging</a>
                 {% endif %}
+                <a href="{% url 'close contest' contest.id %}" class="btn btn-warning">Close Entries</a></td>
             </td>
             <td>
                     {{ contest.get_status_display }}

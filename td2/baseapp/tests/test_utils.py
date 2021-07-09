@@ -82,14 +82,14 @@ class BaseAppTestCase(TestCase):
         """creates a minidome public contest
         requires set_up_multiple_stories
         """
-        self.minidome = MiniDome(winner = self.stories[0], loser = self.stories[3], minidome_type = MiniDome.PUBLIC)
+        self.minidome = MiniDome(winner = self.stories[0], loser = self.stories[3], category = MiniDome.PUBLIC)
         self.minidome.save()
 
     def set_up_minidome_logged_in(self):
         """creates a minidome logged in contest
         requires set_up_multiple_stories
         """
-        self.minidome = MiniDome(winner = self.stories[1], loser = self.stories[4], minidome_type = MiniDome.LOGGED_IN)
+        self.minidome = MiniDome(winner = self.stories[1], loser = self.stories[4], category = MiniDome.LOGGED_IN)
         self.minidome.save()
 
     def set_up_contest(self, mode, creator = ""):
@@ -172,6 +172,10 @@ class BaseAppTestCase(TestCase):
                 shuffle(scores)
                 crit.score = scores.pop()
                 crit.save()
+
+    def sign_up_for_contest(self, contest, user):
+        self.entry = Entry(contest = contest, author = user)
+        self.entry.save()
 
     def score_brawl(self):
         """reuable routine to assign scores to contest entries"""

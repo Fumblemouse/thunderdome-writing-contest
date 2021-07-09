@@ -61,14 +61,14 @@ def minidome(request):
             form_uncommitted = form.save(commit = False)
 
             if logged_in:
-                minidome_type = MiniDome.LOGGED_IN
+                category = MiniDome.LOGGED_IN
             else:
-                minidome_type = MiniDome.PUBLIC
+                category = MiniDome.PUBLIC
 
             winner = form.cleaned_data.get('winner')
             stories_options.remove(winner)
             form_uncommitted.loser = stories_options[0]
-            form_uncommitted.minidome_type = minidome_type
+            form_uncommitted.category = category
             form_uncommitted.save()
             expire_at = datetime.today() + timedelta(minutes=30)
             set_expirable_var(request.session, 'minidome_judged', True, expire_at)
@@ -85,7 +85,7 @@ def minidome(request):
                 messages.error(request, 'Not enough stories')
                 return redirect('home')
 
-            #Create list of stories that exceed lowest 
+            #Create list of stories that exceed lowest
             #number of matches
             stories1 = list(Story.objects.filter(access__gte=1).\
                 exclude(author = request.user).\
@@ -117,7 +117,7 @@ def minidome(request):
                     exclude(author = request.user).\
                     annotate(total_logged_in_tests=F('stats__minidome_logged_in_wins') + F('stats__minidome_logged_in_losses')).\
                     filter(total_logged_in_tests__lt=story1_total_logged_in_tests ))
- 
+
                 story2 = sample(stories2, 1)[0]
 
             form = MiniDomeLoggedInForm( [story1.pk, story2.pk] )
@@ -137,9 +137,9 @@ def minidome(request):
             if len(stories1) == 0 :
                 stories1 = list(Story.objects.filter(access__gte=2).\
                 annotate(total_logged_in_tests=Sum(F('stats__minidome_public_wins') + F('stats__minidome_public_losses'))).\
-                filter(total_logged_in_tests__gte=min_tests_value))    
-                
-                
+                filter(total_logged_in_tests__gte=min_tests_value))
+
+
                 if len(stories1) <= 1 : #because that's itself
                     messages.error(request, 'Not enough stories')
                     return redirect('home')
@@ -156,7 +156,7 @@ def minidome(request):
                 stories2 = list(Story.objects.filter(access__gte=2).\
                 annotate(total_logged_in_tests=Sum(F('stats__minidome_public_wins') + F('stats__minidome_public_losses'))).\
                 filter(total_logged_in_tests__lt=story1_total_public_tests))
-                
+
                 story2 = sample(stories2, 1)[0]
 
             form = MiniDomePublicForm( [story1.pk, story2.pk] )

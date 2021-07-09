@@ -33,6 +33,12 @@ form input.btn-primary {
     margin-left:80%;
 }
 
+form input.btn-primary.btn-only-form {
+    margin:auto;
+    display:block;
+}
+
+
 table {
     width:100%;
     margin-bottom:3rem !important;
@@ -143,7 +149,7 @@ h2.ThunderDome {
 #skiptocontent a {
     color:#000 !important;
 }
-#main-content h1, #main-content h2, #main-content h3 {
+#main-content h1, #main-content h2, #main-content h3, #main-content h4 {
     padding: 2rem 0 0 3vw;
 }
 

@@ -17,7 +17,7 @@
     {% endif %}
         <p>{{ contest_context.content | safe }}</p>
         {% if user.is_authenticated and contest_contex.status == 'OPEN' %}
-            <p><a href="{% url 'confirm enter contest' contest_context.id %}" class="btn btn-primary">Enter</a></p>
+            <p><a href="{% url 'confirm enter contest' contest_context.id %}" class="btn btn-primary">Enter Contest</a></p>
         {% endif %}
 {% else %}
     <p>No contest found - check the url.</p>

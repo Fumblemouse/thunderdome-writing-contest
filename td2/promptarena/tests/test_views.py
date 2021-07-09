@@ -40,11 +40,21 @@ class PromptArenaViewTest(BaseAppTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'promptarena/create-contest.html')
 
+    def test_confirm_enter_contest_exists(self):
+        """test confirm enter contest view exists"""
+        self.login_testuser('djangotestuser')
+        self.set_up_contest(InternalJudgeContest)
+        self.contest.save()
+        response = self.client.get(reverse('confirm enter contest', kwargs = {"contest_id": self.contest.pk}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'promptarena/confirm-enter-contest.html')
+
     def test_enter_contest_new_story_view_exists(self):
         """test enter contest with new story view exists"""
         self.login_testuser('djangotestuser')
         self.set_up_contest(InternalJudgeContest)
         self.contest.save()
+        self.sign_up_for_contest(self.contest, self.user)
         response = self.client.get(reverse('enter contest', kwargs = {"contest_id": self.contest.pk}))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'promptarena/enter-contest-new-story.html')
@@ -54,6 +64,7 @@ class PromptArenaViewTest(BaseAppTestCase):
         self.login_testuser('djangotestuser')
         self.set_up_contest(InternalJudgeContest)
         self.contest.save()
+        self.sign_up_for_contest(self.contest, self.user)
         response = self.client.get(reverse('enter contest old story',  kwargs = {"contest_id": self.contest.pk}))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'promptarena/enter-contest-old-story.html')
@@ -242,6 +253,7 @@ class PromptArenaViewsWithData(BaseAppTestCase):
         """Post a new story to a contest"""
         self.set_up_contest(InternalJudgeContest)
         self.contest.save()
+        self.sign_up_for_contest(self.contest, self.user)
         response = self.client.post(reverse('enter contest', kwargs = {'contest_id' : self.contest.pk}), {
             'title' : 'My Story title',
             'content' : 'My Story content',
@@ -252,6 +264,7 @@ class PromptArenaViewsWithData(BaseAppTestCase):
         """Post a new story to a contest"""
         self.set_up_contest(InternalJudgeContest)
         self.contest.save()
+        self.sign_up_for_contest(self.contest, self.user)
         response = self.client.post(reverse('enter contest', kwargs = {'contest_id' : self.contest.pk}), {
             'content' : 'My Story content',
         })
@@ -261,6 +274,7 @@ class PromptArenaViewsWithData(BaseAppTestCase):
         """Post a new story to a contest"""
         self.set_up_contest(InternalJudgeContest)
         self.contest.save()
+        self.sign_up_for_contest(self.contest, self.user)
         story_content = ""
         for i in range(1010):
             story_content += " word"
@@ -275,6 +289,7 @@ class PromptArenaViewsWithData(BaseAppTestCase):
         self.set_up_contest(InternalJudgeContest)
         self.contest.status = Contest.JUDGEMENT
         self.contest.save()
+        self.sign_up_for_contest(self.contest, self.user)
         response = self.client.post(reverse('enter contest', kwargs = {'contest_id' : self.contest.pk}), {
             'title' : 'My Story title',
             'content' : 'My Story content  ',
@@ -286,6 +301,7 @@ class PromptArenaViewsWithData(BaseAppTestCase):
         self.set_up_story_private()
         self.set_up_contest(InternalJudgeContest)
         self.contest.save()
+        self.sign_up_for_contest(self.contest, self.user)
         response = self.client.post(reverse('enter contest old story', kwargs = {'contest_id' : self.contest.pk}), {
             'story' : self.story.pk
         })
@@ -297,6 +313,7 @@ class PromptArenaViewsWithData(BaseAppTestCase):
         self.set_up_story_private_with_wordcount(wordcount = 1001)
         self.set_up_contest(InternalJudgeContest)
         self.contest.save()
+        self.sign_up_for_contest(self.contest, self.user)
         response = self.client.post(reverse('enter contest old story', kwargs = {'contest_id' : self.contest.pk}), {
             'story' : self.story.pk
         })
@@ -308,6 +325,7 @@ class PromptArenaViewsWithData(BaseAppTestCase):
         self.set_up_contest(InternalJudgeContest)
         self.contest.status = Contest.JUDGEMENT
         self.contest.save()
+        self.sign_up_for_contest(self.contest, self.user)
         response = self.client.post(reverse('enter contest old story', kwargs = {'contest_id' : self.contest.pk}), {
             'story' : self.story.pk
         })
@@ -317,6 +335,7 @@ class PromptArenaViewsWithData(BaseAppTestCase):
         """Add a single judge to a contest (default functionality)"""
         self.set_up_contest(ExternalJudgeContest)
         self.contest.save()
+
         response = self.client.post(reverse('add judge', kwargs = {'contest_id' : self.contest.pk}), {
             'judge' : self.user.pk
         })
