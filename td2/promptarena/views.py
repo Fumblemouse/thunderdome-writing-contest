@@ -286,10 +286,12 @@ def view_contests(request):
     old_contest_list = Contest.objects.filter (
          status = Contest.CLOSED
     )
-
-    current_user_contests_not_entered_yet = Contest.objects.filter(entries__author = request.user, status = Contest.OPEN, entries__content='')
-    current_user_contests_entered = Contest.objects.filter(entries__author = request.user, status = Contest.OPEN).exclude( entries__content='')
-
+    if request.user.is_authenticated:
+        current_user_contests_not_entered_yet = Contest.objects.filter(entries__author = request.user, status = Contest.OPEN, entries__content='')
+        current_user_contests_entered = Contest.objects.filter(entries__author = request.user, status = Contest.OPEN).exclude( entries__content='')
+    else:
+        current_user_contests_not_entered_yet = ""
+        current_user_contests_entered = ""
     context = {
         'current_contest_list': current_contest_list,
         'old_contest_list': old_contest_list,

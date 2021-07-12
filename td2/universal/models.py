@@ -106,6 +106,10 @@ class Notice(models.Model):
     content =  tinymce_models.HTMLField(blank = True)
     created = models.DateTimeField(auto_now_add=True,)
 
+    def __str__(self):
+        """returns string name"""
+        return self.category.Category.label
+
     #def save(self, *args, **kwargs):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None, story=None, contest=None):
         """Save the notice"""

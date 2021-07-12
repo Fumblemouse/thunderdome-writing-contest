@@ -22,6 +22,9 @@
             <td><a href="{% url 'view contest details' contest.id %}">{{ contest.title }}</a></td>
             <td>{{ contest.expiry_date }}</td>
             <td>{{ contest.max_wordcount }}</td>
+
+            {# test if contest is open, then if user has signed up, then if user has already entered a story and provide appropriate text #}
+
             <td>{% if contest.status == contest.UNOPENED %}
                 <a href="{% url 'open contest' contest.id %}" class="btn btn-warning">Open Contest</a>
                 {% endif %}
