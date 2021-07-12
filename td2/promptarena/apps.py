@@ -1,6 +1,9 @@
+"""Names this app
+"""
 from django.apps import AppConfig
 
 
 class PromptarenaConfig(AppConfig):
     """Configure the promptarena"""
-    name = 'promptarena'
+
+    name = "promptarena"

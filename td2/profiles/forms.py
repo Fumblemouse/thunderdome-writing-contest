@@ -35,15 +35,6 @@ class UserUpdateForm(BaseForm):
         model=get_user_model()
         fields= ('email', 'first_name', 'last_name', 'bio', 'private_profile', 'highest_access')
 
-"""
-class ProfileUpdateForm(BaseForm):
-    update profile model fields
-
-    class Meta:
-        model = Profile
-        fields = 'bio', 'public_profile'
-"""
-
 class UserLoginForm(AuthenticationForm):
     """Custom user login form"""
     def __init__(self, *args, **kwargs):

@@ -2,7 +2,10 @@
 from django.test import TestCase
 # Create your tests here.
 from django.contrib.auth import get_user_model
-from profiles.models import CustomUser
+#from profiles.models import CustomUser
+
+# pylint: disable=attribute-defined-outside-init
+# disabled because Django test classes set up variables/attributes in bespoke methods!
 
 class CustomUserCreationTest(TestCase):
     """test for users and profile"""

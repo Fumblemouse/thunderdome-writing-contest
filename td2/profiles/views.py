@@ -1,3 +1,5 @@
+"""Views for profiles app
+"""
 import logging
 from django.contrib.auth import  logout
 from django.contrib.auth import get_user_model
@@ -83,20 +85,20 @@ def sign_up(request):
 
 def activate(request, uidb64, token):
     """activate account after email response"""
-    if request.method == 'POST':
-        try:
-            uid = urlsafe_base64_decode(uidb64).decode()
-            user = UserModel._default_manager.get(pk=uid)
-        except(TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
-            user = None
-        if user is not None and default_token_generator.check_token(user, token) and not user.is_active:
-            user.is_active = True
-            user.save()
-            messages.success(request,'Thank you for your email confirmation. Now you can login your account.')
-        else:
-            messages.error(request,'Activation link is invalid!')
-        return render(request, 'baseapp/home.html',{} )
-    return render(request, 'registration/activate.html', {})
+    if request.method != 'POST':
+        return render(request, 'registration/activate.html', {})
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = UserModel._default_manager.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
+        user = None
+    if user is not None and default_token_generator.check_token(user, token) and not user.is_active:
+        user.is_active = True
+        user.save()
+        messages.success(request,'Thank you for your email confirmation. Now you can login your account.')
+    else:
+        messages.error(request,'Activation link is invalid!')
+    return render(request, 'baseapp/home.html',{} )
 
 @login_required
 def settings(request):

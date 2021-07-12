@@ -1,5 +1,5 @@
 """admin models"""
-from django.contrib import admin # pylint: disable=unused-import
+from django.contrib import admin  # pylint: disable=unused-import
 
 # Register your models here.
 from .models import Contest, Entry, Crit, InternalJudgeContest

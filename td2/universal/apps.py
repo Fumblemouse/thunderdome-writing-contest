@@ -1,5 +1,7 @@
+"""Defines app name"""
 from django.apps import AppConfig
 
 
 class UniversalConfig(AppConfig):
-    name = 'universal'
+    """Names app"""
+    name = "universal"
