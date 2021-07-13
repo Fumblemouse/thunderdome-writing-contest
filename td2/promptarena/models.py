@@ -75,10 +75,7 @@ class Contest(models.Model):
     def __str__(self):
         return self.title
 
-    # def save(self, *args, **kwargs):
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
+    def save(self, *args, **kwargs):
         # provides a slug is one is missed
         slug = self.slug
         slugified = slugify(self.title)
@@ -135,9 +132,7 @@ class InternalJudgeContest(Contest):
     class Meta:
         proxy = True
 
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
+    def save(self, *args, **kwargs):
         self.mode = "INTERNAL JUDGE CONTEST"
         return super(InternalJudgeContest, self).save()
 

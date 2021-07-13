@@ -65,10 +65,7 @@ class MiniDome(models.Model):
         """name shows winner then loser"""
         return self.winner.slug + " vs " + self.loser.slug
 
-    # def save(self, *args, **kwargs):
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
+    def save(self, *args, **kwargs):
         """Save the minidome record"""
         super(MiniDome, self).save()
         # update StoryStats appropriately (this is the only place it happens so we won't use a signal)
@@ -84,17 +81,19 @@ class MiniDome(models.Model):
 
 
 class Notice(models.Model):
-    """Nees that appears on the front page
+    """News that appears on the front page
 
     Args:
         models (Model): Basic Django model
     """
+
     class Category(models.TextChoices):
         """List of possible categories
 
         Args:
             models (TextChoices): a class based way of providing mnultiple options for a field
         """
+
         CONTEST_ANNOUNCE_INTERNAL_JUDGE = "CAIJ", _("Internal Judge Contest Annouce")
         CONTEST_ANNOUNCE_EXTERNAL_JUDGE = "CAEJ", _("External Judge Contest Announce")
         CONTEST_CLOSE = "CC", _("Contest Close")
@@ -131,13 +130,8 @@ class Notice(models.Model):
         """returns string name"""
         return self.category
 
-    # def save(self, *args, **kwargs):
-    def save(
+    def post(
         self,
-        force_insert=False,
-        force_update=False,
-        using=None,
-        update_fields=None,
         story=None,
         contest=None,
     ):
@@ -151,14 +145,15 @@ class Notice(models.Model):
             if story.access == 2:
                 self.privacy = self.PUBLIC
                 self.content = link + " has just been released for everyone to read."
+                self.save()
             elif story.access == 1:
                 self.privacy = self.LOGGED_IN
                 self.content = link + " has just been released for members to read."
+                self.save()
             else:
                 return
         if contest:
             link = create_html_link(contest.get_absolute_url(), contest.title)
             self.privacy = self.PUBLIC
             self.content = link + " is now open for sign-ups."
-
-        super(Notice, self).save()
+            self.save()

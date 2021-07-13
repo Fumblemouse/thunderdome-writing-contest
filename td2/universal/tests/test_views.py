@@ -21,18 +21,19 @@ class MiniDomeViewTest(BaseAppTestCase):
 
     def test_minidome_not_accessible_public(self):
         """test access fails if not enough stories"""
-        response = self.client.get(reverse("minidome"), follow=True)
+        response = self.client.get(reverse("minidome"))
         self.assertRedirects(response, "/")
+        response = self.client.get(reverse("minidome"), follow=True)
         error_messages = self.get_messages(response, "error")
         self.assertEqual(len(error_messages), 1)
         self.assertIn("Not enough", str(error_messages[0]))
 
         self.set_up_story_public()
 
-        response = self.client.get(reverse("minidome"), follow=True)
+        response = self.client.get(reverse("minidome"))
         self.assertRedirects(response, "/")
+        response = self.client.get(reverse("minidome"), follow = True)
         error_messages = self.get_messages(response, "error")
-
         self.assertEqual(len(error_messages), 1)
         self.assertIn("Not enough", str(error_messages[0]))
 
@@ -47,10 +48,10 @@ class MiniDomeViewTest(BaseAppTestCase):
 
         self.set_up_story_logged_in()
 
-        response = self.client.get(reverse("minidome"), follow=True)
+        response = self.client.get(reverse("minidome"))
         self.assertRedirects(response, "/")
+        response = self.client.get(reverse("minidome"), follow=True)
         error_messages = self.get_messages(response, "error")
-
         self.assertEqual(len(error_messages), 1)
         self.assertIn("Not enough", str(error_messages[0]))
 
@@ -66,7 +67,7 @@ class MiniDomeTest(BaseAppTestCase):
 
     def test_minidome_accessible(self):
         """test minidome is available"""
-        # self.set_up_minidome_public()
+        #self.set_up_minidome_public()
         response = self.client.get(reverse("minidome"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "universal/minidome.html")

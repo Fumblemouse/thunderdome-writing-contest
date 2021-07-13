@@ -64,10 +64,7 @@ class Story(models.Model):
         """sits up and says hello"""
         return self.title
 
-    # def save(self, *args, **kwargs):
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
+    def save(self, *args, **kwargs):
         """Additional field input"""
         # provides a slug is one is missed
         slug = self.slug
@@ -78,7 +75,7 @@ class Story(models.Model):
         # Create notification of new available sotry
         if self.access > 0 and not self.has_been_public:
             notice = Notice.objects.create(category=Notice.Category.STORY_ANNOUNCE)
-            notice.save(story=self)
+            notice.post(story=self)
 
         # set flag if saved for public view so it can't be used in contests
         if self.access > 0:
