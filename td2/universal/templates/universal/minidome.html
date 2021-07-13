@@ -36,7 +36,7 @@
                 <li>If you are logged in you can leave a comment about your decision.</li>
             </ol>
         </div>
-        <div class="tab-pane active" id="story1" role="tabpanel" aria-labelledby="story1-tab">
+        <div class="tab-pane" id="story1" role="tabpanel" aria-labelledby="story1-tab">
             <div class="story">
                 {% if story1_context %}
                     <h2>{{ story1_context.title | safe }}</h2>
@@ -51,7 +51,7 @@
                 <img src = "{% static 'baseapp/img/flourish.png' %}" alt="Ending typographical flourish" class="rounded mx-auto d-block" />
             </div>
         </div>
-        <div class="tab-pane active" id="story2" role="tabpanel" aria-labelledby="story2-tab">
+        <div class="tab-pane" id="story2" role="tabpanel" aria-labelledby="story2-tab">
             <div class="story">
                 {% if story2_context %}
                     <h2>{{ story2_context.title | safe }}</h2>
@@ -67,7 +67,7 @@
                 <img src = "{% static 'baseapp/img/flourish.png' %}" alt="Ending typographical flourish" class="rounded mx-auto d-block" />
             </div>
         </div>
-        <div class="tab-pane active" id="fight" role="tabpanel" aria-labelledby="fight-tab">
+        <div class="tab-pane" id="fight" role="tabpanel" aria-labelledby="fight-tab">
             <form method = "post">
                 {% csrf_token %}
                 {% include 'baseapp/base-form.html' %}
