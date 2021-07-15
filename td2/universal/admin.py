@@ -13,7 +13,7 @@ class NoticeAdmin(admin.ModelAdmin):
     Args:
         admin (ModelAdmin): a model for the admin screens
     """    """"""
-    fields = ("__str__", "created")
+    list_display = ("__str__", "created")
 
 
-admin.site.register(Notice)
+admin.site.register(Notice, NoticeAdmin)

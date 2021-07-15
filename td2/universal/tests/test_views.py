@@ -37,6 +37,12 @@ class MiniDomeViewTest(BaseAppTestCase):
         self.assertEqual(len(error_messages), 1)
         self.assertIn("Not enough", str(error_messages[0]))
 
+        self.set_up_multiple_stories(num_stories=1)
+
+        response = self.client.get(reverse("minidome"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "universal/minidome.html")
+
     def test_minidome_not_accessible_logged_in(self):
         """Test access no granted if not enough stories"""
         self.login_testuser()
@@ -173,6 +179,10 @@ class MiniDomeTest(BaseAppTestCase):
         self.story_ids = get_expirable_var(
             self.request.session, "minidome_stories", None
         )
+        #print(self.story_ids)
+       #print(self.response)
+        #print(self.request)
+
         self.client.post(
             reverse("minidome"),
             {

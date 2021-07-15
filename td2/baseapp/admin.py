@@ -4,5 +4,13 @@ from .models import Story, StoryStats
 
 # Register your models here.
 
-admin.site.register(Story)
+class StoryAdmin(admin.ModelAdmin):
+    """Defines StoryAdmin Adminfields for admin screens
+
+    Args:
+        admin (ModelAdmin): a model for the admin screens
+    """    """"""
+    list_display = ("__str__", "access")
+
+admin.site.register(Story, StoryAdmin)
 admin.site.register(StoryStats)

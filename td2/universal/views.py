@@ -14,7 +14,6 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.db.models import Min, F
 
-
 from baseapp.utils import (
     set_expirable_var,
     get_expirable_var,
@@ -56,7 +55,7 @@ def get_min_tests_value(logged_in):
     return min_tests["min_tests"]
 
 
-def get_story_list(logged_in, min_tests_value=None, max_tests_value=None):
+def get_story_list(request, logged_in, min_tests_value=None, max_tests_value=None):
     """Gets list of stories that
 
     Args:
@@ -76,24 +75,27 @@ def get_story_list(logged_in, min_tests_value=None, max_tests_value=None):
         losses_str = "stats__minidome_public_losses"
         min_access = MiniDome.PUBLIC
 
+    query = Story.objects.filter(access__gte=min_access)
+    if logged_in:
+        query = query.exclude(author = request.user)
+
+
     if isinstance(min_tests_value, int):
         return list(
-            Story.objects.filter(access__gte=min_access)
+            query
             .annotate(total_logged_in_tests=F(wins_str) + F(losses_str))
             .exclude(total_logged_in_tests__lte=min_tests_value)
         )
 
     if isinstance(max_tests_value, int):
         return list(
-            Story.objects.filter(access__gte=min_access)
+            query
             .annotate(total_logged_in_tests=F(wins_str) + F(losses_str))
             .exclude(total_logged_in_tests__gte=max_tests_value)
         )
 
     return list(
-        Story.objects.filter(access__gte=min_access).annotate(
-            total_logged_in_tests=F(wins_str) + F(losses_str)
-        )
+        query
     )
 
 
@@ -145,10 +147,10 @@ def set_minidome_stories(request, logged_in, min_tests_value):
         [type]: [description]
     """
     # Create list of stories that exceed or equal lowestnumber of matches
-    stories1 = get_story_list(logged_in, min_tests_value=min_tests_value)
+    stories1 = get_story_list(request, logged_in, min_tests_value=min_tests_value)
     # redo it if there are none (no matches so far or everyone is equal for some reason)
     if len(stories1) == 0:
-        get_story_list(logged_in)
+        stories1 = get_story_list(request, logged_in)
 
         if len(stories1) <= 1:  # because that's itself
             return "Not enough stories"
@@ -160,19 +162,19 @@ def set_minidome_stories(request, logged_in, min_tests_value):
         story1 = sample(stories1, 1)[0]
         story1_stats = StoryStats.objects.get(pk=story1)
         story1_total_tests = get_story_total_tests(story1_stats, logged_in)
-        stories2 = get_story_list(logged_in, max_tests_value=story1_total_tests)
+        stories2 = get_story_list(request, logged_in, max_tests_value=story1_total_tests)
 
         if not stories2:
             stories2 = get_story_list(
-                logged_in, max_tests_value=story1_total_tests + 1
-            ).remove(story1)
-            
+                request, logged_in, max_tests_value=story1_total_tests + 1
+            )
+            stories2.remove(story1)
+
         if not stories2:
             return "Not enough stories"
 
         story2 = sample(stories2, 1)[0]
-        form = get_minidome_form(logged_in, story1, story2)
-
+    form = get_minidome_form(logged_in, story1, story2)
     return [story1, story2, form]
 
 
@@ -198,9 +200,7 @@ def minidome(request):
             + " seconds",
         )
         return redirect("home")
-
     logged_in = request.user.is_authenticated
-
     # next check the values in the session variable
     story_ids = get_expirable_var(request.session, "minidome_stories", None)
     if story_ids is not None:
@@ -214,21 +214,18 @@ def minidome(request):
         else:
             form = MiniDomePublicForm([story1.pk, story2.pk], request.POST or None)
 
-    if request.method == "POST": 
+    if request.method == "POST" and story_ids:
         if form.is_valid():
             return handle_form_submission(form, stories_options, logged_in, request)
     min_tests_value = get_min_tests_value(logged_in)
-
-    if min_tests_value is None:
+    if not isinstance(min_tests_value, int):
         messages.error(request, "Not enough stories")
         return redirect("home")
 
     stories = set_minidome_stories(request, logged_in, min_tests_value)
-
     if isinstance(stories, str):
         messages.error(request, stories)
         return redirect("home")
-
     story1_context = stories[0]
     story2_context = stories[1]
     form = stories[2]
@@ -240,6 +237,7 @@ def minidome(request):
         [story1_context.pk, story2_context.pk],
         expire_at,
     )
+
 
     return render(
         request,

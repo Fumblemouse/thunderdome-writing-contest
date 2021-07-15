@@ -63,7 +63,7 @@ def get_expirable_var(session, var_name, default=None):
         default (Misc, optional): What to use if there is no session variable. Defaults to None.
 
     Returns:
-        Misc: value stored in session variable
+        Str: value stored in session variable
     """
     var = default
     if var_name in session:
